@@ -7,15 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		142E97B22ABADF7F00DD00EC /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 142E97B12ABADF7F00DD00EC /* URLImage */; };
-		143BD7FB2AB83B060073C988 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 143BD7FA2AB83B060073C988 /* WidgetKit.framework */; };
-		143BD7FD2AB83B060073C988 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 143BD7FC2AB83B060073C988 /* SwiftUI.framework */; };
-		143BD8002AB83B060073C988 /* VibleWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143BD7FF2AB83B060073C988 /* VibleWidgetsBundle.swift */; };
-		143BD8022AB83B060073C988 /* VibleWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143BD8012AB83B060073C988 /* VibleWidgets.swift */; };
-		143BD8052AB83B080073C988 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 143BD8042AB83B080073C988 /* Assets.xcassets */; };
-		143BD8072AB83B080073C988 /* VibleWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 143BD8032AB83B060073C988 /* VibleWidgets.intentdefinition */; };
-		143BD8082AB83B080073C988 /* VibleWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 143BD8032AB83B060073C988 /* VibleWidgets.intentdefinition */; };
-		143BD80B2AB83B080073C988 /* VibleWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 143BD7F92AB83B060073C988 /* VibleWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
@@ -27,16 +18,6 @@
 		E7CE226B27FB113F00307A37 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E7CE226A27FB113F00307A37 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		143BD8092AB83B080073C988 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 143BD7F82AB83B060073C988;
-			remoteInfo = VibleWidgetsExtension;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		143BD80C2AB83B080073C988 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -44,7 +25,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				143BD80B2AB83B080073C988 /* VibleWidgetsExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -63,17 +43,10 @@
 
 /* Begin PBXFileReference section */
 		143367CB295A5DC40030EACF /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
-		143BD7F92AB83B060073C988 /* VibleWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = VibleWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		143BD7FA2AB83B060073C988 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		143BD7FC2AB83B060073C988 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		143BD7FF2AB83B060073C988 /* VibleWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibleWidgetsBundle.swift; sourceTree = "<group>"; };
-		143BD8012AB83B060073C988 /* VibleWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibleWidgets.swift; sourceTree = "<group>"; };
-		143BD8032AB83B060073C988 /* VibleWidgets.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = VibleWidgets.intentdefinition; sourceTree = "<group>"; };
-		143BD8042AB83B080073C988 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		143BD8062AB83B080073C988 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
-		14FFA3A12AB8562C005F56C1 /* VibleWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VibleWidgetsExtension.entitlements; sourceTree = "<group>"; };
 		27B16F98A835DF640F03EB6E /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		626C6869ABA62EAEC15894EA /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -94,16 +67,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		143BD7F62AB83B060073C988 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				143BD7FD2AB83B060073C988 /* SwiftUI.framework in Frameworks */,
-				142E97B22ABADF7F00DD00EC /* URLImage in Frameworks */,
-				143BD7FB2AB83B060073C988 /* WidgetKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		97C146EB1CF9000F007C117D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,18 +78,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		143BD7FE2AB83B060073C988 /* VibleWidgets */ = {
-			isa = PBXGroup;
-			children = (
-				143BD7FF2AB83B060073C988 /* VibleWidgetsBundle.swift */,
-				143BD8012AB83B060073C988 /* VibleWidgets.swift */,
-				143BD8032AB83B060073C988 /* VibleWidgets.intentdefinition */,
-				143BD8042AB83B080073C988 /* Assets.xcassets */,
-				143BD8062AB83B080073C988 /* Info.plist */,
-			);
-			path = VibleWidgets;
-			sourceTree = "<group>";
-		};
 		3E239E58FC8557ABF5BB3012 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -151,10 +102,8 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
-				14FFA3A12AB8562C005F56C1 /* VibleWidgetsExtension.entitlements */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
-				143BD7FE2AB83B060073C988 /* VibleWidgets */,
 				97C146EF1CF9000F007C117D /* Products */,
 				BFE0A0F339354DF42ABFC02B /* Pods */,
 				F71DB2B6095EC4590F645088 /* GoogleService-Info.plist */,
@@ -166,7 +115,6 @@
 			isa = PBXGroup;
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
-				143BD7F92AB83B060073C988 /* VibleWidgetsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -201,26 +149,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		143BD7F82AB83B060073C988 /* VibleWidgetsExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 143BD8102AB83B080073C988 /* Build configuration list for PBXNativeTarget "VibleWidgetsExtension" */;
-			buildPhases = (
-				143BD7F52AB83B060073C988 /* Sources */,
-				143BD7F62AB83B060073C988 /* Frameworks */,
-				143BD7F72AB83B060073C988 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = VibleWidgetsExtension;
-			packageProductDependencies = (
-				142E97B12ABADF7F00DD00EC /* URLImage */,
-			);
-			productName = VibleWidgetsExtension;
-			productReference = 143BD7F92AB83B060073C988 /* VibleWidgetsExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 		97C146ED1CF9000F007C117D /* Runner */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
@@ -239,7 +167,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				143BD80A2AB83B080073C988 /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Runner;
@@ -256,9 +183,6 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
-					143BD7F82AB83B060073C988 = {
-						CreatedOnToolsVersion = 14.3.1;
-					};
 					97C146ED1CF9000F007C117D = {
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 1100;
@@ -275,27 +199,17 @@
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
-				142E97B02ABADF7F00DD00EC /* XCRemoteSwiftPackageReference "url-image" */,
 			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
-				143BD7F82AB83B060073C988 /* VibleWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		143BD7F72AB83B060073C988 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				143BD8052AB83B080073C988 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		97C146EC1CF9000F007C117D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -402,35 +316,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		143BD7F52AB83B060073C988 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				143BD8022AB83B060073C988 /* VibleWidgets.swift in Sources */,
-				143BD8072AB83B080073C988 /* VibleWidgets.intentdefinition in Sources */,
-				143BD8002AB83B060073C988 /* VibleWidgetsBundle.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		97C146EA1CF9000F007C117D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
-				143BD8082AB83B080073C988 /* VibleWidgets.intentdefinition in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		143BD80A2AB83B080073C988 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 143BD7F82AB83B060073C988 /* VibleWidgetsExtension */;
-			targetProxy = 143BD8092AB83B080073C988 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		97C146FA1CF9000F007C117D /* Main.storyboard */ = {
@@ -452,135 +347,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		143BD80D2AB83B080073C988 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = VibleWidgetsExtension.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
-				DEVELOPMENT_TEAM = XCUTNS56DG;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = VibleWidgets/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = VibleWidgets;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 2.8.1;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.subverse.vible.VibleWidgets;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-		143BD80E2AB83B080073C988 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = VibleWidgetsExtension.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
-				DEVELOPMENT_TEAM = XCUTNS56DG;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = VibleWidgets/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = VibleWidgets;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 2.8.1;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.subverse.vible.VibleWidgets;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
-		143BD80F2AB83B080073C988 /* Profile */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = VibleWidgetsExtension.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
-				DEVELOPMENT_TEAM = XCUTNS56DG;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = VibleWidgets/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = VibleWidgets;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 2.8.1;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.subverse.vible.VibleWidgets;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Profile;
-		};
 		249021D3217E4FDB00AE95B9 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -645,7 +411,7 @@
 				DEVELOPMENT_TEAM = XCUTNS56DG;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Vible;
+				INFOPLIST_KEY_CFBundleDisplayName = WeMotions;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -653,7 +419,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.8.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.subverse.vible;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wemotions.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -788,7 +554,7 @@
 				DEVELOPMENT_TEAM = XCUTNS56DG;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Vible;
+				INFOPLIST_KEY_CFBundleDisplayName = WeMotions;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -796,7 +562,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.8.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.subverse.vible;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wemotions.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -825,7 +591,7 @@
 				DEVELOPMENT_TEAM = XCUTNS56DG;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Vible;
+				INFOPLIST_KEY_CFBundleDisplayName = WeMotions;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -833,7 +599,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.8.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.subverse.vible;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wemotions.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -850,16 +616,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		143BD8102AB83B080073C988 /* Build configuration list for PBXNativeTarget "VibleWidgetsExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				143BD80D2AB83B080073C988 /* Debug */,
-				143BD80E2AB83B080073C988 /* Release */,
-				143BD80F2AB83B080073C988 /* Profile */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		97C146E91CF9000F007C117D /* Build configuration list for PBXProject "Runner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -881,25 +637,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		142E97B02ABADF7F00DD00EC /* XCRemoteSwiftPackageReference "url-image" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/dmytro-anokhin/url-image";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		142E97B12ABADF7F00DD00EC /* URLImage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 142E97B02ABADF7F00DD00EC /* XCRemoteSwiftPackageReference "url-image" */;
-			productName = URLImage;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
 }
