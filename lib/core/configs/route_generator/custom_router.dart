@@ -52,8 +52,6 @@ class CustomRouter {
         );
       case SearchScreen.routeName:
         return SearchScreen.route();
-      case ChatScreen.routeName:
-        return ChatScreen.route();
       case CreateSubverseScreen.routeName:
         return CreateSubverseScreen.route();
       case SettingsScreen.routeName:
@@ -138,10 +136,6 @@ class CustomRouter {
         return ManageAccountScreen.route();
       case AccountInformationScreen.routeName:
         return AccountInformationScreen.route();
-      case GroupChatDetailScreen.routeName:
-        return GroupChatDetailScreen.route(
-          args: settings.arguments as GroupChatDetailScreenArgs,
-        );
 
       default:
         return _errorRoute();

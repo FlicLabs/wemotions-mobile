@@ -73,11 +73,36 @@ void main() async {
       getThemeMode(mode);
       bool value = mode == 'ThemeMode.dark';
       runApp(
-        ChangeNotifierProvider<ThemeProvider>(
-          create: (_) => ThemeProvider(
-            value ? Constants.darkTheme : Constants.lightTheme,
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => AuthProvider()),
+            ChangeNotifierProvider(create: (_) => HomeProvider()),
+            ChangeNotifierProvider(create: (_) => SearchProvider()),
+            ChangeNotifierProvider(create: (_) => VideoProvider()),
+            ChangeNotifierProvider(create: (_) => CommentProvider()),
+            ChangeNotifierProvider(create: (_) => CameraProvider()),
+            ChangeNotifierProvider(create: (_) => PostProvider()),
+            ChangeNotifierProvider(create: (_) => SettingsProvider()),
+            ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
+            ChangeNotifierProvider(create: (_) => ProfileProvider()),
+            ChangeNotifierProvider(create: (_) => UserProfileProvider()),
+            ChangeNotifierProvider(create: (_) => BottomNavBarProvider()),
+            ChangeNotifierProvider(create: (_) => CreateSubverseProvider()),
+            ChangeNotifierProvider(create: (_) => EditSubverseProvider()),
+            ChangeNotifierProvider(create: (_) => EditProfileProvider()),
+            ChangeNotifierProvider(create: (_) => AccountProvider()),
+            ChangeNotifierProvider(create: (_) => InviteProvider()),
+            ChangeNotifierProvider(create: (_) => QrCodeProvider()),
+            ChangeNotifierProvider(create: (_) => ExitProvider()),
+            ChangeNotifierProvider(create: (_) => NotificationProvider()),
+            ChangeNotifierProvider(create: (_) => SpectrumProvider()),
+          ],
+          child: ChangeNotifierProvider<ThemeProvider>(
+            create: (_) => ThemeProvider(
+              value ? Constants.darkTheme : Constants.lightTheme,
+            ),
+            builder: (context, child) => WeMotions(initialLink: initialLink),
           ),
-          builder: (context, child) => HolyVible(initialLink: initialLink),
         ),
       );
     },

@@ -24,7 +24,6 @@ class _SplashScreenState extends State<SplashScreen> {
     fetchSubverse();
     fetchFeed();
     fetchProfile();
-    connectToWebSocket();
     loadUserInfo();
   }
 
@@ -48,14 +47,6 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  connectToWebSocket() async {
-    if (logged_in!) {
-      if (gc_member!) {
-        final chat = Provider.of<ChatProvider>(context, listen: false);
-        await chat.connect(token!);
-      }
-    }
-  }
 
   initNotifications() {
     Provider.of<NotificationProvider>(context, listen: false).initialize();

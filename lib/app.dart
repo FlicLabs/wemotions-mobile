@@ -1,59 +1,69 @@
 import 'export.dart';
 
-class HolyVible extends StatelessWidget {
+class WeMotions extends StatefulWidget {
   final PendingDynamicLinkData? initialLink;
-  const HolyVible({Key? key, this.initialLink}) : super(key: key);
+  const WeMotions({Key? key, this.initialLink}) : super(key: key);
 
   @override
+  State<WeMotions> createState() => _WeMotionsState();
+}
+
+class _WeMotionsState extends State<WeMotions> {
+  @override
+  void initState() {
+    super.initState();
+    fetchSubverse();
+    fetchFeed();
+    fetchProfile();
+  }
+
+  fetchSubverse() async {
+    final subverse = Provider.of<SearchProvider>(context, listen: false);
+    await [
+      subverse.getSubversePosts(id: subverse_id),
+      subverse.getSubverseInfo(id: subverse_id),
+    ];
+  }
+
+  fetchFeed() async {
+    final home = Provider.of<HomeProvider>(context, listen: false);
+    await home.createIsolate(token: token);
+  }
+
+  fetchProfile() async {
+    if (prefs_username == null || prefs_username != '') {
+      final profile = Provider.of<ProfileProvider>(context, listen: false);
+      await profile.fetchProfile(username: prefs_username!);
+    }
+  }
+
+  initNotifications() {
+    Provider.of<NotificationProvider>(context, listen: false).initialize();
+  }
+
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => HomeProvider()),
-        ChangeNotifierProvider(create: (_) => SearchProvider()),
-        ChangeNotifierProvider(create: (_) => VideoProvider()),
-        ChangeNotifierProvider(create: (_) => CommentProvider()),
-        ChangeNotifierProvider(create: (_) => CameraProvider()),
-        ChangeNotifierProvider(create: (_) => PostProvider()),
-        ChangeNotifierProvider(create: (_) => SettingsProvider()),
-        ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
-        ChangeNotifierProvider(create: (_) => ProfileProvider()),
-        ChangeNotifierProvider(create: (_) => UserProfileProvider()),
-        ChangeNotifierProvider(create: (_) => BottomNavBarProvider()),
-        ChangeNotifierProvider(create: (_) => CreateSubverseProvider()),
-        ChangeNotifierProvider(create: (_) => EditSubverseProvider()),
-        ChangeNotifierProvider(create: (_) => EditProfileProvider()),
-        ChangeNotifierProvider(create: (_) => AccountProvider()),
-        ChangeNotifierProvider(create: (_) => InviteProvider()),
-        ChangeNotifierProvider(create: (_) => QrCodeProvider()),
-        ChangeNotifierProvider(create: (_) => ExitProvider()),
-        ChangeNotifierProvider(create: (_) => ChatProvider()),
-        ChangeNotifierProvider(create: (_) => NotificationProvider()),
-        ChangeNotifierProvider(create: (_) => SpectrumProvider()),
-      ],
-      child: Consumer<ThemeProvider>(
-        builder: (_, __, ___) {
-          return MaterialApp(
-            themeMode: __.selectedThemeMode,
-            theme: theme.getTheme(),
-            darkTheme: Constants.darkTheme,
-            navigatorKey: navKey,
-            scaffoldMessengerKey: rootKey,
-            title: 'Holy Vible',
-            debugShowCheckedModeBanner: false,
-            onGenerateRoute: CustomRouter.onGenerateRoute,
-            initialRoute: onboard == false
-                ? WelcomeScreen.routeName
-                : SplashScreen.routeName,
-            routes: {
-              SplashScreen.routeName: (context) {
-                return SplashScreen(initialLink: initialLink);
-              }
-            },
-          );
-        },
-      ),
+    return Consumer<ThemeProvider>(
+      builder: (_, __, ___) {
+        return MaterialApp(
+          themeMode: __.selectedThemeMode,
+          theme: theme.getTheme(),
+          darkTheme: Constants.darkTheme,
+          navigatorKey: navKey,
+          scaffoldMessengerKey: rootKey,
+          title: 'WeMotions',
+          debugShowCheckedModeBanner: false,
+          onGenerateRoute: CustomRouter.onGenerateRoute,
+          initialRoute: onboard == false
+              ? WelcomeScreen.routeName
+              : BottomNavBar.routeName,
+          routes: {
+            BottomNavBar.routeName: (context) {
+              return BottomNavBar(initialLink: widget.initialLink);
+            }
+          },
+        );
+      },
     );
   }
 }

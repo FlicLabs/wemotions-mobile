@@ -91,66 +91,66 @@ class _OverlayNotificationState extends State<OverlayNotification>
                     children: [
                       Row(
                         children: [
-                          if (widget.type == NotificationType.push) ...[
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    children: [
-                                      CustomCircularAvatar(
-                                        imageUrl: widget.imageUrl,
-                                        height: 38,
-                                        width: 38,
-                                      ),
-                                      width10,
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            widget.title ?? '',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .copyWith(fontSize: 15),
-                                          ),
-                                          if (widget.chatType ==
-                                              'groupChat') ...[
-                                            Text(
-                                              '${widget.username}${': '}${widget.body ?? ''}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .labelMedium,
-                                            ),
-                                          ],
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () async {
-                                Navigator.pushNamed(
-                                  context,
-                                  ChatScreen.routeName,
-                                );
-                              },
-                              child: Text(
-                                'reply',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium!
-                                    .copyWith(
-                                        color: Theme.of(context).hintColor),
-                              ),
-                            ),
-                          ],
+                          // if (widget.type == NotificationType.push) ...[
+                          //   Expanded(
+                          //     child: Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       mainAxisAlignment: MainAxisAlignment.center,
+                          //       children: [
+                          //         Row(
+                          //           children: [
+                          //             CustomCircularAvatar(
+                          //               imageUrl: widget.imageUrl,
+                          //               height: 38,
+                          //               width: 38,
+                          //             ),
+                          //             width10,
+                          //             Column(
+                          //               crossAxisAlignment:
+                          //                   CrossAxisAlignment.start,
+                          //               mainAxisAlignment:
+                          //                   MainAxisAlignment.center,
+                          //               children: [
+                          //                 Text(
+                          //                   widget.title ?? '',
+                          //                   style: Theme.of(context)
+                          //                       .textTheme
+                          //                       .bodyLarge!
+                          //                       .copyWith(fontSize: 15),
+                          //                 ),
+                          //                 if (widget.chatType ==
+                          //                     'groupChat') ...[
+                          //                   Text(
+                          //                     '${widget.username}${': '}${widget.body ?? ''}',
+                          //                     style: Theme.of(context)
+                          //                         .textTheme
+                          //                         .labelMedium,
+                          //                   ),
+                          //                 ],
+                          //               ],
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                          //   GestureDetector(
+                          //     onTap: () async {
+                          //       Navigator.pushNamed(
+                          //         context,
+                          //         ChatScreen.routeName,
+                          //       );
+                          //     },
+                          //     child: Text(
+                          //       'reply',
+                          //       style: Theme.of(context)
+                          //           .textTheme
+                          //           .labelMedium!
+                          //           .copyWith(
+                          //               color: Theme.of(context).hintColor),
+                          //     ),
+                          //   ),
+                          // ],
                           if (widget.type == NotificationType.local) ...[
                             Expanded(
                               child: Align(

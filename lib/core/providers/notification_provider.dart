@@ -98,9 +98,9 @@ class NotificationProvider extends ChangeNotifier {
         // final Map<String, dynamic> responseData = json.decode(jsonString);
         // PayloadModel payload = PayloadModel.fromJson(responseData);
 
-        if (message.data['type'] == 'privateChat') {
-          navKey.currentState!.pushNamed(ChatScreen.routeName);
-        }
+        // if (message.data['type'] == 'privateChat') {
+        //   navKey.currentState!.pushNamed(ChatScreen.routeName);
+        // }
       });
     }
 

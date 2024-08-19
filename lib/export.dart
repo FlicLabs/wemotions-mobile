@@ -140,10 +140,6 @@ export 'package:socialverse/features/auth/widgets/auth_obscure_icon.dart';
 export 'package:socialverse/features/auth/widgets/social_button.dart';
 export 'package:socialverse/features/auth/widgets/auth_save_button.dart';
 export 'package:socialverse/features/auth/widgets/auth_aligned_text.dart';
-export 'package:socialverse/features/chat/widgets/chat_item.dart';
-export 'package:socialverse/features/chat/widgets/chat_textbar.dart';
-export 'package:socialverse/features/chat/widgets/chat_bubble.dart';
-
 // Models, Services, Repositories
 export 'package:socialverse/features/auth/domain/models/user.dart';
 export 'package:socialverse/features/home/domain/models/feed_model.dart';
@@ -168,8 +164,6 @@ export 'package:socialverse/features/search/domain/services/subscription_service
 export 'package:socialverse/features/profile/domain/services/edit_profile_service.dart';
 export 'package:socialverse/features/profile/domain/services/settings_services.dart';
 export 'package:socialverse/core/domain/services/messagin_service.dart';
-export 'package:socialverse/features/chat/domain/models/messages_model.dart';
-export 'package:socialverse/features/chat/domain/models/sender_model.dart';
 export 'package:socialverse/features/profile/domain/services/account_service.dart';
 // Providers
 export 'package:socialverse/core/providers/theme_provider.dart';
@@ -193,7 +187,6 @@ export 'package:socialverse/core/providers/snackbar_provider.dart';
 export 'package:socialverse/features/profile/providers/settings/invite_provider.dart';
 export 'package:socialverse/features/profile/providers/settings/account_provider.dart';
 export 'package:socialverse/features/home/providers/exit_provider.dart';
-export 'package:socialverse/features/chat/provider/chat_provider.dart';
 export 'package:socialverse/features/profile/providers/profile/profile_provider.dart';
 export 'package:socialverse/features/home/providers/spectrum_provider.dart';
 
@@ -236,5 +229,3 @@ export 'package:socialverse/features/profile/presentation/settings/account/chang
 export 'package:socialverse/features/profile/presentation/settings/account/manage_account_screen.dart';
 export 'package:socialverse/features/profile/presentation/settings/general/theme_switch_screen.dart';
 export 'package:socialverse/features/profile/presentation/profile/user_profile_screen.dart';
-export 'package:socialverse/features/chat/presentation/chat_screen.dart';
-export 'package:socialverse/features/chat/presentation/gc_detail_screen.dart';

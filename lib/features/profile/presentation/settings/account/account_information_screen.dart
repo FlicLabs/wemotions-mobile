@@ -17,7 +17,6 @@ class AccountInformationScreen extends StatelessWidget {
     final nav = Provider.of<BottomNavBarProvider>(context);
     final account = Provider.of<AccountProvider>(context);
     final profile = Provider.of<ProfileProvider>(context);
-    final chat = Provider.of<ChatProvider>(context);
     return Consumer<AccountProvider>(
       builder: (_, __, ___) {
         return Scaffold(
@@ -93,10 +92,6 @@ class AccountInformationScreen extends StatelessWidget {
                           nav.currentPage = 0;
                           profile.user = ProfileModel.empty;
                           profile.posts.clear();
-                          if (gc_member!) {
-                            chat.messages.clear();
-                            chat.channel.sink.close();
-                          }
                           account.logout(context);
                         },
                       ),

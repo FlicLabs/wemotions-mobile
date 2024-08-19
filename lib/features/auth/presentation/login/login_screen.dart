@@ -14,7 +14,6 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isKeyboardShowing = MediaQuery.of(context).viewInsets.vertical > 0;
-    final chat = Provider.of<ChatProvider>(context);
     final profile = Provider.of<ProfileProvider>(context);
     return Consumer<AuthProvider>(builder: (_, __, ___) {
       return Scaffold(
@@ -116,18 +115,13 @@ class LoginScreen extends StatelessWidget {
                                   onTap: () async {
                                     if (__.loginFormKey.currentState!
                                         .validate()) {
-                                      chat.page = 1;
                                       await __.login(
                                         email: __.email.text,
                                         password: __.password.text,
-                                        page: chat.page,
                                       );
                                       profile.fetchProfile(
-                                          username: prefs_username!);
-                                      if (gc_member!) {
-                                        await chat.connect(token!);
-                                        await chat.fetchMessages();
-                                      }
+                                        username: prefs_username!,
+                                      );
                                     }
                                   },
                                   title: 'Login',
@@ -165,14 +159,9 @@ class LoginScreen extends StatelessWidget {
                                   title: 'Sign in with Apple',
                                   icon: Icons.apple,
                                   onTap: () async {
-                                    chat.page = 1;
-                                    await __.signInWithApple(page: chat.page);
+                                    await __.signInWithApple();
                                     profile.fetchProfile(
                                         username: prefs_username!);
-                                    if (gc_member!) {
-                                      await chat.connect(token!);
-                                      await chat.fetchMessages();
-                                    }
                                   },
                                 )
                               ],
@@ -181,14 +170,10 @@ class LoginScreen extends StatelessWidget {
                                   title: 'Sign in with Google',
                                   icon: UniconsLine.google,
                                   onTap: () async {
-                                    chat.page = 1;
-                                    await __.signInWithGoogle(page: chat.page);
+                                    await __.signInWithGoogle();
                                     profile.fetchProfile(
-                                        username: prefs_username!);
-                                    if (gc_member!) {
-                                      await chat.connect(token!);
-                                      await chat.fetchMessages();
-                                    }
+                                      username: prefs_username!,
+                                    );
                                   },
                                 )
                               ]

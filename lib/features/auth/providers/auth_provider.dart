@@ -7,7 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:socialverse/features/auth/domain/service/auth_service.dart';
 import 'dart:math' show Random;
 import 'package:crypto/crypto.dart';
-import 'package:socialverse/features/chat/domain/services/chat_service.dart';
+
 
 enum AuthStatus {
   NotLoggedIn,
@@ -37,7 +37,6 @@ class AuthProvider extends ChangeNotifier {
   final notification = getIt<NotificationProvider>();
 
   final _service = AuthService();
-  final _chat_service = ChatService();
 
   AuthStatus _loggedInAuthStatus = AuthStatus.NotLoggedIn;
   AuthStatus _registeredAuthStatus = AuthStatus.NotRegistered;
@@ -110,7 +109,6 @@ class AuthProvider extends ChangeNotifier {
   Future<dynamic> login({
     required String email,
     required String password,
-    required int page,
   }) async {
     Map data = {
       'mixed': email,
@@ -150,25 +148,6 @@ class AuthProvider extends ChangeNotifier {
         log('owner_id: $owner_id');
         token = prefs?.getString('token') ?? '';
         prefs_email = prefs?.getString('email') ?? '';
-
-        Response chatResponse = await _chat_service.getMessages(page: page);
-
-        if (chatResponse.statusCode == 200 || chatResponse.statusCode == 201) {
-          final Map<String, dynamic> chatResponseData = chatResponse.data;
-          log(chatResponseData['status']);
-          if (chatResponseData['status'] == 'success') {
-            prefs!.setBool("gc_member", true);
-            gc_member = prefs?.getBool('gc_member') ?? false;
-            log('member: ${gc_member}');
-          }
-        } else {
-          final Map<String, dynamic> chatResponseData = chatResponse.data;
-          if (chatResponseData['status'] == 'error') {
-            prefs!.setBool("gc_member", false);
-            gc_member = prefs?.getBool('gc_member') ?? false;
-            log('member: ${gc_member}');
-          }
-        }
 
         _loggedInAuthStatus = AuthStatus.LoggedIn;
         notifyListeners();
@@ -261,7 +240,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> signInWithApple({required int page}) async {
+  Future<void> signInWithApple() async {
     final rawNonce = generateNonce();
     final nonce = sha256ofString(rawNonce);
 
@@ -325,25 +304,6 @@ class AuthProvider extends ChangeNotifier {
       token = prefs?.getString('token') ?? '';
       prefs_email = prefs?.getString('email') ?? '';
 
-      Response chatResponse = await _chat_service.getMessages(page: page);
-
-      if (chatResponse.statusCode == 200 || chatResponse.statusCode == 201) {
-        final Map<String, dynamic> chatResponseData = chatResponse.data;
-        log(chatResponseData['status']);
-        if (chatResponseData['status'] == 'success') {
-          prefs!.setBool("gc_member", true);
-          gc_member = prefs?.getBool('gc_member') ?? false;
-          log('member: ${gc_member}');
-        }
-      } else {
-        final Map<String, dynamic> chatResponseData = chatResponse.data;
-        if (chatResponseData['status'] == 'error') {
-          prefs!.setBool("gc_member", false);
-          gc_member = prefs?.getBool('gc_member') ?? false;
-          log('member: ${gc_member}');
-        }
-      }
-
       _loggedInAuthStatus = AuthStatus.LoggedIn;
       notifyListeners();
 
@@ -360,7 +320,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> signInWithGoogle({required int page}) async {
+  Future<void> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     final GoogleSignInAuthentication? googleAuth =
@@ -417,25 +377,6 @@ class AuthProvider extends ChangeNotifier {
     log(prefs_username.toString());
 
     username.text = prefs_username!;
-
-    Response chatResponse = await _chat_service.getMessages(page: page);
-
-    if (chatResponse.statusCode == 200 || chatResponse.statusCode == 201) {
-      final Map<String, dynamic> chatResponseData = chatResponse.data;
-      log(chatResponseData['status']);
-      if (chatResponseData['status'] == 'success') {
-        prefs!.setBool("gc_member", true);
-        gc_member = prefs?.getBool('gc_member') ?? false;
-        log('member: ${gc_member}');
-      }
-    } else {
-      final Map<String, dynamic> chatResponseData = chatResponse.data;
-      if (chatResponseData['status'] == 'error') {
-        prefs!.setBool("gc_member", false);
-        gc_member = prefs?.getBool('gc_member') ?? false;
-        log('member: ${gc_member}');
-      }
-    }
 
     _loggedInAuthStatus = AuthStatus.LoggedIn;
     notifyListeners();
