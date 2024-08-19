@@ -1,4 +1,4 @@
-package com.subverse.vible
+package com.wemotions.app
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.android.FlutterFragmentActivity
