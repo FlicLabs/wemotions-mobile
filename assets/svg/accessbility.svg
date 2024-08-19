@@ -1,0 +1,7 @@
+<svg id="Component_37_1" data-name="Component 37 – 1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <g id="Ellipse_713" data-name="Ellipse 713" fill="none" stroke="#86878b" stroke-width="1">
+    <circle cx="8" cy="8" r="8" stroke="none"/>
+    <circle cx="8" cy="8" r="7.5" fill="none"/>
+  </g>
+  <path id="Icon_material-accessibility" data-name="Icon material-accessibility" d="M7.025,3a.8.8,0,1,1-.795.8A.8.8,0,0,1,7.025,3ZM10.6,5.8c-.272.07-2.384,0-2.384,0V11H7.422V8.6H6.628V11H5.833V5.8s-2.124.064-2.384,0-.379-.186-.379-.386.068-.33.379-.414,6.842-.082,7.151,0,.47.206.47.406S10.872,5.73,10.6,5.8Z" transform="translate(0.929 1)" fill="#86878b"/>
+</svg>

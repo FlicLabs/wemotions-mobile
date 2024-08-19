@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <g id="icadd" transform="translate(-617 -401)">
+    <rect id="Rectangle_5" data-name="Rectangle 5" width="16" height="16" transform="translate(617 401)" fill="none"/>
+    <g id="icadd-2" data-name="icadd" transform="translate(608.9 392.9)">
+      <g id="Icon-Plus" transform="translate(8.1 8.1)">
+        <path id="Fill-38" d="M-12.164-254.428a7.736,7.736,0,0,1-7.736-7.736,7.736,7.736,0,0,1,7.736-7.736,7.736,7.736,0,0,1,7.736,7.736,7.736,7.736,0,0,1-7.736,7.736Zm0-14.63a6.921,6.921,0,0,0-6.894,6.894,6.921,6.921,0,0,0,6.894,6.894,6.921,6.921,0,0,0,6.894-6.894,6.921,6.921,0,0,0-6.894-6.894Z" transform="translate(20.164 270.164)" stroke="#000" stroke-width="0.5"/>
+        <path id="Fill-39" d="M-8.7-247.4H-.2v1.25H-8.7Z" transform="translate(12.449 254.775)"/>
+        <path id="Fill-40" d="M2.6-258.7H3.846v8.5H2.6Z" transform="translate(4.777 262.449)"/>
+      </g>
+    </g>
+  </g>
+</svg>

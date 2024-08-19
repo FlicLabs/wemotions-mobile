@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20.576" height="20.591" viewBox="0 0 20.576 20.591">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_2159" data-name="Rectangle 2159" width="20.576" height="20.591" fill="none" stroke="#fff" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="Group_3463" data-name="Group 3463" clip-path="url(#clip-path)">
+    <circle id="Ellipse_828" data-name="Ellipse 828" cx="9.76" cy="9.76" r="9.76" transform="translate(0.499 0.513)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_200004" data-name="Path 200004" d="M42.328,21.971a13.4,13.4,0,0,0-19.169,0,9.787,9.787,0,0,1,19.169,0Z" transform="translate(-22.485 -13.752)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_200005" data-name="Path 200005" d="M23.159,423.238a13.462,13.462,0,0,0,19.257,0,9.831,9.831,0,0,1-19.257,0Z" transform="translate(-22.485 -410.912)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_200006" data-name="Path 200006" d="M423.144,41.457a13.558,13.558,0,0,0,0-19.3,9.717,9.717,0,0,1,4.941,2.682,9.9,9.9,0,0,1,0,13.936A9.717,9.717,0,0,1,423.144,41.457Z" transform="translate(-410.82 -21.511)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_200007" data-name="Path 200007" d="M21.113,22.156a13.558,13.558,0,0,0,0,19.3,9.717,9.717,0,0,1-4.941-2.682,9.9,9.9,0,0,1,0-13.936A9.717,9.717,0,0,1,21.113,22.156Z" transform="translate(-12.919 -21.511)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="1"/>
+  </g>
+</svg>

@@ -1,0 +1,12 @@
+<svg id="User_Not_Accepted_" data-name="User Not Accepted " xmlns="http://www.w3.org/2000/svg" width="19.75" height="16" viewBox="0 0 19.75 16">
+  <g id="Squircle" transform="translate(0 20)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0-7C0-4.53,1.235-4,7-4s7-.53,7-3-1.235-3-7-3S0-9.471,0-7Z" stroke="none"/>
+    <path d="M 7 -8.5 C 5.014369964599609 -8.5 2.859129905700684 -8.446269989013672 1.929189682006836 -8.047719955444336 C 1.643429756164551 -7.925250053405762 1.5 -7.86378002166748 1.5 -7 C 1.5 -6.13621997833252 1.643429756164551 -6.074749946594238 1.929189682006836 -5.952280044555664 C 2.859129905700684 -5.553730010986328 5.014369964599609 -5.5 7 -5.5 C 8.985630035400391 -5.5 11.14087009429932 -5.553730010986328 12.07081031799316 -5.952280044555664 C 12.35657024383545 -6.074749946594238 12.5 -6.13621997833252 12.5 -7 C 12.5 -7.86378002166748 12.35657024383545 -7.925250053405762 12.07081031799316 -8.047719955444336 C 11.14087009429932 -8.446269989013672 8.985630035400391 -8.5 7 -8.5 M 7 -10 C 12.76449966430664 -10 14 -9.470499992370605 14 -7 C 14 -4.529500007629395 12.76449966430664 -4 7 -4 C 1.235500335693359 -4 0 -4.529500007629395 0 -7 C 0 -9.470499992370605 1.235500335693359 -10 7 -10 Z" stroke="none" fill="#86878b"/>
+  </g>
+  <g id="Ellipse_43" data-name="Ellipse 43" transform="translate(11 8) rotate(180)" fill="none" stroke="#86878b" stroke-width="1.5">
+    <circle cx="4" cy="4" r="4" stroke="none"/>
+    <circle cx="4" cy="4" r="3.25" fill="none"/>
+  </g>
+  <path id="Ellipse_38" data-name="Ellipse 38" d="M2-4A2,2,0,0,1,0-6,2,2,0,0,1,2-8" transform="translate(15 -1) rotate(180)" fill="none" stroke="#86878b" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+  <path id="Vector_42" data-name="Vector 42" d="M1.333,4C3.667,4,5,3.714,5,2S3.667,0,0,0" transform="translate(14 10)" fill="none" stroke="#86878b" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+</svg>
