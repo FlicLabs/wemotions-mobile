@@ -50,21 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDgq5BlWQ9YyJcLWobVsSU-HwQ1KCesomk',
-    appId: '1:115873070240:android:0fc078fdd57def8d299dc5',
-    messagingSenderId: '115873070240',
-    projectId: 'flic-69356',
-    storageBucket: 'flic-69356.appspot.com',
+    apiKey: 'AIzaSyAxpR7Vx1FxhzFlqUbXF6kmZIWCWCilFwk',
+    appId: '1:933869952850:android:3192be45e4a2961c2ea48b',
+    messagingSenderId: '933869952850',
+    projectId: 'we-motions',
+    storageBucket: 'we-motions.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCBzayDUG4lZhpTkF-CW0jKH1vpTPzpDpQ',
-    appId: '1:115873070240:ios:b84224c4398e1b24299dc5',
-    messagingSenderId: '115873070240',
-    projectId: 'flic-69356',
-    storageBucket: 'flic-69356.appspot.com',
-    androidClientId: '115873070240-3mmbq5jb5bh8ecg6je9b4a3b2tb6ajqo.apps.googleusercontent.com',
-    iosClientId: '115873070240-5gpgud8ibilvbe7bg0lpp8f7l9410gsa.apps.googleusercontent.com',
-    iosBundleId: 'com.subverse.vible',
+    apiKey: 'AIzaSyCg4XP46RBvaAlfDC7csrpDyZA0LznuZzE',
+    appId: '1:933869952850:ios:e9a666011fbc65452ea48b',
+    messagingSenderId: '933869952850',
+    projectId: 'we-motions',
+    storageBucket: 'we-motions.appspot.com',
+    iosBundleId: 'com.wemotions.app',
   );
+
 }
