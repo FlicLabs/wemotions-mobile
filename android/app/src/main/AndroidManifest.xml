@@ -16,21 +16,8 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="Vible"
+        android:label="WeMotions"
         android:requestLegacyExternalStorage="true" >
-        <receiver
-            android:name=".VibleWidgets"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="es.antonborri.home_widget.action.LAUNCH" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/vible_widgets_info" />
-        </receiver>
 
         <activity
             android:name=".MainActivity"
