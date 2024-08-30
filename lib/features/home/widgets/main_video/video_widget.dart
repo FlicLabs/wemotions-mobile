@@ -1,6 +1,5 @@
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/home/helper/custom_page_view_physics.dart';
-import 'package:socialverse/features/home/utils/custom_heart_widget.dart';
 import 'package:socialverse/features/home/utils/video_sheet.dart';
 
 class VideoWidgetArgs {
@@ -85,8 +84,6 @@ class _VideoWidgetState extends State<VideoWidget> {
     bool isKeyboardShowing = MediaQuery.of(context).viewInsets.vertical > 0;
     final video = Provider.of<VideoProvider>(context);
     final home = Provider.of<HomeProvider>(context);
-    // final auth = Provider.of<AuthProvider>(context);
-    final spectrum = Provider.of<SpectrumProvider>(context);
     final comment = Provider.of<CommentProvider>(context);
     final exit = Provider.of<ExitProvider>(context);
     bool isInit = video.videoController(video.index)!.value.isInitialized;
@@ -134,201 +131,181 @@ class _VideoWidgetState extends State<VideoWidget> {
                         },
                         scrollDirection: Axis.vertical,
                         itemBuilder: (_, index) {
-                          return Listener(
-                            onPointerDown: (PointerDownEvent event) {
-                              if (isInit && logged_in!) {
-                                spectrum.startSwipe(event.position.dy);
-                              }
-                              home.setTapPosition(event.position);
-                            },
-                            onPointerMove: (PointerMoveEvent event) {
-                              if (isInit && logged_in!) {
-                                spectrum.updateSwipe(
-                                    event.position.dy, context);
-                              }
-                            },
-                            onPointerUp: (PointerUpEvent event) {
-                              if (isInit && logged_in!) {
-                                spectrum.endSwipe(home.posts[index].id);
-                              }
-                            },
-                            child: GestureDetector(
-                              // onTapDown: (TapDownDetails details) {
-                              //   home.setTapPosition(details.globalPosition);
-                              // },
-                              onDoubleTap: () {
-                                // if (logged_in == true) {
-                                home.handleDoubleTap();
-                                // if (video.posts[index].upvoted) {
-                                //   video.posts[index].upvoted = false;
-                                //   video.posts[index].upvoteCount--;
-                                //   home.postLikeRemove(
-                                //     id: video.posts[index].id,
-                                //   );
-                                // } else {
-                                // }
-                                if (video.posts[index].upvoted == false) {
-                                  video.posts[index].upvoted = true;
-                                  video.posts[index].upvoteCount++;
-                                  home.postLikeAdd(
-                                    id: video.posts[index].id,
-                                  );
-                                }
-
-                                Timer(Duration(seconds: 1),
-                                    () => home.isLiked = false);
-
-                                if (home.tapPosition != home.prevTapPosition) {
-                                  home.consecutiveDoubleTaps = 0;
-                                  home.likeAnimationScale = 1.0;
-                                }
-
-                                home.prevTapPosition = home.tapPosition;
-
-                                home.consecutiveDoubleTaps++;
-                                home.likeAnimationScale =
-                                    1.0 + (home.consecutiveDoubleTaps * 0.2);
-                                home.timer?.cancel();
-                                home.timer = Timer(Duration(seconds: 2), () {
-                                  home.consecutiveDoubleTaps = 0;
-                                  home.likeAnimationScale = 1.0;
-                                });
-                                // } else {
-                                //   auth.showAuthBottomSheet(context);
-                                // }
-                              },
-                              onLongPress: () {
-                                HapticFeedback.mediumImpact();
-                                showModalBottomSheet(
-                                  context: context,
-                                  backgroundColor: Colors.black,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30.0),
-                                      topRight: Radius.circular(30.0),
-                                    ),
-                                  ),
-                                  builder: (context) {
-                                    return VideoSheet(
-                                      isUser: video.posts[index].username !=
-                                          prefs_username,
-                                      isFromSubverse: widget.isFromSubverse,
-                                      isFromProfile: widget.isFromProfile,
-                                      isFromFeed: false,
-                                      isCallback: true,
-                                      category_name:
-                                          video.posts[index].category.name,
-                                      category_count:
-                                          video.posts[index].category.count,
-                                      category_id:
-                                          video.posts[index].category.id,
-                                      category_photo:
-                                          video.posts[index].category.imageUrl,
-                                      category_desc: video
-                                          .posts[index].category.description,
-                                      title: video.posts[index].title,
-                                      video_link: video.posts[index].videoLink,
-                                      video_id: video.posts[index].id,
-                                      current_index: index,
-                                    );
-                                  },
+                          return GestureDetector(
+                            // onTapDown: (TapDownDetails details) {
+                            //   home.setTapPosition(details.globalPosition);
+                            // },
+                            onDoubleTap: () {
+                              // if (logged_in == true) {
+                              home.handleDoubleTap();
+                              // if (video.posts[index].upvoted) {
+                              //   video.posts[index].upvoted = false;
+                              //   video.posts[index].upvoteCount--;
+                              //   home.postLikeRemove(
+                              //     id: video.posts[index].id,
+                              //   );
+                              // } else {
+                              // }
+                              if (video.posts[index].upvoted == false) {
+                                video.posts[index].upvoted = true;
+                                video.posts[index].upvoteCount++;
+                                home.postLikeAdd(
+                                  id: video.posts[index].id,
                                 );
-                              },
-                              onTap: isKeyboardShowing
-                                  ? () => comment.focusNode.unfocus()
-                                  : () {
-                                      if (video
-                                          .videoController(index)!
-                                          .value
-                                          .isPlaying) {
-                                        video.isPlaying = false;
-                                        video.videoController(index)!.pause();
-                                      } else {
-                                        video.isPlaying = true;
-                                        video.videoController(index)!.play();
-                                      }
-                                    },
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    height: cs().height(context),
-                                    width: cs().width(context),
-                                    decoration:
-                                        BoxDecoration(color: Colors.black),
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        CustomNetworkImage(
-                                          height: cs().height(context),
-                                          width: cs().width(context),
-                                          imageUrl:
-                                              video.posts[index].thumbnailUrl,
-                                        ),
-                                        if (isInit) ...[
-                                          SizedBox.expand(
-                                            child: FittedBox(
-                                              fit: BoxFit.cover,
-                                              child: SizedBox(
-                                                width: video
-                                                    .videoController(index)!
-                                                    .value
-                                                    .size
-                                                    .width,
-                                                height: video
-                                                    .videoController(index)!
-                                                    .value
-                                                    .size
-                                                    .height,
-                                                child: VideoPlayer(
-                                                  video.videoController(index)!,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                        if (video.downloading == true)
-                                          DownloadBar(
-                                            height: 0,
-                                            color: Colors.grey.withOpacity(0.4),
-                                            label:
-                                                'Saving: ${video.progressString}',
-                                          ),
-                                        if (video.downloadingCompleted == true)
-                                          DownloadBar(
-                                            height: 0,
-                                            color: Theme.of(context).hintColor,
-                                            label: 'Video Saved',
-                                          ),
-                                        video.isViewMode
-                                            ? shrink
-                                            : MainInfoSideBar(),
-                                        MainVideoProgressIndicator(),
-                                        MainPlayButton(),
-                                        if (home.isLiked) ...[
-                                          Positioned(
-                                            left: home.tapPosition.dx - 75,
-                                            top: home.tapPosition.dy - 150,
-                                            child: SafeArea(
-                                              child: Transform.scale(
-                                                scale: home.likeAnimationScale,
-                                                child: Image.asset(
-                                                  AppAsset.like,
-                                                  color: Colors.white,
-                                                  height: 150,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                        // Uncomment this
-                                        // video.isViewMode
-                                        //     ? shrink
-                                        //     : VideoSideBar(),
-                                      ],
-                                    ),
+                              }
+
+                              Timer(Duration(seconds: 1),
+                                  () => home.isLiked = false);
+
+                              if (home.tapPosition != home.prevTapPosition) {
+                                home.consecutiveDoubleTaps = 0;
+                                home.likeAnimationScale = 1.0;
+                              }
+
+                              home.prevTapPosition = home.tapPosition;
+
+                              home.consecutiveDoubleTaps++;
+                              home.likeAnimationScale =
+                                  1.0 + (home.consecutiveDoubleTaps * 0.2);
+                              home.timer?.cancel();
+                              home.timer = Timer(Duration(seconds: 2), () {
+                                home.consecutiveDoubleTaps = 0;
+                                home.likeAnimationScale = 1.0;
+                              });
+                              // } else {
+                              //   auth.showAuthBottomSheet(context);
+                              // }
+                            },
+                            onLongPress: () {
+                              HapticFeedback.mediumImpact();
+                              showModalBottomSheet(
+                                context: context,
+                                backgroundColor: Colors.black,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(30.0),
+                                    topRight: Radius.circular(30.0),
                                   ),
-                                ],
-                              ),
+                                ),
+                                builder: (context) {
+                                  return VideoSheet(
+                                    isUser: video.posts[index].username !=
+                                        prefs_username,
+                                    isFromSubverse: widget.isFromSubverse,
+                                    isFromProfile: widget.isFromProfile,
+                                    isFromFeed: false,
+                                    isCallback: true,
+                                    category_name:
+                                        video.posts[index].category.name,
+                                    category_count:
+                                        video.posts[index].category.count,
+                                    category_id: video.posts[index].category.id,
+                                    category_photo:
+                                        video.posts[index].category.imageUrl,
+                                    category_desc:
+                                        video.posts[index].category.description,
+                                    title: video.posts[index].title,
+                                    video_link: video.posts[index].videoLink,
+                                    video_id: video.posts[index].id,
+                                    current_index: index,
+                                  );
+                                },
+                              );
+                            },
+                            onTap: isKeyboardShowing
+                                ? () => comment.focusNode.unfocus()
+                                : () {
+                                    if (video
+                                        .videoController(index)!
+                                        .value
+                                        .isPlaying) {
+                                      video.isPlaying = false;
+                                      video.videoController(index)!.pause();
+                                    } else {
+                                      video.isPlaying = true;
+                                      video.videoController(index)!.play();
+                                    }
+                                  },
+                            child: Stack(
+                              children: [
+                                Container(
+                                  height: cs().height(context),
+                                  width: cs().width(context),
+                                  decoration:
+                                      BoxDecoration(color: Colors.black),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      CustomNetworkImage(
+                                        height: cs().height(context),
+                                        width: cs().width(context),
+                                        imageUrl:
+                                            video.posts[index].thumbnailUrl,
+                                      ),
+                                      if (isInit) ...[
+                                        SizedBox.expand(
+                                          child: FittedBox(
+                                            fit: BoxFit.cover,
+                                            child: SizedBox(
+                                              width: video
+                                                  .videoController(index)!
+                                                  .value
+                                                  .size
+                                                  .width,
+                                              height: video
+                                                  .videoController(index)!
+                                                  .value
+                                                  .size
+                                                  .height,
+                                              child: VideoPlayer(
+                                                video.videoController(index)!,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      if (video.downloading == true)
+                                        DownloadBar(
+                                          height: 0,
+                                          color: Colors.grey.withOpacity(0.4),
+                                          label:
+                                              'Saving: ${video.progressString}',
+                                        ),
+                                      if (video.downloadingCompleted == true)
+                                        DownloadBar(
+                                          height: 0,
+                                          color: Theme.of(context).hintColor,
+                                          label: 'Video Saved',
+                                        ),
+                                      video.isViewMode
+                                          ? shrink
+                                          : MainInfoSideBar(),
+                                      MainVideoProgressIndicator(),
+                                      MainPlayButton(),
+                                      if (home.isLiked) ...[
+                                        Positioned(
+                                          left: home.tapPosition.dx - 75,
+                                          top: home.tapPosition.dy - 150,
+                                          child: SafeArea(
+                                            child: Transform.scale(
+                                              scale: home.likeAnimationScale,
+                                              child: Image.asset(
+                                                AppAsset.like,
+                                                color: Colors.white,
+                                                height: 150,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                      // Uncomment this
+                                      // video.isViewMode
+                                      //     ? shrink
+                                      //     : VideoSideBar(),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },
@@ -374,32 +351,6 @@ class _VideoWidgetState extends State<VideoWidget> {
                     : shrink;
               },
             ),
-            if (spectrum.isSwiping && spectrum.ratingValue != 0) ...[
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: cs().height(context),
-                  width: cs().width(context),
-                  color: Colors.black.withOpacity(0.5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '${spectrum.ratingValue.round()}%',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 50,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      CustomHeartWidget(fillPercentage: spectrum.ratingValue)
-                    ],
-                  ),
-                ),
-              ),
-            ],
           ],
         ),
       ),
