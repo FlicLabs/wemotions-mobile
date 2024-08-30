@@ -35,7 +35,7 @@ export 'package:qr_flutter/qr_flutter.dart';
 export 'package:screenshot/screenshot.dart';
 export 'package:qr_code_scanner/qr_code_scanner.dart' hide CameraException;
 export 'package:flutter_switch/flutter_switch.dart';
-export 'package:flutter_dotenv/flutter_dotenv.dart';
+// export 'package:flutter_dotenv/flutter_dotenv.dart';
 export 'package:firebase_crashlytics/firebase_crashlytics.dart';
 export 'package:firebase_messaging/firebase_messaging.dart';
 export 'package:home_widget/home_widget.dart';
@@ -188,10 +188,8 @@ export 'package:socialverse/features/profile/providers/settings/invite_provider.
 export 'package:socialverse/features/profile/providers/settings/account_provider.dart';
 export 'package:socialverse/features/home/providers/exit_provider.dart';
 export 'package:socialverse/features/profile/providers/profile/profile_provider.dart';
-export 'package:socialverse/features/home/providers/spectrum_provider.dart';
 
 // Screens
-export 'package:socialverse/core/presentation/splash_screen.dart';
 export 'package:socialverse/features/auth/presentation/login/login_screen.dart';
 export 'package:socialverse/features/auth/presentation/signup_screen.dart';
 export 'package:socialverse/core/presentation/welcome_screen.dart';

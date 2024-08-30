@@ -1,7 +1,5 @@
-import 'package:socialverse/export.dart';
-
 class API {
-  static String endpoint = 'https://api.socialverseapp.com/';
+  static String endpoint = 'https://api.wemotions.app/';
   static String testnet = '${API.endpoint}testnet/';
   static String mainnet = '${API.endpoint}mainnet/';
 
@@ -63,9 +61,9 @@ class API {
   static String members = 'chat/group/members';
 
   // Keys
-  static String stripe_key = dotenv.env['STRIPE_KEY']!;
-  static String api_key = dotenv.env['API_KEY']!;
-  static String zx_key = dotenv.env['ZxKEY']!;
+  // static String stripe_key = dotenv.env['STRIPE_KEY']!;
+  // static String api_key = dotenv.env['API_KEY']!;
+  // static String zx_key = dotenv.env['ZxKEY']!;
 
   // WalletKit
   static String create = 'wallet/create';

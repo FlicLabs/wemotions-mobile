@@ -14,7 +14,8 @@ class AuthService {
       print(response.statusCode);
       return response;
     } on DioError catch (e) {
-      print(e);
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
       return e;
     }
   }
@@ -28,7 +29,8 @@ class AuthService {
       print(response.data);
       return response;
     } on DioError catch (e) {
-      print(e);
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
       return e;
     }
   }
@@ -44,7 +46,8 @@ class AuthService {
       print(response.statusCode);
       return response;
     } on DioError catch (e) {
-      print(e);
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
       return e;
     }
   }
@@ -59,7 +62,8 @@ class AuthService {
       print(response.statusCode);
       return response;
     } on DioError catch (e) {
-      print(e);
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
       return e;
     }
   }

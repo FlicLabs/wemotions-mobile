@@ -7,8 +7,7 @@ class FeedModel {
     required this.pageSize,
     required this.posts,
   });
-  late final String page;
-  // late final int recordsPerPage;
+  late final int page;
   late final int maxPageSize;
   late final int pageSize;
   late final List<Posts> posts;

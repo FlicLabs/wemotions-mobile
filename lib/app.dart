@@ -12,17 +12,8 @@ class _WeMotionsState extends State<WeMotions> {
   @override
   void initState() {
     super.initState();
-    fetchSubverse();
     fetchFeed();
     fetchProfile();
-  }
-
-  fetchSubverse() async {
-    final subverse = Provider.of<SearchProvider>(context, listen: false);
-    await [
-      subverse.getSubversePosts(id: subverse_id),
-      subverse.getSubverseInfo(id: subverse_id),
-    ];
   }
 
   fetchFeed() async {

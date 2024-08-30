@@ -761,13 +761,8 @@ class HomeProvider extends ChangeNotifier {
     */
         // final _service = SubverseService();
 
-        Response response = await _homeService.getFeed(
-          page: index,
-          id: subverse_id,
-          token: token,
-        );
-
-        final List<Posts> data = FeedModel.fromJson(response.data).posts;
+        final response = await _homeService.getFeed(index, token ?? '');
+        final List<Posts> data = FeedModel.fromJson(response).posts;
         isolateResponseSendPort.send(data);
 
         /* 

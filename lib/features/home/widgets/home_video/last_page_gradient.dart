@@ -62,9 +62,9 @@ class LastPageGradient extends StatelessWidget {
                   final link = await search.dynamicLink.createSubverseLink(
                     imageUrl: home.posts[home.index].thumbnailUrl,
                     id: '${home.posts[home.index].id}',
-                    title: home.posts[home.index].category.name,
-                    count: '${home.posts[home.index].category.count}',
-                    description: home.posts[home.index].category.description,
+                    title: '',
+                    count: '',
+                    description: '',
                     isSubverse: true,
                   );
                   Share.share(link);

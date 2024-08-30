@@ -60,7 +60,7 @@ void main() async {
   logged_in = prefs?.getBool('logged_in') ?? false;
   owner_id = prefs?.getString('owner_id') ?? '';
   gc_member = prefs?.getBool('gc_member') ?? false;
-  await dotenv.load();
+  // await dotenv.load();
   NetworkDio.setDynamicHeader(endPoint: API.endpoint);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(
@@ -95,7 +95,6 @@ void main() async {
             ChangeNotifierProvider(create: (_) => QrCodeProvider()),
             ChangeNotifierProvider(create: (_) => ExitProvider()),
             ChangeNotifierProvider(create: (_) => NotificationProvider()),
-            ChangeNotifierProvider(create: (_) => SpectrumProvider()),
           ],
           child: ChangeNotifierProvider<ThemeProvider>(
             create: (_) => ThemeProvider(

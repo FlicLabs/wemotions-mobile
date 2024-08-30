@@ -26,8 +26,6 @@ class CustomRouter {
           settings: const RouteSettings(name: '/'),
           builder: (_) => Scaffold(),
         );
-      case SplashScreen.routeName:
-        return SplashScreen.route();
       case WelcomeScreen.routeName:
         return WelcomeScreen.route();
       case LoginScreen.routeName:

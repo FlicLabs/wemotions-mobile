@@ -4,14 +4,17 @@ import 'package:socialverse/export.dart';
 class HomeService {
   Dio dio = new Dio();
 
-  getFeed({required int id, required int page, required String token}) async {
-    print('${API.endpoint}${API.subverse}/$id/posts?page=$page');
+  getFeed(int page, String token) async {
+    print('${API.endpoint}${API.feed}?page=$page');
     try {
       Response response = await dio.get(
-        '${API.endpoint}${API.subverse}/$id/posts?page=$page',
+        '${API.endpoint}${API.feed}?page=$page',
         options: Options(headers: {'Flic-Token': token}),
       );
-      return response;
+      ;
+      // print(response.statusCode);
+      // print(response.data);
+      return response.data;
     } on DioError catch (e) {
       print(e.response?.statusCode);
       print(e.response?.statusMessage);
@@ -126,7 +129,7 @@ class HomeService {
   deletePostAdmin(int id) async {
     try {
       Response response = await dio.delete(
-        '${API.endpoint}${API.posts}/$id?api_key=${API.api_key}',
+        '${API.endpoint}${API.posts}/$id?api_key=',
         options: Options(headers: {'Flic-Token': token ?? ''}),
       );
       print(response.data);
