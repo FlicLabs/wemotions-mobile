@@ -45,7 +45,7 @@ class LoginScreen extends StatelessWidget {
                                 AppAsset.icon,
                                 height: 180,
                                 width: cs().width(context) / 2,
-                                color: Theme.of(context).indicatorColor,
+                                color: Theme.of(context).hintColor,
                               ),
                               AuthTextFormField(
                                 keyboardType: TextInputType.emailAddress,

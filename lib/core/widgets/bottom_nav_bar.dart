@@ -30,7 +30,7 @@ class _BottomNavBarState extends State<BottomNavBar>
 
   final List<Widget> _screens = [
     HomeScreen(),
-    SubverseScreen(),
+    // SubverseScreen(),
     ProfileScreen(),
   ];
 
@@ -99,23 +99,23 @@ class _BottomNavBarState extends State<BottomNavBar>
                     ),
                     label: '',
                   ),
-                  BottomNavigationBarItem(
-                    icon: Image.asset(
-                      AppAsset.icon,
-                      height: 50,
-                      width: 50,
-                      color: nav.currentPage == 1
-                          ? Theme.of(context).hintColor
-                          : Theme.of(context).primaryColorDark,
-                    ),
-                    label: '',
-                  ),
+                  // BottomNavigationBarItem(
+                  //   icon: Image.asset(
+                  //     AppAsset.icon,
+                  //     height: 50,
+                  //     width: 50,
+                  //     color: nav.currentPage == 1
+                  //         ? Theme.of(context).hintColor
+                  //         : Theme.of(context).primaryColorDark,
+                  //   ),
+                  //   label: '',
+                  // ),
                   BottomNavigationBarItem(
                     icon: SvgPicture.asset(
                       AppAsset.icuser,
                       height: 30,
                       width: 30,
-                      color: nav.currentPage == 2
+                      color: nav.currentPage == 1
                           ? Theme.of(context).hintColor
                           : Theme.of(context).primaryColorDark,
                     ),

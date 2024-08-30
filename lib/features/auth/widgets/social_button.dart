@@ -18,10 +18,13 @@ class SocialButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Theme.of(context).indicatorColor,
+        ),
         height: 50,
         width: width ?? cs().width(context),
         alignment: Alignment.center,
-        color: Theme.of(context).indicatorColor,
         child: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
