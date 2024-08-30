@@ -75,7 +75,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(bottom: 20),
-                    child: ImageButton(
+                    child: TransparentButton(
                       title: 'Get Empowered',
                       onTap: () async {
                         prefs?.setBool('onboard', true);

@@ -98,7 +98,7 @@ class _PostScreenState extends State<PostScreen> {
                             height40,
                             Padding(
                               padding: EdgeInsets.only(bottom: 20),
-                              child: ImageButton(
+                              child: TransparentButton(
                                 onTap: () {
                                   if (__.formKey.currentState!.validate()) {
                                     if (mounted) {

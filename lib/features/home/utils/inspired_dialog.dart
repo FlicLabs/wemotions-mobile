@@ -49,7 +49,7 @@ class InspiredDialog extends StatelessWidget {
                   ? shrink
                   : Padding(
                       padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: ImageTextButton(
+                      child: TransparentButton(
                         title: 'I FEEL INSPIRED',
                         onTap: () async {
                           HapticFeedback.heavyImpact();

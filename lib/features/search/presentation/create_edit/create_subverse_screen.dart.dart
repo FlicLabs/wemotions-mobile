@@ -62,7 +62,7 @@ class CreateSubverseScreen extends StatelessWidget {
                   ),
                   height40,
                   if (__.loading == false) ...[
-                    ImageTextButton(
+                    TransparentButton(
                       title: 'Create Subverse',
                       onTap: () {
                         if (__.formKey.currentState!.validate()) {

@@ -1,4 +1,3 @@
-
 import 'package:socialverse/export.dart';
 
 class EditProfileScreenArgs {
@@ -287,7 +286,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ],
                   if (__.loading == false) ...[
-                    ImageTextButton(
+                    TransparentButton(
                       title: 'Update',
                       onTap: () async {
                         if (__.selectedImage?.path != null) {

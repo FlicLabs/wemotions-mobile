@@ -32,7 +32,7 @@ class AuthBottomSheet extends StatelessWidget {
                 ),
               ),
               height20,
-              ImageTextButton(
+              TransparentButton(
                 title: 'Sign In',
                 onTap: () {
                   if (home.isPlaying == true) {

@@ -21,12 +21,6 @@ class SignUpScreen extends StatelessWidget {
           body: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(AppAsset.darkThemeBackground),
-                fit: BoxFit.cover,
-              ),
-            ),
             child: SafeArea(
               child: Stack(
                 children: [

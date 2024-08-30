@@ -154,7 +154,7 @@ class _EditSubverseScreenState extends State<EditSubverseScreen> {
                   ),
                   height40,
                   if (__.loading == false) ...[
-                    ImageTextButton(
+                    TransparentButton(
                       title: 'Update Subverse',
                       onTap: () async {
                         if (__.formKey.currentState!.validate()) {

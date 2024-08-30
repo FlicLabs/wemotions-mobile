@@ -21,14 +21,7 @@ class SocialButton extends StatelessWidget {
         height: 50,
         width: width ?? cs().width(context),
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(AppAsset.apptheme),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
-          ),
-          borderRadius: BorderRadius.circular(10),
-        ),
+        color: Theme.of(context).indicatorColor,
         child: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

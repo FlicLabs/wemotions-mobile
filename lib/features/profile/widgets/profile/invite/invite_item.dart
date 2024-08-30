@@ -52,7 +52,7 @@ class InviteItem extends StatelessWidget {
                 width20,
                 Consumer<InviteProvider>(
                   builder: (_, __, ___) {
-                    return ImageButton(
+                    return TransparentButton(
                       title: 'Invite',
                       height: 35,
                       width: 120,

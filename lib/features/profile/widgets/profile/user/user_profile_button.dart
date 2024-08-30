@@ -50,7 +50,7 @@ class UserProfileButton extends StatelessWidget {
                                     }
                                   },
                                 )
-                              : ImageButton(
+                              : TransparentButton(
                                   title: 'Subscribe',
                                   onTap: () {
                                     if (logged_in == true) {

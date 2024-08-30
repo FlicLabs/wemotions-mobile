@@ -84,7 +84,7 @@ class FollowingItem extends StatelessWidget {
                                     }
                                   },
                                 )
-                              : ImageButton(
+                              : TransparentButton(
                                   title: 'Subscribe',
                                   height: 35,
                                   width: 120,

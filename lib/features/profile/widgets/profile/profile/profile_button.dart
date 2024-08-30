@@ -17,7 +17,7 @@ class ProfileButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
-                  child: ImageButton(
+                  child: TransparentButton(
                     title: 'Edit Profile',
                     onTap: () {
                       Navigator.of(context).pushNamed(

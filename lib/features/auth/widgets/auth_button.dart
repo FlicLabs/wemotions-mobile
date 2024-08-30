@@ -25,13 +25,7 @@ class AuthButton extends StatelessWidget {
         height: height ?? 50,
         width: width ?? cs().width(context),
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(image ?? AppAsset.darkThemeBackground),
-            fit: BoxFit.cover,
-          ),
-          borderRadius: radius ?? BorderRadius.circular(10),
-        ),
+        color: Theme.of(context).indicatorColor,
         child: Center(
           child: Text(
             title,

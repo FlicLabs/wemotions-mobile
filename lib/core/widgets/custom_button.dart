@@ -128,98 +128,6 @@ class CustomTextButton extends StatelessWidget {
   }
 }
 
-class ImageTextButton extends StatelessWidget {
-  final String title;
-  final VoidCallback onTap;
-  final double? height;
-  final double? width;
-  final BorderRadiusGeometry? borderRadius;
-  final ColorFilter? colorFilter;
-
-  const ImageTextButton({
-    Key? key,
-    required this.title,
-    required this.onTap,
-    this.height,
-    this.width,
-    this.borderRadius,
-    this.colorFilter,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        height: height ?? 50,
-        width: width ?? MediaQuery.of(context).size.width,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(AppAsset.darkThemeBackground),
-            fit: BoxFit.cover,
-            colorFilter: colorFilter,
-          ),
-          borderRadius: borderRadius ?? BorderRadius.circular(10),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontFamily: 'sofia',
-            fontSize: 17,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ImageButton extends StatelessWidget {
-  final String title;
-  final VoidCallback onTap;
-  final double? height;
-  final double? width;
-  final String? image;
-  final BorderRadiusGeometry? radius;
-  const ImageButton({
-    Key? key,
-    required this.title,
-    required this.onTap,
-    this.height,
-    this.width,
-    this.image,
-    this.radius,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: height ?? 50,
-        width: width ?? cs().width(context),
-        padding: EdgeInsets.all(5),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(image ?? AppAsset.darkThemeBackground),
-            fit: BoxFit.cover,
-          ),
-          borderRadius: radius ?? BorderRadius.circular(10),
-        ),
-        child: Center(
-          child: Text(
-            title,
-            style: AppTextStyle.normalRegular16,
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class TransparentButton extends StatelessWidget {
   final String title;
   final VoidCallback? onTap;
@@ -315,9 +223,10 @@ class CustomTransparentButton extends StatelessWidget {
         child: Center(
           child: Text(
             title,
-            style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                  color: textColor ?? Theme.of(context).indicatorColor,
-                ),
+            style: Theme.of(context)
+                .textTheme
+                .displayMedium!
+                .copyWith(color: textColor ?? Theme.of(context).indicatorColor),
             textAlign: TextAlign.center,
           ),
         ),
