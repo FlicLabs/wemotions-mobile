@@ -19,20 +19,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    fetchData();
-    fetchPosts();
+    fetchFeed();
   }
 
-  fetchData() async {
-    final subverse = Provider.of<SearchProvider>(context, listen: false);
-    await [
-      subverse.getSubversePosts(id: subverse_id),
-      subverse.getSubverseInfo(id: subverse_id),
-    ];
-  }
-
-  fetchPosts() {
-    Provider.of<HomeProvider>(context, listen: false).createIsolate(token: token);
+  fetchFeed() async {
+    final home = Provider.of<HomeProvider>(context, listen: false);
+    await home.createIsolate(token: token);
   }
 
   @override
