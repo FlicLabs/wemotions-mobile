@@ -140,4 +140,22 @@ class HomeService {
       return e;
     }
   }
+
+  getReplies(int id, String token) async {
+    print('${API.endpoint}${API.posts}/$id/replies');
+    try {
+      Response response = await dio.get(
+        '${API.endpoint}${API.posts}/$id/replies',
+        // options: Options(headers: {'Flic-Token': token}),
+      );
+      ;
+      // print(response.statusCode);
+      // print(response.data);
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      return e.response?.statusCode;
+    }
+  }
 }

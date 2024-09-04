@@ -1,4 +1,5 @@
 import 'package:socialverse/export.dart';
+import 'package:socialverse/features/home/providers/reply_provider.dart';
 
 class PlayButton extends StatelessWidget {
   const PlayButton({Key? key}) : super(key: key);
@@ -10,12 +11,23 @@ class PlayButton extends StatelessWidget {
         return __.videoController(__.index)!.value.isInitialized
             ? __.videoController(__.index)!.value.isPlaying
                 ? shrink
-                : Center(
-                    child: Icon(
-                      Icons.play_arrow_rounded,
-                      color: Colors.white.withOpacity(0.4),
-                      size: 65,
-                    ),
+                : Consumer<ReplyProvider>(
+                    builder: (context, value, child) {
+                      return value
+                              .videoController(value.index)!
+                              .value
+                              .isInitialized
+                          ? value.videoController(value.index)!.value.isPlaying
+                              ? shrink
+                              : Center(
+                                  child: Icon(
+                                    Icons.play_arrow_rounded,
+                                    color: Colors.white.withOpacity(0.4),
+                                    size: 65,
+                                  ),
+                                )
+                          : shrink;
+                    },
                   )
             : shrink;
       },

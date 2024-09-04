@@ -6,7 +6,9 @@ import 'package:socialverse/features/home/widgets/home_video/pop_menu_slider.dar
 
 enum RateItem { LOVE_IT, LIKE_IT, OKAY, DISLIKE_IT, HATE_IT }
 
-class HomeProvider extends ChangeNotifier {
+/* New provider to manage the horizontal feed and their video controllers.*/
+
+class ReplyProvider extends ChangeNotifier {
   final home = PageController();
   final dynamicLink = DynamicLinkRepository();
 
@@ -186,16 +188,12 @@ class HomeProvider extends ChangeNotifier {
     _posts = value;
   }
 
-  
- /*
- hPosts store the current video with the replies for the horizontal feed.
-  */
-  List<Posts> _hPosts = <Posts>[];
-  List<Posts> get hPosts => _hPosts;
+  // List<Posts> _replies = <Posts>[];
+  // List<Posts> get replies => _replies;
 
-  set hPosts(List<Posts> value) {
-    _hPosts = value;
-  }
+  // set replies(List<Posts> value) {
+  //   _replies = value;
+  // }
 
   List<Posts> _single_post = <Posts>[];
   List<Posts> get single_post => _single_post;
@@ -326,7 +324,7 @@ class HomeProvider extends ChangeNotifier {
     posts.clear();
     notifyListeners();
 
-    await createIsolate(token: token);
+    // await createIsolate(token: token);
     notifyListeners();
   }
 
@@ -564,7 +562,7 @@ class HomeProvider extends ChangeNotifier {
   Future<void> _autoScroll(index) async {
     _isPlaying = true;
     posts_page++;
-    createIsolate(token: token);
+    // createIsolate(token: token);
     notifyListeners();
 
     int newIndex = index;
@@ -676,11 +674,11 @@ class HomeProvider extends ChangeNotifier {
     _controllers.remove(posts.elementAt(index));
     _listeners.remove(index);
   }
+  
 
   onPageChanged(int index) async {
     _isPlaying = true;
-    createIsolate(token: token);
-    // createReplyIsolate(_posts[index]);
+    // createIsolate(token: token);
     HomeWidget.saveWidgetData<String>('title', _posts[index].title);
     HomeWidget.saveWidgetData<String>('description', _posts[index].username);
     HomeWidget.saveWidgetData<String>('image', _posts[index].thumbnailUrl);
@@ -699,148 +697,5 @@ class HomeProvider extends ChangeNotifier {
       notifyListeners();
     }
     notifyListeners();
-  }
-
-  Future createIsolate({String? token}) async {
-    ReceivePort mainReceivePort = ReceivePort();
-    /* 
-       ReceivePort is a communication channel for receiving messages.
-       Here, we create a new ReceivePort called mainReceivePort, 
-       which will be used to receive messages from the spawned isolate. 
-    */
-    Isolate.spawn<SendPort>(getVideosTask, mainReceivePort.sendPort);
-    /* 
-       Isolate.spawn is used to create a new isolate. It takes two arguments:
-       the function (getVideosTask) to be executed in the isolate, and the SendPort 
-       (mainReceivePort.sendPort) through which the isolate can send messages back to the main isolate.
-    */
-    SendPort isolateSendPort = await mainReceivePort.first;
-    /* 
-       await mainReceivePort.first waits for the first message to be received on 
-       the mainReceivePort. In this case, it waits for the SendPort of the spawned
-       isolate to be received and assigns it to isolateSendPort.
-    */
-    ReceivePort isolateResponseReceivePort = ReceivePort();
-    /* 
-       Another ReceivePort called isolateResponseReceivePort is created. 
-       This port will be used to receive the response from the spawned isolate.
-    */
-
-    isolateSendPort
-        .send([_posts_page, isolateResponseReceivePort.sendPort, token]);
-    /* 
-       The _posts_page and isolateResponseReceivePort.sendPort are sent 
-       to the spawned isolate through isolateSendPort. This is done by sending a 
-       list containing these values.
-    */
-
-    final isolateResponse = await isolateResponseReceivePort.first;
-    _posts.addAll(isolateResponse.toList());
-    notifyListeners();
-    /* 
-       await isolateResponseReceivePort.first waits for the first message to be 
-       received on isolateResponseReceivePort. Once received, it assigns the 
-       message to isolateResponse, which is then added to the _posts list.
-    */
-  }
-
-  static void getVideosTask(SendPort mySendPort) async {
-    final _homeService = HomeService();
-    ReceivePort isolateReceivePort = ReceivePort();
-    /* 
-       In the spawned isolate, a new ReceivePort called isolateReceivePort is 
-       created. This will be used to receive messages from the main isolate.
-    */
-    mySendPort.send(isolateReceivePort.sendPort);
-    /* 
-       The SendPort of the spawned isolate's isolateReceivePort is sent back to 
-       the main isolate through mySendPort. This allows the main isolate to send 
-       messages to the spawned isolate.
-    */
-
-    await for (var message in isolateReceivePort) {
-      if (message is List) {
-        final int index = message[0];
-        final SendPort isolateResponseSendPort = message[1];
-        final token = message[2];
-        /* 
-       The isolateReceivePort listens for incoming messages in a loop using a
-       for loop. It waits for messages to be received on isolateReceivePort.
-    */
-        /* 
-       If the received message is a List, it extracts the index and 
-       isolateResponseSendPort from the message.
-    */
-        // final _service = SubverseService();
-
-        final response = await _homeService.getFeed(index, token ?? '');
-        final List<Posts> data = FeedModel.fromJson(response).posts;
-        isolateResponseSendPort.send(data);
-
-        /* 
-       A network request is made to retrieve video data based on the index value
-       received. The response is converted into a FeedModel object, and the posts list is extracted.
-    */
-        /* 
-       The isolateResponseSendPort is then used to send the data (video posts) back to the main isolate.
-    */
-      }
-    }
-  }
-
-  /* 
-       In summary, this code sets up a communication mechanism using SendPort and 
-       ReceivePort to create a separate isolate that retrieves video data. The spawned 
-       isolate receives a random number from the main isolate, makes a network request 
-       based on that number, and sends the retrieved video posts back to the main isolate. 
-       This allows the main isolate to continue its execution without being blocked by the 
-       network request, resulting in faster and more efficient video playback
-  */
-
- /*
-      Isolate to fetch the replies of the current video
- */
-  Future createReplyIsolate(Posts post, {String? token}) async {
-    ReceivePort mainReceivePort = ReceivePort();
-    
-    Isolate.spawn<SendPort>(getRepliesTask, mainReceivePort.sendPort);
-    
-    SendPort isolateSendPort = await mainReceivePort.first;
-    
-    ReceivePort isolateResponseReceivePort = ReceivePort();
-    
-
-    isolateSendPort.send([post.id, isolateResponseReceivePort.sendPort, token]);
-    
-
-    final isolateResponse = await isolateResponseReceivePort.first;
-    _hPosts.clear();
-    _hPosts.add(post);
-    _hPosts.addAll(isolateResponse.toList());
-    notifyListeners();
-    
-  }
-
-  static void getRepliesTask(SendPort mySendPort) async {
-    final _homeService = HomeService();
-    ReceivePort isolateReceivePort = ReceivePort();
-    
-    mySendPort.send(isolateReceivePort.sendPort);
-    
-
-    await for (var message in isolateReceivePort) {
-      if (message is List) {
-        final int index = message[0];
-        final SendPort isolateResponseSendPort = message[1];
-        final token = message[2];
-       
-        
-
-        final response = await _homeService.getReplies(index, token ?? '');
-        final List<Posts> data = ReplyModel.fromJson(response).post;
-        isolateResponseSendPort.send(data);
-
-      }
-    }
   }
 }

@@ -1,3 +1,5 @@
+import 'package:socialverse/features/home/providers/reply_provider.dart';
+
 import 'export.dart';
 
 @pragma('vm:entry-point')
@@ -95,6 +97,7 @@ void main() async {
             ChangeNotifierProvider(create: (_) => QrCodeProvider()),
             ChangeNotifierProvider(create: (_) => ExitProvider()),
             ChangeNotifierProvider(create: (_) => NotificationProvider()),
+            ChangeNotifierProvider(create: (_) => ReplyProvider()),
           ],
           child: ChangeNotifierProvider<ThemeProvider>(
             create: (_) => ThemeProvider(
