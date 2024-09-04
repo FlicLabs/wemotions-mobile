@@ -1,4 +1,3 @@
-import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/home/domain/models/single_post_model.dart';
