@@ -466,7 +466,7 @@ class ReplyProvider extends ChangeNotifier {
   initializedVideoPlayer() async {
     if (posts.isNotEmpty) {
       _index = 0;
-      _isPlaying = false;
+      _isPlaying = true;
       _initController(0).then((_) {
         _playController(0);
       });

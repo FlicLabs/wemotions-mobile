@@ -41,14 +41,13 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     home.index = widget.pageIndex;
 
     // fetches the replies for the first video.
-    home.fetchingReplies = true;
-    home.createReplyIsolate(widget.posts[0]);
+    
     final reply = Provider.of<ReplyProvider>(context, listen: false);
 
     /* Reply provider has its own posts variable containing the horizontal feed to manage it
     separately from the vertical feed. */
    
-    reply.posts = home.posts;
+    reply.posts = home.hPosts;
   }
 
   void _pageListener() {
@@ -107,8 +106,8 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                 onPageChanged: (value) {
                   if (value == 1) {
                     home.videoController(home.index)!.pause();
-                    reply.isPlaying = true;
-                    // home.videoController(home.index)!.seekTo(Duration.zero);
+                    
+                    home.videoController(home.index)!.seekTo(Duration.zero);
                   } else if (value == 0) {
                     home.videoController(home.index)!.play();
                   }
