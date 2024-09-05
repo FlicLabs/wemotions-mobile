@@ -8,6 +8,7 @@ enum RateItem { LOVE_IT, LIKE_IT, OKAY, DISLIKE_IT, HATE_IT }
 
 class HomeProvider extends ChangeNotifier {
   final home = PageController();
+  final outerPage = PageController();
   final dynamicLink = DynamicLinkRepository();
 
   final _homeService = HomeService();
@@ -186,8 +187,7 @@ class HomeProvider extends ChangeNotifier {
     _posts = value;
   }
 
-  
- /*
+  /*
  hPosts store the current video with the replies for the horizontal feed.
   */
   List<Posts> _hPosts = <Posts>[];
@@ -195,6 +195,14 @@ class HomeProvider extends ChangeNotifier {
 
   set hPosts(List<Posts> value) {
     _hPosts = value;
+  }
+
+  bool _fetchingReplies = false;
+  bool get fetchingReplies => _fetchingReplies;
+
+  set fetchingReplies(bool value) {
+    _fetchingReplies = value;
+    notifyListeners();
   }
 
   List<Posts> _single_post = <Posts>[];
@@ -797,49 +805,43 @@ class HomeProvider extends ChangeNotifier {
        network request, resulting in faster and more efficient video playback
   */
 
- /*
+  /*
       Isolate to fetch the replies of the current video
  */
   Future createReplyIsolate(Posts post, {String? token}) async {
     ReceivePort mainReceivePort = ReceivePort();
-    
+
     Isolate.spawn<SendPort>(getRepliesTask, mainReceivePort.sendPort);
-    
+
     SendPort isolateSendPort = await mainReceivePort.first;
-    
+
     ReceivePort isolateResponseReceivePort = ReceivePort();
-    
 
     isolateSendPort.send([post.id, isolateResponseReceivePort.sendPort, token]);
-    
 
     final isolateResponse = await isolateResponseReceivePort.first;
     _hPosts.clear();
-    _hPosts.add(post);
+    // _hPosts.add(post);
     _hPosts.addAll(isolateResponse.toList());
+    fetchingReplies = false;
     notifyListeners();
-    
   }
 
   static void getRepliesTask(SendPort mySendPort) async {
     final _homeService = HomeService();
     ReceivePort isolateReceivePort = ReceivePort();
-    
+
     mySendPort.send(isolateReceivePort.sendPort);
-    
 
     await for (var message in isolateReceivePort) {
       if (message is List) {
         final int index = message[0];
         final SendPort isolateResponseSendPort = message[1];
         final token = message[2];
-       
-        
 
         final response = await _homeService.getReplies(index, token ?? '');
         final List<Posts> data = ReplyModel.fromJson(response).post;
         isolateResponseSendPort.send(data);
-
       }
     }
   }

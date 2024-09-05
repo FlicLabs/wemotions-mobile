@@ -92,6 +92,22 @@ class ReplyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // int _prevIndex = -1;
+  // int get prevIndex => _prevIndex;
+
+  // set prevIndex(int value) {
+  //   _prevIndex = value;
+  //   notifyListeners();
+  // }
+
+  bool _didScroll = false;
+  bool get didScroll => _didScroll;
+
+  set didScroll(bool value) {
+    _didScroll = value;
+    notifyListeners();
+  }
+
   double _slider_val = 0;
   double get slider_val => _slider_val;
 
@@ -450,7 +466,7 @@ class ReplyProvider extends ChangeNotifier {
   initializedVideoPlayer() async {
     if (posts.isNotEmpty) {
       _index = 0;
-      _isPlaying = true;
+      _isPlaying = false;
       _initController(0).then((_) {
         _playController(0);
       });
@@ -673,7 +689,6 @@ class ReplyProvider extends ChangeNotifier {
     _controllers.remove(posts.elementAt(index));
     _listeners.remove(index);
   }
-  
 
   onPageChanged(int index) async {
     _isPlaying = true;

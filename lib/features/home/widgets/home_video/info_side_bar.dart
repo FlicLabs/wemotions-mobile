@@ -12,7 +12,7 @@ class InfoSideBar extends StatelessWidget {
     return Consumer<HomeProvider>(
       builder: (_, __, ___) {
         return Consumer<ReplyProvider>(builder: (context, value, child) {
-          final postTitle = value.posts.isEmpty? __.posts[__.index].title:value.posts[value.index].title;
+          final postTitle = true? __.posts[__.index].title:value.posts[value.index].title;
           return Positioned(
             left: 15,
             bottom: video.downloading == true || video.downloadingCompleted
@@ -35,7 +35,7 @@ class InfoSideBar extends StatelessWidget {
                             throw 'Could not launch $link';
                           }
                         },
-                        text: postTitle,
+                        text: __.hPosts.length.toString(),
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyle.normalRegular,
                         textAlign: TextAlign.start,

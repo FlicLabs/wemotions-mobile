@@ -61,6 +61,8 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
             reply.onPageChanged(value);
             reply.index = value;
           },
+          controller: widget.pageController,
+          physics: CustomBouncingScrollPhysics(),
           itemCount: reply.posts.length,
           itemBuilder: (context, hindex) {
             bool isInit2 = reply.videoController(hindex)!.value.isInitialized;
@@ -241,5 +243,50 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
         ),
       ],
     );
+  }
+}
+
+// class CustomNoOverscrollPhysics extends ClampingScrollPhysics {
+//   CustomNoOverscrollPhysics({ScrollPhysics? parent})
+//       : super(parent: parent);
+//   @override
+//   CustomNoOverscrollPhysics applyTo(ScrollPhysics? ancestor) {
+//     return CustomNoOverscrollPhysics(parent: buildParent(ancestor));
+//   }
+
+//   @override
+//   double applyBoundaryConditions(ScrollMetrics position, double value) {
+//     // Allow the pixels to reflect beyond minScrollExtent but prevent visual scroll beyond the extent
+//     if (value < position.minScrollExtent) {
+//       // Return 0.0 to prevent actual scrolling, but allow the position.pixels to reflect the underflow
+//       // reply.prevIndex = 0;
+//       return value - position.minScrollExtent;
+//     } else if (value > position.maxScrollExtent) {
+//       // Prevent scrolling beyond maxScrollExtent
+//       return value - position.maxScrollExtent;
+//     }
+//     return 0.0; // No boundary conditions apply, normal scroll
+//   }
+// }
+
+class CustomBouncingScrollPhysics extends BouncingScrollPhysics {
+  final double nFrictionFactor;
+
+  CustomBouncingScrollPhysics(
+      {ScrollPhysics? parent, this.nFrictionFactor = 0.001})
+      : super(parent: parent);
+
+  @override
+  CustomBouncingScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return CustomBouncingScrollPhysics(
+      parent: buildParent(ancestor),
+      nFrictionFactor: nFrictionFactor,
+    );
+  }
+
+  @override
+  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
+    final double friction = offset > 0.0 ? nFrictionFactor : nFrictionFactor;
+    return super.applyPhysicsToUserOffset(position, offset) * friction;
   }
 }

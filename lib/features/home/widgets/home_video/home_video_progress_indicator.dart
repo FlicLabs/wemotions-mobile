@@ -18,7 +18,7 @@ class HomeVideoProgressIndicator extends StatelessWidget {
                 child: Stack(
                   children: [
                     //ui changes when replies are fetched.
-                    value.posts.isEmpty?
+                    true?
                     VideoProgressIndicator(
                       __.videoController(__.index)!,
                       allowScrubbing: true,
