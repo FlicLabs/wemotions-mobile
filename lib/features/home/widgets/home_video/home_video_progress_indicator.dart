@@ -18,7 +18,7 @@ class HomeVideoProgressIndicator extends StatelessWidget {
                 child: Stack(
                   children: [
                     //ui changes when replies are fetched.
-                    true?
+                    
                     VideoProgressIndicator(
                       __.videoController(__.index)!,
                       allowScrubbing: true,
@@ -27,15 +27,7 @@ class HomeVideoProgressIndicator extends StatelessWidget {
                         backgroundColor: Colors.white,
                         playedColor: Theme.of(context).hintColor,
                       ),
-                    ): VideoProgressIndicator(
-                          value.videoController(value.index)!,
-                          allowScrubbing: true,
-                          colors: VideoProgressColors(
-                            bufferedColor: Colors.white,
-                            backgroundColor: Colors.white,
-                            playedColor: Theme.of(context).hintColor,
-                          ),
-                        ),
+                    )
                     // Padding(
                     //   padding: const EdgeInsets.only(top: 3.8),
                     //   child: SliderTheme(

@@ -92,6 +92,15 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _horizontalIndex = 0;
+  int get horizontalIndex => _horizontalIndex;
+
+  set horizontalIndex(int value) {
+    _horizontalIndex = value;
+    notifyListeners();
+  }
+
+
   double _slider_val = 0;
   double get slider_val => _slider_val;
 

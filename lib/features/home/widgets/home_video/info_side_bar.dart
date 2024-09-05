@@ -12,7 +12,7 @@ class InfoSideBar extends StatelessWidget {
     return Consumer<HomeProvider>(
       builder: (_, __, ___) {
         return Consumer<ReplyProvider>(builder: (context, value, child) {
-          final postTitle = true? __.posts[__.index].title:value.posts[value.index].title;
+          final postTitle = __.posts[__.index].title;
           return Positioned(
             left: 15,
             bottom: video.downloading == true || video.downloadingCompleted

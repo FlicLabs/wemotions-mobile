@@ -1,3 +1,4 @@
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/home/helper/custom_page_view_physics.dart';
 import 'package:socialverse/features/home/utils/video_sheet.dart';
@@ -41,12 +42,12 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     home.index = widget.pageIndex;
 
     // fetches the replies for the first video.
-    
+
     final reply = Provider.of<ReplyProvider>(context, listen: false);
 
     /* Reply provider has its own posts variable containing the horizontal feed to manage it
     separately from the vertical feed. */
-   
+
     reply.posts = home.hPosts;
   }
 
@@ -99,16 +100,17 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             scrollDirection: Axis.vertical,
             itemBuilder: (_, index) {
               bool isInit = home.videoController(index)!.value.isInitialized;
-              // PageController replies = PageController();
               // When replies have not been fetched, the original implementation works.
               // The home provider manages it.
               return PageView(
                 onPageChanged: (value) {
                   if (value == 1) {
+                    home.horizontalIndex = 1;
                     home.videoController(home.index)!.pause();
-                    
+
                     home.videoController(home.index)!.seekTo(Duration.zero);
                   } else if (value == 0) {
+                    home.horizontalIndex = 0;
                     home.videoController(home.index)!.play();
                   }
                 },
@@ -320,17 +322,49 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                   Since new video controller is created for horizontal feed, the video restarts.
                   Happens due to the delay in fetching replies.
                   */
-              // Consumer<ReplyProvider>(builder: (context, value, child) {
-              //   return ReplyVideoWidget(
-              //     video: home.posts[index],
-              //     pageController: value.home,
-              //     pIdx: 0,
-              //     parentIdx: index,
-              //     isLastPage: _isLastPage,
-              //     isInit: isInit,
-              //   );
-              // });
             },
+          ),
+        ),
+        if (reply.posts.isNotEmpty && home.fetchingReplies == false) ...[
+          Positioned(
+            right: reply.posts.length == 3
+                ? -18
+                : reply.posts.length == 1
+                    ? 18
+                    : 0,
+            top: 240,
+            child: AnimatedSmoothIndicator(
+              // controller: reply.home,
+              count: reply.posts.length + 1,
+              activeIndex: home.horizontalIndex,
+              effect: ScrollingDotsEffect(
+                  maxVisibleDots: 3,
+                  fixedCenter: true,
+                  dotHeight: 10,
+                  dotWidth: 10,
+                  activeDotColor: Colors.white,
+                  dotColor: Colors.grey),
+            ),
+          ),
+        ],
+        Positioned(
+          right: 20,
+          top: home.posts.length == 3
+              ? 202
+              : home.posts.length == 1
+                  ? 238
+                  : 220,
+          child: SmoothPageIndicator(
+            controller: widget.pageController,
+            axisDirection: Axis.vertical,
+            count: home.posts.length,
+            effect: ScrollingDotsEffect(
+                maxVisibleDots: 3,
+                fixedCenter: true,
+                dotHeight: 10,
+                dotWidth: 10,
+                activeDotColor: Colors.white,
+                dotColor: Colors.grey),
           ),
         ),
       ],
