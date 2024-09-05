@@ -66,8 +66,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
             reply.index = value;
           },
           controller: widget.pageController,
-          physics: CustomBouncingScrollPhysics(),
-          itemCount: reply.posts.length + 1,
+          itemCount: reply.posts.length,
           itemBuilder: (context, index) {
             bool isReplyInit =
                 reply.videoController(index)!.value.isInitialized;
@@ -268,7 +267,9 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                         flex: 5,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
+                            vertical: 10,
+                            horizontal: 10,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -284,20 +285,22 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                       text:
                                           '${home.posts[home.index].firstName}${home.posts[home.index].lastName}@${home.posts[home.index].username}',
                                       style: const TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 10),
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                              SizedBox(height: 5),
+                              height5,
                               Text(
                                 home.posts[home.index].title,
                                 style: const TextStyle(
-                                    color: Color.fromARGB(255, 23, 23, 60),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400),
+                                  color: Color.fromARGB(255, 23, 23, 60),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                ),
                                 softWrap: true,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -311,10 +314,8 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                 )
               ],
             );
-          
           },
         ),
-                        
       ],
     );
   }
