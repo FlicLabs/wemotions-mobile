@@ -8,7 +8,7 @@ enum RateItem { LOVE_IT, LIKE_IT, OKAY, DISLIKE_IT, HATE_IT }
 
 class HomeProvider extends ChangeNotifier {
   final home = PageController();
-  final outerPage = PageController();
+  final replies = PageController();
   final dynamicLink = DynamicLinkRepository();
 
   final _homeService = HomeService();
@@ -805,9 +805,9 @@ class HomeProvider extends ChangeNotifier {
        network request, resulting in faster and more efficient video playback
   */
 
-  /*
-      Isolate to fetch the replies of the current video
- */
+
+  // Isolate to fetch the replies of the current video using post id
+
   Future createReplyIsolate(Posts post, {String? token}) async {
     ReceivePort mainReceivePort = ReceivePort();
 
@@ -821,7 +821,6 @@ class HomeProvider extends ChangeNotifier {
 
     final isolateResponse = await isolateResponseReceivePort.first;
     _hPosts.clear();
-    // _hPosts.add(post);
     _hPosts.addAll(isolateResponse.toList());
     fetchingReplies = false;
     notifyListeners();

@@ -459,7 +459,7 @@ class ReplyProvider extends ChangeNotifier {
     }
   }
 
-  final Map<String, VideoPlayerController> _controllers = {};
+  final Map<String, VideoPlayerController> controllers = {};
   final Map<int, VoidCallback> _listeners = {};
   final Map<int, bool> _viewCountUpdated = {};
 
@@ -485,13 +485,13 @@ class ReplyProvider extends ChangeNotifier {
       ),
     );
     _viewCountUpdated[index] = false;
-    _controllers[posts.elementAt(index).videoLink] = controller;
+    controllers[posts.elementAt(index).videoLink] = controller;
     await controller.initialize();
   }
 
   void setPlaybackSpeed(double speed) {
     _playback_speed = speed;
-    _controllers.values.forEach((controller) {
+    controllers.values.forEach((controller) {
       controller.setPlaybackSpeed(speed);
     });
     notifyListeners();
@@ -517,13 +517,13 @@ class ReplyProvider extends ChangeNotifier {
   }
 
   VideoPlayerController? videoController(int index) {
-    return _controllers[posts.elementAt(index).videoLink] ??
-        _controllers[API.video_link];
+    return controllers[posts.elementAt(index).videoLink] ??
+        controllers[API.video_link];
   }
 
   void disposed(index) {
     videoController(index)?.dispose();
-    _controllers.remove(posts.elementAt(index));
+    controllers.remove(posts.elementAt(index));
   }
 
   VoidCallback _listenerSpawner(index) {
@@ -609,7 +609,7 @@ class ReplyProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       if (_index == 0) {
-        _controllers.forEach((key, value) {});
+        controllers.forEach((key, value) {});
         return;
       }
       _stopController(_index);
@@ -660,7 +660,7 @@ class ReplyProvider extends ChangeNotifier {
 
   Future<void> _previousVideo() async {
     if (_index == 0) {
-      _controllers.forEach((key, value) {});
+      controllers.forEach((key, value) {});
       return;
     }
     _stopController(_index);
@@ -686,7 +686,7 @@ class ReplyProvider extends ChangeNotifier {
 
   void _removeController(int index) {
     videoController(index)?.dispose();
-    _controllers.remove(posts.elementAt(index));
+    controllers.remove(posts.elementAt(index));
     _listeners.remove(index);
   }
 

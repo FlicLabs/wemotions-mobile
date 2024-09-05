@@ -40,14 +40,14 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     await home.initializedVideoPlayer();
     home.index = widget.pageIndex;
 
-    //fetches the replies for the first video.
+    // fetches the replies for the first video.
     home.fetchingReplies = true;
     home.createReplyIsolate(widget.posts[0]);
     final reply = Provider.of<ReplyProvider>(context, listen: false);
 
-    /*Reply provider has its own posts variable containing the horizontal feed to manage it
-    separately from the vertical feed.
-    */
+    /* Reply provider has its own posts variable containing the horizontal feed to manage it
+    separately from the vertical feed. */
+   
     reply.posts = home.posts;
   }
 
@@ -90,7 +90,6 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             onPageChanged: (index) async {
               home.posts_page++;
 
-              //Isolate call to fetch replies for the current video
               home.fetchingReplies = true;
               home.createReplyIsolate(home.posts[index]);
 
@@ -101,21 +100,21 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             scrollDirection: Axis.vertical,
             itemBuilder: (_, index) {
               bool isInit = home.videoController(index)!.value.isInitialized;
-              // PageController outerPage = PageController();
-              return //When replies have not been fetched, the original implementation works.
-                  //The home provider manages it.
-                  PageView(
+              // PageController replies = PageController();
+              // When replies have not been fetched, the original implementation works.
+              // The home provider manages it.
+              return PageView(
                 onPageChanged: (value) {
                   if (value == 1) {
                     home.videoController(home.index)!.pause();
                     reply.isPlaying = true;
-                    home.videoController(home.index)!.seekTo(Duration.zero);
+                    // home.videoController(home.index)!.seekTo(Duration.zero);
                   } else if (value == 0) {
                     home.videoController(home.index)!.play();
                   }
                 },
                 scrollDirection: Axis.horizontal,
-                controller: home.outerPage,
+                controller: home.replies,
                 children: [
                   GestureDetector(
                     onDoubleTap: () {
@@ -291,13 +290,10 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                     NotificationListener<ScrollNotification>(
                       onNotification: (ScrollNotification notification) {
                         if (notification is ScrollUpdateNotification) {
-                          // if () {
-                          //   reply.prevIndex = 0;
-                          // }
                           if (reply.index == 0 &&
                               notification.metrics.pixels <
                                   notification.metrics.minScrollExtent) {
-                            home.outerPage.animateToPage(
+                            home.replies.animateToPage(
                               0,
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.fastEaseInToSlowEaseOut,
@@ -311,9 +307,8 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                         return ReplyVideoWidget(
                           video: home.posts[index],
                           pageController: value.home,
-                          pIdx: 0,
-                          parentIdx: index,
-                          isLastPage: _isLastPage,
+                          postIndex: 0,
+                          parentIndex: index,
                           isInit: isInit,
                         );
                       }),
