@@ -3,9 +3,9 @@ import 'package:socialverse/export.dart';
 import 'package:socialverse/features/home/helper/custom_page_view_physics.dart';
 import 'package:socialverse/features/home/utils/video_sheet.dart';
 import 'package:socialverse/features/home/widgets/home_video/last_page_gradient.dart';
-import 'package:socialverse/features/home/widgets/home_video/reply_video_widget.dart';
+import 'package:socialverse/features/home/widgets/reply_video/reply_video_widget.dart';
 
-import '../../providers/reply_provider.dart';
+import 'package:socialverse/features/home/providers/reply_provider.dart';
 
 class HomeVideoWidget extends StatefulWidget {
   const HomeVideoWidget({
@@ -91,6 +91,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
               home.posts_page++;
 
               home.fetchingReplies = true;
+              home.horizontalIndex = 0;
               home.createReplyIsolate(home.posts[index]);
 
               home.onPageChanged(index);
@@ -327,9 +328,9 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
         ),
         if (reply.posts.isNotEmpty && home.fetchingReplies == false) ...[
           Positioned(
-            right: reply.posts.length == 3
+            right: reply.posts.length == 2
                 ? -18
-                : reply.posts.length == 1
+                : reply.posts.length == 0
                     ? 18
                     : 0,
             top: 240,
