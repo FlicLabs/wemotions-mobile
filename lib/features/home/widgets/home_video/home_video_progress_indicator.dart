@@ -1,7 +1,5 @@
 import 'package:socialverse/export.dart';
 
-import '../../providers/reply_provider.dart';
-
 class HomeVideoProgressIndicator extends StatelessWidget {
   const HomeVideoProgressIndicator({Key? key}) : super(key: key);
 

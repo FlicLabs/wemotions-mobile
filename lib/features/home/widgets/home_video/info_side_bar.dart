@@ -1,8 +1,6 @@
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:socialverse/export.dart';
 
-import '../../providers/reply_provider.dart';
-
 class InfoSideBar extends StatelessWidget {
   const InfoSideBar({Key? key}) : super(key: key);
 
