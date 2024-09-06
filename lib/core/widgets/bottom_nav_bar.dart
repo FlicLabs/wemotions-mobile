@@ -70,9 +70,9 @@ class _BottomNavBarState extends State<BottomNavBar>
                 showUnselectedLabels: false,
                 selectedFontSize: 0,
                 onTap: (index) {
-                  if (index == 2 && logged_in == false) {
+                  if (index == 1 && logged_in == false) {
                     auth.showAuthBottomSheet(context);
-                  } else if (index == 3 && logged_in == false) {
+                  } else if (index == 1 && logged_in == false) {
                     auth.showAuthBottomSheet(context);
                   } else {
                     nav.currentPage = index;
