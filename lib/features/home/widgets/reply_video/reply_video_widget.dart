@@ -4,6 +4,7 @@ import 'package:socialverse/features/home/utils/video_sheet.dart';
 import 'package:socialverse/features/home/widgets/reply_video/reply_play_button.dart';
 import 'package:socialverse/features/home/widgets/reply_video/reply_video_progress_indicator.dart';
 import 'package:socialverse/features/home/widgets/reply_video/reply_info_side_bar.dart';
+import 'package:socialverse/features/home/widgets/reply_video/reply_side_bar.dart';
 
 class ReplyVideoWidget extends StatefulWidget {
   final Posts video;
@@ -62,10 +63,11 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
       children: [
         PageView.builder(
           scrollDirection: Axis.horizontal,
-          onPageChanged: (value) {
-            home.horizontalIndex = value + 1;
-            reply.onPageChanged(value);
-            reply.index = value;
+          onPageChanged: (index) {
+            home.horizontalIndex = index + 1;
+            reply.onPageChanged(index);
+            reply.index = index;
+            reply.isFollowing = reply.posts[index].following;
           },
           controller: widget.pageController,
           physics: CustomBouncingScrollPhysics(),
@@ -75,144 +77,150 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                 reply.videoController(index)!.value.isInitialized;
             return Stack(
               children: [
-                GestureDetector(
-                  onDoubleTap: () {
-                    reply.handleDoubleTap();
+                Listener(
+                  onPointerDown: (PointerDownEvent event) {
+                    reply.setTapPosition(event.position);
+                  },
+                  child: GestureDetector(
+                    onDoubleTap: () {
+                      reply.handleDoubleTap();
 
-                    if (reply.posts[index].upvoted == false) {
-                      reply.posts[index].upvoted = true;
-                      reply.posts[index].upvoteCount++;
-                      home.postLikeAdd(id: reply.posts[index].id);
-                    }
+                      if (reply.posts[index].upvoted == false) {
+                        reply.posts[index].upvoted = true;
+                        reply.posts[index].upvoteCount++;
+                        reply.postLikeAdd(id: reply.posts[index].id);
+                      }
 
-                    Timer(Duration(seconds: 1), () => home.isLiked = false);
+                      Timer(Duration(seconds: 1), () => reply.isLiked = false);
 
-                    if (reply.tapPosition != reply.prevTapPosition) {
-                      reply.consecutiveDoubleTaps = 0;
-                      reply.likeAnimationScale = 1.0;
-                    }
-
-                    reply.prevTapPosition = reply.tapPosition;
-
-                    reply.consecutiveDoubleTaps++;
-                    reply.likeAnimationScale =
-                        1.0 + (reply.consecutiveDoubleTaps * 0.2);
-                    reply.timer?.cancel();
-                    reply.timer = Timer(
-                      Duration(seconds: 2),
-                      () {
+                      if (reply.tapPosition != reply.prevTapPosition) {
                         reply.consecutiveDoubleTaps = 0;
                         reply.likeAnimationScale = 1.0;
-                      },
-                    );
-                  },
-                  onLongPress: () async {
-                    HapticFeedback.mediumImpact();
-                    showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30.0),
-                          topRight: Radius.circular(30.0),
+                      }
+
+                      reply.prevTapPosition = reply.tapPosition;
+
+                      reply.consecutiveDoubleTaps++;
+                      reply.likeAnimationScale =
+                          1.0 + (reply.consecutiveDoubleTaps * 0.2);
+                      reply.timer?.cancel();
+                      reply.timer = Timer(
+                        Duration(seconds: 2),
+                        () {
+                          reply.consecutiveDoubleTaps = 0;
+                          reply.likeAnimationScale = 1.0;
+                        },
+                      );
+                    },
+                    onLongPress: () async {
+                      HapticFeedback.mediumImpact();
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30.0),
+                            topRight: Radius.circular(30.0),
+                          ),
                         ),
-                      ),
-                      builder: (context) {
-                        return VideoSheet(
-                          isUser: reply.posts[index].username != prefs_username,
-                          isFromFeed: true,
-                          video_id: reply.posts[index].id,
-                          category_name: '',
-                          category_count: 0,
-                          category_id: 0,
-                          category_photo: '',
-                          category_desc: '',
-                          title: reply.posts[index].title,
-                          video_link: reply.posts[index].videoLink,
-                          current_index: widget.parentIndex,
-                        );
-                      },
-                    );
-                  },
-                  onTap: () {
-                    if (reply.videoController(index)!.value.isPlaying) {
-                      reply.isPlaying = false;
-                      reply.videoController(index)!.pause();
-                    } else {
-                      reply.isPlaying = true;
-                      reply.videoController(index)!.play();
-                    }
-                  },
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                        ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            CustomNetworkImage(
-                              height: cs().height(context),
-                              width: cs().width(context),
-                              imageUrl: reply.posts[index].thumbnailUrl,
-                              isLoading: true,
-                            ),
-                            if (isReplyInit) ...[
-                              SizedBox.expand(
-                                child: FittedBox(
-                                  fit: BoxFit.cover,
-                                  child: SizedBox(
-                                      width: reply
-                                          .videoController(index)!
-                                          .value
-                                          .size
-                                          .width,
-                                      height: reply
-                                          .videoController(index)!
-                                          .value
-                                          .size
-                                          .height,
-                                      child: VideoPlayer(
-                                          reply.videoController(index)!)),
-                                ),
+                        builder: (context) {
+                          return VideoSheet(
+                            isUser:
+                                reply.posts[index].username != prefs_username,
+                            isFromFeed: true,
+                            video_id: reply.posts[index].id,
+                            category_name: '',
+                            category_count: 0,
+                            category_id: 0,
+                            category_photo: '',
+                            category_desc: '',
+                            title: reply.posts[index].title,
+                            video_link: reply.posts[index].videoLink,
+                            current_index: widget.parentIndex,
+                          );
+                        },
+                      );
+                    },
+                    onTap: () {
+                      if (reply.videoController(index)!.value.isPlaying) {
+                        reply.isPlaying = false;
+                        reply.videoController(index)!.pause();
+                      } else {
+                        reply.isPlaying = true;
+                        reply.videoController(index)!.play();
+                      }
+                    },
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                          ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              CustomNetworkImage(
+                                height: cs().height(context),
+                                width: cs().width(context),
+                                imageUrl: reply.posts[index].thumbnailUrl,
+                                isLoading: true,
                               ),
-                            ],
-                            if (video.downloading == true)
-                              DownloadBar(
-                                color: Colors.grey.withOpacity(0.4),
-                                label: 'Saving: ${video.progressString}',
-                              ),
-                            if (video.downloadingCompleted == true)
-                              DownloadBar(
-                                color: Theme.of(context).hintColor,
-                                label: 'Video Saved',
-                              ),
-                            video.isViewMode ? shrink : ReplyInfoSideBar(),
-                            ReplyPlayButton(),
-                            if (home.isLiked) ...[
-                              Positioned(
-                                left: home.tapPosition.dx - 75,
-                                top: home.tapPosition.dy - 150,
-                                child: SafeArea(
-                                  child: Transform.scale(
-                                    scale: home.likeAnimationScale,
-                                    child: Image.asset(
-                                      AppAsset.like,
-                                      color: Colors.white,
-                                      height: 150,
-                                    ),
+                              if (isReplyInit) ...[
+                                SizedBox.expand(
+                                  child: FittedBox(
+                                    fit: BoxFit.cover,
+                                    child: SizedBox(
+                                        width: reply
+                                            .videoController(index)!
+                                            .value
+                                            .size
+                                            .width,
+                                        height: reply
+                                            .videoController(index)!
+                                            .value
+                                            .size
+                                            .height,
+                                        child: VideoPlayer(
+                                            reply.videoController(index)!)),
                                   ),
                                 ),
-                              )
+                              ],
+                              if (video.downloading == true)
+                                DownloadBar(
+                                  color: Colors.grey.withOpacity(0.4),
+                                  label: 'Saving: ${video.progressString}',
+                                ),
+                              if (video.downloadingCompleted == true)
+                                DownloadBar(
+                                  color: Theme.of(context).hintColor,
+                                  label: 'Video Saved',
+                                ),
+                              video.isViewMode ? shrink : ReplyInfoSideBar(),
+                              ReplyPlayButton(),
+                              if (reply.isLiked) ...[
+                                Positioned(
+                                  left: reply.tapPosition.dx - 75,
+                                  top: reply.tapPosition.dy - 150,
+                                  child: SafeArea(
+                                    child: Transform.scale(
+                                      scale: reply.likeAnimationScale,
+                                      child: Image.asset(
+                                        AppAsset.like,
+                                        color: Colors.white,
+                                        height: 150,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                              video.isViewMode ? shrink : ReplySideBar(),
+                              ReplyVideoProgressIndicator(),
                             ],
-                            video.isViewMode ? shrink : HomeSideBar(),
-                            ReplyVideoProgressIndicator(),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Container(
