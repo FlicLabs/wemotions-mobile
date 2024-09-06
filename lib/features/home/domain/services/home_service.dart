@@ -146,7 +146,7 @@ class HomeService {
     try {
       Response response = await dio.get(
         '${API.endpoint}${API.posts}/$id/replies',
-        // options: Options(headers: {'Flic-Token': token}),
+        options: Options(headers: {'Flic-Token': token}),
       );
       ;
       // print(response.statusCode);

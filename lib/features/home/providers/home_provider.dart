@@ -100,7 +100,6 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   double _slider_val = 0;
   double get slider_val => _slider_val;
 
@@ -340,10 +339,16 @@ class HomeProvider extends ChangeNotifier {
     HapticFeedback.mediumImpact();
     posts.isEmpty ? null : disposed(_index);
     posts_page = 1;
+    horizontalIndex = 0;
     posts.clear();
+    hPosts.clear();
     notifyListeners();
 
     await createIsolate(token: token);
+    notifyListeners();
+
+    fetchingReplies = true;
+    await createReplyIsolate(posts[0], token: token);
     notifyListeners();
   }
 
@@ -813,7 +818,6 @@ class HomeProvider extends ChangeNotifier {
        This allows the main isolate to continue its execution without being blocked by the 
        network request, resulting in faster and more efficient video playback
   */
-
 
   // Isolate to fetch the replies of the current video using post id
 

@@ -23,7 +23,7 @@ class _WeMotionsState extends State<WeMotions> {
     await home.createIsolate(token: token);
 
     home.fetchingReplies = true;
-    await home.createReplyIsolate(home.posts[0]);
+    await home.createReplyIsolate(home.posts[0], token: token);
 
     final reply = Provider.of<ReplyProvider>(context, listen: false);
     reply.posts = home.hPosts;

@@ -84,7 +84,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
               home.posts_page++;
               home.fetchingReplies = true;
               home.horizontalIndex = 0;
-              home.createReplyIsolate(home.posts[index]);
+              home.createReplyIsolate(home.posts[index],token: token);
               home.onPageChanged(index);
               home.index = index;
               home.isFollowing = home.posts[index].following;
