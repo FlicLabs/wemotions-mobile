@@ -38,16 +38,9 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
 
   initializeVideo() async {
     final home = Provider.of<HomeProvider>(context, listen: false);
+    final reply = Provider.of<ReplyProvider>(context, listen: false);
     await home.initializedVideoPlayer();
     home.index = widget.pageIndex;
-
-    // fetches the replies for the first video.
-
-    final reply = Provider.of<ReplyProvider>(context, listen: false);
-
-    /* Reply provider has its own posts variable containing the horizontal feed to manage it
-    separately from the vertical feed. */
-
     reply.posts = home.hPosts;
   }
 
@@ -89,11 +82,9 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             physics: CustomPageViewScrollPhysics(),
             onPageChanged: (index) async {
               home.posts_page++;
-
               home.fetchingReplies = true;
               home.horizontalIndex = 0;
               home.createReplyIsolate(home.posts[index]);
-
               home.onPageChanged(index);
               home.index = index;
               home.isFollowing = home.posts[index].following;
@@ -101,8 +92,6 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             scrollDirection: Axis.vertical,
             itemBuilder: (_, index) {
               bool isInit = home.videoController(index)!.value.isInitialized;
-              // When replies have not been fetched, the original implementation works.
-              // The home provider manages it.
               return PageView(
                 onPageChanged: (value) {
                   if (value == 1) {
@@ -118,97 +107,122 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                 scrollDirection: Axis.horizontal,
                 controller: home.replies,
                 children: [
-                  GestureDetector(
-                    onDoubleTap: () {
-                      home.handleDoubleTap();
+                  Listener(
+                    onPointerDown: (PointerDownEvent event) {
+                      home.setTapPosition(event.position);
+                    },
+                    child: GestureDetector(
+                      onDoubleTap: () {
+                        home.handleDoubleTap();
 
-                      if (home.posts[index].upvoted == false) {
-                        home.posts[index].upvoted = true;
-                        home.posts[index].upvoteCount++;
-                        home.postLikeAdd(id: home.posts[index].id);
-                      }
+                        if (home.posts[index].upvoted == false) {
+                          home.posts[index].upvoted = true;
+                          home.posts[index].upvoteCount++;
+                          home.postLikeAdd(id: home.posts[index].id);
+                        }
 
-                      Timer(Duration(seconds: 1), () => home.isLiked = false);
+                        Timer(Duration(seconds: 1), () => home.isLiked = false);
 
-                      if (home.tapPosition != home.prevTapPosition) {
-                        home.consecutiveDoubleTaps = 0;
-                        home.likeAnimationScale = 1.0;
-                      }
-
-                      home.prevTapPosition = home.tapPosition;
-
-                      home.consecutiveDoubleTaps++;
-                      home.likeAnimationScale =
-                          1.0 + (home.consecutiveDoubleTaps * 0.2);
-                      home.timer?.cancel();
-                      home.timer = Timer(
-                        Duration(seconds: 2),
-                        () {
+                        if (home.tapPosition != home.prevTapPosition) {
                           home.consecutiveDoubleTaps = 0;
                           home.likeAnimationScale = 1.0;
-                        },
-                      );
-                    },
-                    onLongPress: () async {
-                      HapticFeedback.mediumImpact();
-                      showModalBottomSheet(
-                        context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30.0),
-                            topRight: Radius.circular(30.0),
+                        }
+
+                        home.prevTapPosition = home.tapPosition;
+
+                        home.consecutiveDoubleTaps++;
+                        home.likeAnimationScale =
+                            1.0 + (home.consecutiveDoubleTaps * 0.2);
+                        home.timer?.cancel();
+                        home.timer = Timer(
+                          Duration(seconds: 2),
+                          () {
+                            home.consecutiveDoubleTaps = 0;
+                            home.likeAnimationScale = 1.0;
+                          },
+                        );
+                      },
+                      onLongPress: () async {
+                        HapticFeedback.mediumImpact();
+                        showModalBottomSheet(
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(30.0),
+                              topRight: Radius.circular(30.0),
+                            ),
                           ),
-                        ),
-                        builder: (context) {
-                          return VideoSheet(
-                            isUser:
-                                home.posts[index].username != prefs_username,
-                            isFromFeed: widget.isFromFeed,
-                            video_id: home.posts[index].id,
-                            category_name: '',
-                            category_count: 0,
-                            category_id: 0,
-                            category_photo: '',
-                            category_desc: '',
-                            title: home.posts[index].title,
-                            video_link: home.posts[index].videoLink,
-                            current_index: index,
-                          );
-                        },
-                      );
-                    },
-                    onTap: () {
-                      if (home.videoController(index)!.value.isPlaying) {
-                        home.isPlaying = false;
-                        home.videoController(index)!.pause();
-                      } else {
-                        home.isPlaying = true;
-                        home.videoController(index)!.play();
-                      }
-                    },
-                    child: Stack(
-                      children: [
-                        Container(
-                          height: MediaQuery.of(context).size.height,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                          ),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              if (!_isLastPage) ...[
-                                CustomNetworkImage(
-                                  height: cs().height(context),
-                                  width: cs().width(context),
-                                  imageUrl: home.posts[index].thumbnailUrl,
-                                  isLoading: true,
-                                ),
-                              ],
-                              if (isInit && !_isLastPage) ...[
-                                SizedBox.expand(
-                                  child: FittedBox(
-                                    fit: BoxFit.cover,
+                          builder: (context) {
+                            return VideoSheet(
+                              isUser:
+                                  home.posts[index].username != prefs_username,
+                              isFromFeed: widget.isFromFeed,
+                              video_id: home.posts[index].id,
+                              category_name: '',
+                              category_count: 0,
+                              category_id: 0,
+                              category_photo: '',
+                              category_desc: '',
+                              title: home.posts[index].title,
+                              video_link: home.posts[index].videoLink,
+                              current_index: index,
+                            );
+                          },
+                        );
+                      },
+                      onTap: () {
+                        if (home.videoController(index)!.value.isPlaying) {
+                          home.isPlaying = false;
+                          home.videoController(index)!.pause();
+                        } else {
+                          home.isPlaying = true;
+                          home.videoController(index)!.play();
+                        }
+                      },
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: MediaQuery.of(context).size.height,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                            ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                if (!_isLastPage) ...[
+                                  CustomNetworkImage(
+                                    height: cs().height(context),
+                                    width: cs().width(context),
+                                    imageUrl: home.posts[index].thumbnailUrl,
+                                    isLoading: true,
+                                  ),
+                                ],
+                                if (isInit && !_isLastPage) ...[
+                                  SizedBox.expand(
+                                    child: FittedBox(
+                                      fit: BoxFit.cover,
+                                      child: SizedBox(
+                                        width: home
+                                            .videoController(index)!
+                                            .value
+                                            .size
+                                            .width,
+                                        height: home
+                                            .videoController(index)!
+                                            .value
+                                            .size
+                                            .height,
+                                        child: VideoPlayer(
+                                          home.videoController(index)!,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                if (_isLastPage) ...[
+                                  LastPageGradient(
+                                    isInit: isInit,
                                     child: SizedBox(
                                       width: home
                                           .videoController(index)!
@@ -225,66 +239,46 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                              if (_isLastPage) ...[
-                                LastPageGradient(
-                                  isInit: isInit,
-                                  child: SizedBox(
-                                    width: home
-                                        .videoController(index)!
-                                        .value
-                                        .size
-                                        .width,
-                                    height: home
-                                        .videoController(index)!
-                                        .value
-                                        .size
-                                        .height,
-                                    child: VideoPlayer(
-                                      home.videoController(index)!,
-                                    ),
+                                ],
+                                if (video.downloading == true)
+                                  DownloadBar(
+                                    color: Colors.grey.withOpacity(0.4),
+                                    label: 'Saving: ${video.progressString}',
                                   ),
-                                ),
-                              ],
-                              if (video.downloading == true)
-                                DownloadBar(
-                                  color: Colors.grey.withOpacity(0.4),
-                                  label: 'Saving: ${video.progressString}',
-                                ),
-                              if (video.downloadingCompleted == true)
-                                DownloadBar(
-                                  color: Theme.of(context).hintColor,
-                                  label: 'Video Saved',
-                                ),
-                              if (!_isLastPage) ...[
-                                video.isViewMode ? shrink : InfoSideBar(),
-                              ],
-                              if (!_isLastPage) PlayButton(),
-                              if (home.isLiked) ...[
-                                Positioned(
-                                  left: home.tapPosition.dx - 75,
-                                  top: home.tapPosition.dy - 150,
-                                  child: SafeArea(
-                                    child: Transform.scale(
-                                      scale: home.likeAnimationScale,
-                                      child: Image.asset(
-                                        AppAsset.like,
-                                        color: Colors.white,
-                                        height: 150,
+                                if (video.downloadingCompleted == true)
+                                  DownloadBar(
+                                    color: Theme.of(context).hintColor,
+                                    label: 'Video Saved',
+                                  ),
+                                if (!_isLastPage) ...[
+                                  video.isViewMode ? shrink : InfoSideBar(),
+                                ],
+                                if (!_isLastPage) PlayButton(),
+                                if (home.isLiked) ...[
+                                  Positioned(
+                                    left: home.tapPosition.dx - 75,
+                                    top: home.tapPosition.dy - 150,
+                                    child: SafeArea(
+                                      child: Transform.scale(
+                                        scale: home.likeAnimationScale,
+                                        child: Image.asset(
+                                          AppAsset.like,
+                                          color: Colors.white,
+                                          height: 150,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                )
+                                  )
+                                ],
+                                if (!_isLastPage) ...[
+                                  video.isViewMode ? shrink : HomeSideBar(),
+                                ],
+                                HomeVideoProgressIndicator(),
                               ],
-                              if (!_isLastPage) ...[
-                                video.isViewMode ? shrink : HomeSideBar(),
-                              ],
-                              HomeVideoProgressIndicator(),
-                            ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   if (reply.posts.isNotEmpty &&
