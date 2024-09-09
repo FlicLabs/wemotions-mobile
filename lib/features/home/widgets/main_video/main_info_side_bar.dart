@@ -1,4 +1,3 @@
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:socialverse/export.dart';
 
 class MainInfoSideBar extends StatelessWidget {

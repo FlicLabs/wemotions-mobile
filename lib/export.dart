@@ -41,6 +41,7 @@ export 'package:firebase_messaging/firebase_messaging.dart';
 export 'package:home_widget/home_widget.dart';
 export 'package:shimmer/shimmer.dart';
 export 'package:audioplayers/audioplayers.dart';
+export 'package:flutter_linkify/flutter_linkify.dart';
 
 // Utils, Widgets, Constants, Extensions, Configs
 export 'package:socialverse/app.dart';
@@ -140,6 +141,14 @@ export 'package:socialverse/features/auth/widgets/auth_obscure_icon.dart';
 export 'package:socialverse/features/auth/widgets/social_button.dart';
 export 'package:socialverse/features/auth/widgets/auth_save_button.dart';
 export 'package:socialverse/features/auth/widgets/auth_aligned_text.dart';
+export 'package:socialverse/features/home/widgets/reply_video/reply_play_button.dart';
+export 'package:socialverse/features/home/widgets/reply_video/reply_video_progress_indicator.dart';
+export 'package:socialverse/features/home/widgets/reply_video/reply_info_side_bar.dart';
+export 'package:socialverse/features/home/widgets/reply_video/reply_side_bar.dart';
+export 'package:socialverse/features/home/widgets/reply_video/reply_video_sheet.dart';
+export 'package:socialverse/features/home/widgets/home_video/pop_menu_slider.dart';
+export 'package:socialverse/features/home/widgets/reply_video/reply_playback_sheet.dart';
+
 // Models, Services, Repositories
 export 'package:socialverse/features/auth/domain/models/user.dart';
 export 'package:socialverse/features/home/domain/models/feed_model.dart';
@@ -165,6 +174,8 @@ export 'package:socialverse/features/profile/domain/services/edit_profile_servic
 export 'package:socialverse/features/profile/domain/services/settings_services.dart';
 export 'package:socialverse/core/domain/services/messagin_service.dart';
 export 'package:socialverse/features/profile/domain/services/account_service.dart';
+export 'package:socialverse/features/home/domain/models/single_post_model.dart';
+
 // Providers
 export 'package:socialverse/core/providers/theme_provider.dart';
 export 'package:socialverse/features/auth/providers/auth_provider.dart';
@@ -188,6 +199,7 @@ export 'package:socialverse/features/profile/providers/settings/invite_provider.
 export 'package:socialverse/features/profile/providers/settings/account_provider.dart';
 export 'package:socialverse/features/home/providers/exit_provider.dart';
 export 'package:socialverse/features/profile/providers/profile/profile_provider.dart';
+export 'package:socialverse/features/home/providers/reply_provider.dart';
 
 // Screens
 export 'package:socialverse/features/auth/presentation/login/login_screen.dart';
@@ -227,3 +239,9 @@ export 'package:socialverse/features/profile/presentation/settings/account/chang
 export 'package:socialverse/features/profile/presentation/settings/account/manage_account_screen.dart';
 export 'package:socialverse/features/profile/presentation/settings/general/theme_switch_screen.dart';
 export 'package:socialverse/features/profile/presentation/profile/user_profile_screen.dart';
+
+
+
+
+
+

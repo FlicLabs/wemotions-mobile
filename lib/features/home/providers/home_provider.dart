@@ -1,8 +1,6 @@
 import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/home/domain/models/single_post_model.dart';
-import 'package:socialverse/features/home/widgets/home_video/pop_menu_slider.dart';
 
 enum RateItem { LOVE_IT, LIKE_IT, OKAY, DISLIKE_IT, HATE_IT }
 

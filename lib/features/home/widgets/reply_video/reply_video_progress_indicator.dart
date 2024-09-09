@@ -1,7 +1,5 @@
 import 'package:socialverse/export.dart';
 
-import 'package:socialverse/features/home/providers/reply_provider.dart';
-
 class ReplyVideoProgressIndicator extends StatelessWidget {
   const ReplyVideoProgressIndicator({Key? key}) : super(key: key);
 

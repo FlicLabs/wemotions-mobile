@@ -1,7 +1,4 @@
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:socialverse/export.dart';
-
-import 'package:socialverse/features/home/providers/reply_provider.dart';
 
 class ReplyInfoSideBar extends StatelessWidget {
   const ReplyInfoSideBar({Key? key}) : super(key: key);

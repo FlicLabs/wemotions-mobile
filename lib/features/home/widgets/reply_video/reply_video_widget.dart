@@ -1,10 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/home/providers/reply_provider.dart';
-import 'package:socialverse/features/home/widgets/reply_video/reply_play_button.dart';
-import 'package:socialverse/features/home/widgets/reply_video/reply_video_progress_indicator.dart';
-import 'package:socialverse/features/home/widgets/reply_video/reply_info_side_bar.dart';
-import 'package:socialverse/features/home/widgets/reply_video/reply_side_bar.dart';
-import 'package:socialverse/features/home/widgets/reply_video/reply_video_sheet.dart';
 
 class ReplyVideoWidget extends StatefulWidget {
   final Posts video;

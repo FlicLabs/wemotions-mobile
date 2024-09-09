@@ -1,4 +1,3 @@
-import 'package:socialverse/features/home/providers/reply_provider.dart';
 
 import 'export.dart';
 
@@ -20,12 +19,11 @@ class _WeMotionsState extends State<WeMotions> {
 
   fetchFeed() async {
     final home = Provider.of<HomeProvider>(context, listen: false);
-    await home.createIsolate(token: token);
+    final reply = Provider.of<ReplyProvider>(context, listen: false);
 
+    await home.createIsolate(token: token);
     home.fetchingReplies = true;
     await home.createReplyIsolate(home.posts[0], token: token);
-
-    final reply = Provider.of<ReplyProvider>(context, listen: false);
     reply.posts = home.hPosts;
   }
 

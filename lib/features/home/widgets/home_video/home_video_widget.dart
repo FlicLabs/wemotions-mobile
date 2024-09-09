@@ -5,7 +5,6 @@ import 'package:socialverse/features/home/utils/video_sheet.dart';
 import 'package:socialverse/features/home/widgets/home_video/last_page_gradient.dart';
 import 'package:socialverse/features/home/widgets/reply_video/reply_video_widget.dart';
 
-import 'package:socialverse/features/home/providers/reply_provider.dart';
 
 class HomeVideoWidget extends StatefulWidget {
   const HomeVideoWidget({

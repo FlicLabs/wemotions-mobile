@@ -1,9 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/home/domain/models/single_post_model.dart';
-import 'package:socialverse/features/home/widgets/home_video/pop_menu_slider.dart';
-
-enum RateItem { LOVE_IT, LIKE_IT, OKAY, DISLIKE_IT, HATE_IT }
 
 /* New provider to manage the horizontal feed and their video controllers.*/
 
@@ -262,23 +258,6 @@ class ReplyProvider extends ChangeNotifier {
     }
   }
 
-  // Future<void> getFeed() async {
-  //   Random random = Random();
-  //   int randomNumber = random.nextInt(45) + 1;
-  //   _page = randomNumber;
-  //   await _homeService.getFeed(_page).then((response) {
-  //     int randomNumber = random.nextInt(26) + 1;
-  //     _page = randomNumber;
-  //     addPostsToList(FeedModel.fromJson(response).posts);
-  //   });
-  //   notifyListeners();
-  // }
-
-  // void addPostsToList(List<Posts> postData) {
-  //   _posts.addAll(postData);
-  //   notifyListeners();
-  // }
-
   Future<void> getSubversePosts({required int id, required int page}) async {
     _temp.clear();
     await _subverseService
@@ -337,9 +316,6 @@ class ReplyProvider extends ChangeNotifier {
     posts.isEmpty ? null : disposed(_index);
     posts_page = 1;
     posts.clear();
-    notifyListeners();
-
-    // await createIsolate(token: token);
     notifyListeners();
   }
 
