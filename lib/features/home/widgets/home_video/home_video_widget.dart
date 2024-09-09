@@ -84,7 +84,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
               home.posts_page++;
               home.fetchingReplies = true;
               home.horizontalIndex = 0;
-              home.createReplyIsolate(home.posts[index],token: token);
+              home.createReplyIsolate(home.posts[index], token: token);
               home.onPageChanged(index);
               home.index = index;
               home.isFollowing = home.posts[index].following;
@@ -322,12 +322,14 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
         ),
         if (reply.posts.isNotEmpty && home.fetchingReplies == false) ...[
           Positioned(
-            right: reply.posts.length == 2
-                ? -18
-                : reply.posts.length == 0
-                    ? 18
-                    : 0,
-            top: 240,
+            // right: reply.posts.length == 2
+            //     ? -18
+            //     : reply.posts.length == 0
+            //         ? 18
+            //         : 0,
+            right: cs().width(context) * 0.5,
+            left: cs().width(context) * 0.5,
+            bottom: 70,
             child: AnimatedSmoothIndicator(
               // controller: reply.home,
               count: reply.posts.length + 1,
@@ -343,12 +345,14 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
           ),
         ],
         Positioned(
-          right: 20,
-          top: home.posts.length == 3
-              ? 202
-              : home.posts.length == 1
-                  ? 238
-                  : 220,
+          right: cs().width(context) * 0.5,
+          left: cs().width(context) * 0.5,
+          bottom: 50,
+          // top: home.posts.length == 3
+          //     ? 202
+          //     : home.posts.length == 1
+          //         ? 238
+          //         : 220,
           child: SmoothPageIndicator(
             controller: widget.pageController,
             axisDirection: Axis.vertical,
