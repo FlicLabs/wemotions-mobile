@@ -1,10 +1,10 @@
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/home/providers/reply_provider.dart';
-import 'package:socialverse/features/home/utils/video_sheet.dart';
 import 'package:socialverse/features/home/widgets/reply_video/reply_play_button.dart';
 import 'package:socialverse/features/home/widgets/reply_video/reply_video_progress_indicator.dart';
 import 'package:socialverse/features/home/widgets/reply_video/reply_info_side_bar.dart';
 import 'package:socialverse/features/home/widgets/reply_video/reply_side_bar.dart';
+import 'package:socialverse/features/home/widgets/reply_video/reply_video_sheet.dart';
 
 class ReplyVideoWidget extends StatefulWidget {
   final Posts video;
@@ -123,7 +123,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                           ),
                         ),
                         builder: (context) {
-                          return VideoSheet(
+                          return ReplyVideoSheet(
                             isUser:
                                 reply.posts[index].username != prefs_username,
                             isFromFeed: true,
@@ -135,7 +135,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                             category_desc: '',
                             title: reply.posts[index].title,
                             video_link: reply.posts[index].videoLink,
-                            current_index: widget.parentIndex,
+                            current_index: index,
                           );
                         },
                       );
