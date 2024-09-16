@@ -8,7 +8,7 @@ class InfoSideBar extends StatelessWidget {
     final video = Provider.of<VideoProvider>(context);
     return Consumer<HomeProvider>(
       builder: (_, __, ___) {
-        final postTitle = __.posts[__.index].title;
+        final postTitle = __.posts[__.index][0].title;
         return Positioned(
           left: 15,
           bottom:
@@ -17,7 +17,7 @@ class InfoSideBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              if (__.posts[__.index].title.isNotEmpty) ...[
+              if (__.posts[__.index][0].title.isNotEmpty) ...[
                 SizedBox(
                   width: cs().width(context) - 100,
                   child: GestureDetector(

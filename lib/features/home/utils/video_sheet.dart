@@ -84,7 +84,7 @@ class VideoSheet extends StatelessWidget {
                       home.createIsolate(token: token);
                       home.animateToPage(index);
                       await home.removeController(current_index);
-                      List<Posts> post_list = home.posts;
+                      List<List<Posts>> post_list = home.posts;
                       post_list.removeAt(current_index);
                       home.posts = post_list;
                       notification.show(
@@ -107,7 +107,7 @@ class VideoSheet extends StatelessWidget {
                       home.createIsolate(token: token);
                       home.animateToPage(index);
                       await home.removeController(current_index);
-                      List<Posts> post_list = home.posts;
+                      List<List<Posts>> post_list = home.posts;
                       post_list.removeAt(current_index);
                       home.posts = post_list;
                       notification.show(
@@ -130,7 +130,7 @@ class VideoSheet extends StatelessWidget {
                       home.createIsolate(token: token);
                       home.animateToPage(index);
                       await home.removeController(current_index);
-                      List<Posts> post_list = home.posts;
+                      List<List<Posts>> post_list = home.posts;
                       post_list.removeAt(current_index);
                       home.posts = post_list;
                       notification.show(
@@ -298,7 +298,7 @@ class VideoSheet extends StatelessWidget {
                         home.createIsolate(token: token);
                         home.animateToPage(index);
                         await home.removeController(current_index);
-                        List<Posts> post_list = home.posts;
+                        List<List<Posts>> post_list = home.posts;
                         post_list.removeAt(current_index);
                         home.posts = post_list;
                         notification.show(

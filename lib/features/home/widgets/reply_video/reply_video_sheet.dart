@@ -85,10 +85,10 @@ class ReplyVideoSheet extends StatelessWidget {
                       // home.createIsolate(token: token);
                       reply.animateToPage(index);
                       await reply.removeController(current_index);
-                      List<Posts> post_list = home.hPosts;
-                      post_list.removeAt(current_index);
-                      home.hPosts = post_list;
-                      reply.posts = home.hPosts;
+                      List<Posts> post_list = home.posts[home.index];
+                      post_list.removeAt(current_index+1);
+                      home.posts[home.index] = post_list;
+                      reply.posts = home.posts[home.index].sublist(1);
                       notification.show(
                         title: 'Post has been reported',
                         type: NotificationType.local,
@@ -109,10 +109,10 @@ class ReplyVideoSheet extends StatelessWidget {
                       // home.createIsolate(token: token);
                       reply.animateToPage(index);
                       await reply.removeController(current_index);
-                      List<Posts> post_list = home.hPosts;
-                      post_list.removeAt(current_index);
-                      home.hPosts = post_list;
-                      reply.posts = home.hPosts;
+                      List<Posts> post_list = home.posts[home.index];
+                      post_list.removeAt(current_index + 1);
+                      home.posts[home.index] = post_list;
+                      reply.posts = home.posts[home.index].sublist(1);
                       notification.show(
                         title: 'Post has been reported',
                         type: NotificationType.local,
@@ -133,10 +133,10 @@ class ReplyVideoSheet extends StatelessWidget {
                       // home.createIsolate(token: token);
                       reply.animateToPage(index);
                       await reply.removeController(current_index);
-                      List<Posts> post_list = home.hPosts;
-                      post_list.removeAt(current_index);
-                      home.hPosts = post_list;
-                      reply.posts = home.hPosts;
+                      List<Posts> post_list = home.posts[home.index];
+                      post_list.removeAt(current_index + 1);
+                      home.posts[home.index] = post_list;
+                      reply.posts = home.posts[home.index].sublist(1);
                       notification.show(
                         title: 'We will show you fewer videos like this',
                         type: NotificationType.local,
@@ -302,10 +302,10 @@ class ReplyVideoSheet extends StatelessWidget {
                         // home.createIsolate(token: token);
                         reply.animateToPage(index);
                         await reply.removeController(current_index);
-                        List<Posts> post_list = home.hPosts;
-                        post_list.removeAt(current_index);
-                        home.hPosts = post_list;
-                        reply.posts = home.hPosts;
+                        List<Posts> post_list = home.posts[home.index];
+                        post_list.removeAt(current_index + 1);
+                        home.posts[home.index] = post_list;
+                        reply.posts = home.posts[home.index].sublist(1);
                         notification.show(
                           title: 'Post has been deleted',
                           type: NotificationType.local,

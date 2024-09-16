@@ -186,22 +186,22 @@ class HomeProvider extends ChangeNotifier {
     });
   }
 
-  List<Posts> _posts = <Posts>[];
-  List<Posts> get posts => _posts;
+  List<List<Posts>> _posts = [];
+  List<List<Posts>> get posts => _posts;
 
-  set posts(List<Posts> value) {
+  set posts(List<List<Posts>> value) {
     _posts = value;
   }
 
   /*
  hPosts store the current video with the replies for the horizontal feed.
   */
-  List<Posts> _hPosts = <Posts>[];
-  List<Posts> get hPosts => _hPosts;
+  // List<Posts> _hPosts = <Posts>[];
+  // List<Posts> get hPosts => _hPosts;
 
-  set hPosts(List<Posts> value) {
-    _hPosts = value;
-  }
+  // set hPosts(List<Posts> value) {
+  //   _hPosts = value;
+  // }
 
   bool _fetchingReplies = false;
   bool get fetchingReplies => _fetchingReplies;
@@ -339,14 +339,14 @@ class HomeProvider extends ChangeNotifier {
     posts_page = 1;
     horizontalIndex = 0;
     posts.clear();
-    hPosts.clear();
+    // hPosts.clear();
     notifyListeners();
 
     await createIsolate(token: token);
     notifyListeners();
 
     fetchingReplies = true;
-    await createReplyIsolate(posts[0], token: token);
+    await createReplyIsolate(0, token: token);
     notifyListeners();
   }
 
@@ -485,14 +485,14 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> _initController(int index) async {
     var controller = VideoPlayerController.network(
-      posts.elementAt(index).videoLink,
+      posts.elementAt(index)[0].videoLink,
       videoPlayerOptions: VideoPlayerOptions(
         allowBackgroundPlayback: false,
         mixWithOthers: false,
       ),
     );
     _viewCountUpdated[index] = false;
-    _controllers[posts.elementAt(index).videoLink] = controller;
+    _controllers[posts.elementAt(index)[0].videoLink] = controller;
     await controller.initialize();
   }
 
@@ -524,7 +524,7 @@ class HomeProvider extends ChangeNotifier {
   }
 
   VideoPlayerController? videoController(int index) {
-    return _controllers[posts.elementAt(index).videoLink] ??
+    return _controllers[posts.elementAt(index)[0].videoLink] ??
         _controllers[API.video_link];
   }
 
@@ -564,7 +564,7 @@ class HomeProvider extends ChangeNotifier {
             if (positionInSeconds > 1 &&
                 !_viewCountUpdated[index]! &&
                 logged_in!) {
-              updateViewCount(id: posts.elementAt(index).id);
+              updateViewCount(id: posts.elementAt(index)[0].id);
               _viewCountUpdated[index] = true;
             }
           }
@@ -700,14 +700,16 @@ class HomeProvider extends ChangeNotifier {
   onPageChanged(int index) async {
     _isPlaying = true;
     createIsolate(token: token);
-    // createReplyIsolate(_posts[index]);
-    HomeWidget.saveWidgetData<String>('title', _posts[index].title);
-    HomeWidget.saveWidgetData<String>('description', _posts[index].username);
-    HomeWidget.saveWidgetData<String>('image', _posts[index].thumbnailUrl);
-    HomeWidget.updateWidget(
-      iOSName: iOSWidgetName,
-      androidName: androidWidgetName,
-    );
+    // createReplyIsolate(posts_page++, token: token);
+    if (_index < index) {
+      if (index - 3 >= 0 && posts[index-3].length > 1) {
+        posts[index - 3].removeRange(1, posts[index - 3].length);
+      }
+    } else if (_index > index) {
+      if (index + 3 <= posts.length - 1 && posts[index + 3].length > 1) {
+        posts[index + 3].removeRange(1, posts[index + 3].length - 1);
+      }
+    }
     notifyListeners();
     if (_index > index) {
       await _previousVideo();
@@ -795,7 +797,7 @@ class HomeProvider extends ChangeNotifier {
 
         final response = await _homeService.getFeed(index, token ?? '');
         final List<Posts> data = FeedModel.fromJson(response).posts;
-        isolateResponseSendPort.send(data);
+        isolateResponseSendPort.send(data.map((e) => [e]).toList());
 
         /* 
        A network request is made to retrieve video data based on the index value
@@ -819,7 +821,7 @@ class HomeProvider extends ChangeNotifier {
 
   // Isolate to fetch the replies of the current video using post id
 
-  Future createReplyIsolate(Posts post, {String? token}) async {
+  Future createReplyIsolate(int indexForFetch, {String? token}) async {
     ReceivePort mainReceivePort = ReceivePort();
 
     Isolate.spawn<SendPort>(getRepliesTask, mainReceivePort.sendPort);
@@ -828,11 +830,16 @@ class HomeProvider extends ChangeNotifier {
 
     ReceivePort isolateResponseReceivePort = ReceivePort();
 
-    isolateSendPort.send([post.id, isolateResponseReceivePort.sendPort, token]);
+    isolateSendPort.send([
+      posts[indexForFetch][0].id,
+      isolateResponseReceivePort.sendPort,
+      token
+    ]);
 
     final isolateResponse = await isolateResponseReceivePort.first;
-    _hPosts.clear();
-    _hPosts.addAll(isolateResponse.toList());
+    // _hPosts.clear();
+    // _hPosts.addAll(isolateResponse.toList());
+    _posts[indexForFetch].addAll(isolateResponse.toList());
     fetchingReplies = false;
     notifyListeners();
   }

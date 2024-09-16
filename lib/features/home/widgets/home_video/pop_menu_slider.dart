@@ -53,7 +53,7 @@ class PopupMenuSliderState extends State<PopupMenuSlider> {
                 home.slider_val = value;
                 int roundedValue = value.round();
                 log(roundedValue.toString());
-                home.posts[home.index].ratingCount = value.toInt().round();
+                home.posts[home.index][0].ratingCount = value.toInt().round();
                 home.updateRating(
                   id: widget.id,
                   rating: roundedValue.clamp(0, 100),

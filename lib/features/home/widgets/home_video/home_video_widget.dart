@@ -5,7 +5,6 @@ import 'package:socialverse/features/home/utils/video_sheet.dart';
 import 'package:socialverse/features/home/widgets/home_video/last_page_gradient.dart';
 import 'package:socialverse/features/home/widgets/reply_video/reply_video_widget.dart';
 
-
 class HomeVideoWidget extends StatefulWidget {
   const HomeVideoWidget({
     Key? key,
@@ -15,7 +14,7 @@ class HomeVideoWidget extends StatefulWidget {
     required this.isFromFeed,
   }) : super(key: key);
 
-  final List<Posts> posts;
+  final List<List<Posts>> posts;
   final PageController pageController;
   final int pageIndex;
   final bool isFromFeed;
@@ -40,7 +39,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     final reply = Provider.of<ReplyProvider>(context, listen: false);
     await home.initializedVideoPlayer();
     home.index = widget.pageIndex;
-    reply.posts = home.hPosts;
+    reply.posts = home.posts[0].sublist(1);
   }
 
   void _pageListener() {
@@ -65,7 +64,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     final home = Provider.of<HomeProvider>(context);
     final video = Provider.of<VideoProvider>(context);
     final reply = Provider.of<ReplyProvider>(context);
-    reply.posts = home.hPosts;
+    reply.posts = home.posts[home.index].sublist(1);
     double nav = MediaQuery.of(context).size.height * 0.0595;
     double available = MediaQuery.of(context).size.height - nav;
     return Stack(
@@ -83,10 +82,20 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
               home.posts_page++;
               home.fetchingReplies = true;
               home.horizontalIndex = 0;
-              home.createReplyIsolate(home.posts[index], token: token);
+              reply.posts = home.posts[index].sublist(1);
+              if (home.index < index) {
+                if (index + 2 <= home.posts.length - 1) {
+                  home.createReplyIsolate(index + 2, token: token);
+                }
+              } else if (home.index > index) {
+                if (index - 2 >= 0) {
+                  home.createReplyIsolate(index - 2, token: token);
+                }
+              }
+              // home.createReplyIsolate(home.post_forReply++, token: token);
               home.onPageChanged(index);
               home.index = index;
-              home.isFollowing = home.posts[index].following;
+              home.isFollowing = home.posts[index][0].following;
             },
             scrollDirection: Axis.vertical,
             itemBuilder: (_, index) {
@@ -114,10 +123,10 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                       onDoubleTap: () {
                         home.handleDoubleTap();
 
-                        if (home.posts[index].upvoted == false) {
-                          home.posts[index].upvoted = true;
-                          home.posts[index].upvoteCount++;
-                          home.postLikeAdd(id: home.posts[index].id);
+                        if (home.posts[index][0].upvoted == false) {
+                          home.posts[index][0].upvoted = true;
+                          home.posts[index][0].upvoteCount++;
+                          home.postLikeAdd(id: home.posts[index][0].id);
                         }
 
                         Timer(Duration(seconds: 1), () => home.isLiked = false);
@@ -153,17 +162,17 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                           ),
                           builder: (context) {
                             return VideoSheet(
-                              isUser:
-                                  home.posts[index].username != prefs_username,
+                              isUser: home.posts[index][0].username !=
+                                  prefs_username,
                               isFromFeed: widget.isFromFeed,
-                              video_id: home.posts[index].id,
+                              video_id: home.posts[index][0].id,
                               category_name: '',
                               category_count: 0,
                               category_id: 0,
                               category_photo: '',
                               category_desc: '',
-                              title: home.posts[index].title,
-                              video_link: home.posts[index].videoLink,
+                              title: home.posts[index][0].title,
+                              video_link: home.posts[index][0].videoLink,
                               current_index: index,
                             );
                           },
@@ -193,7 +202,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                                   CustomNetworkImage(
                                     height: cs().height(context),
                                     width: cs().width(context),
-                                    imageUrl: home.posts[index].thumbnailUrl,
+                                    imageUrl: home.posts[index][0].thumbnailUrl,
                                     isLoading: true,
                                   ),
                                 ],
@@ -280,8 +289,8 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                       ),
                     ),
                   ),
-                  if (reply.posts.isNotEmpty &&
-                      home.fetchingReplies == false) ...[
+                  if (home.posts[index].length > 1 &&
+                      reply.posts.length == home.posts[index].length - 1) ...[
                     NotificationListener<ScrollNotification>(
                       onNotification: (ScrollNotification notification) {
                         if (notification is ScrollUpdateNotification) {
@@ -300,7 +309,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                       child: Consumer<ReplyProvider>(
                           builder: (context, value, child) {
                         return ReplyVideoWidget(
-                          video: home.posts[index],
+                          video: home.posts[index][0],
                           pageController: value.home,
                           postIndex: 0,
                           parentIndex: index,
@@ -319,29 +328,31 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             },
           ),
         ),
-        if (reply.posts.isNotEmpty && home.fetchingReplies == false) ...[
-          Positioned(
-            // right: reply.posts.length == 2
-            //     ? -18
-            //     : reply.posts.length == 0
-            //         ? 18
-            //         : 0,
-            right: cs().width(context) * 0.5,
-            left: cs().width(context) * 0.5,
-            bottom: 70,
-            child: AnimatedSmoothIndicator(
-              // controller: reply.home,
-              count: reply.posts.length + 1,
-              activeIndex: home.horizontalIndex,
-              effect: ScrollingDotsEffect(
-                  maxVisibleDots: 3,
-                  fixedCenter: true,
-                  dotHeight: 10,
-                  dotWidth: 10,
-                  activeDotColor: Colors.white,
-                  dotColor: Colors.grey),
+        if (widget.pageController.hasClients) ...[
+          if (widget.pageController.page == home.index) ...[
+            Positioned(
+              // right: reply.posts.length == 2
+              //     ? -18
+              //     : reply.posts.length == 0
+              //         ? 18
+              //         : 0,
+              right: cs().width(context) * 0.5,
+              left: cs().width(context) * 0.5,
+              bottom: 70,
+              child: AnimatedSmoothIndicator(
+                // controller: reply.home,
+                count: reply.posts.length + 1,
+                activeIndex: home.horizontalIndex,
+                effect: ScrollingDotsEffect(
+                    maxVisibleDots: 3,
+                    fixedCenter: true,
+                    dotHeight: 10,
+                    dotWidth: 10,
+                    activeDotColor: Colors.white,
+                    dotColor: Colors.grey),
+              ),
             ),
-          ),
+          ]
         ],
         Positioned(
           right: cs().width(context) * 0.5,

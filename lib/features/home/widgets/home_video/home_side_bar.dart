@@ -28,17 +28,17 @@ class HomeSideBar extends StatelessWidget {
                               children: [
                                 SideBarItem(
                                   onTap: () {
-                                    if (__.posts[__.index].upvoted) {
-                                      __.posts[__.index].upvoted = false;
-                                      __.posts[__.index].upvoteCount--;
+                                    if (__.posts[__.index][0].upvoted) {
+                                      __.posts[__.index][0].upvoted = false;
+                                      __.posts[__.index][0].upvoteCount--;
                                       __.postLikeRemove(
-                                        id: __.posts[__.index].id,
+                                        id: __.posts[__.index][0].id,
                                       );
                                     } else {
-                                      __.posts[__.index].upvoted = true;
-                                      __.posts[__.index].upvoteCount++;
+                                      __.posts[__.index][0].upvoted = true;
+                                      __.posts[__.index][0].upvoteCount++;
                                       __.postLikeAdd(
-                                        id: __.posts[__.index].id,
+                                        id: __.posts[__.index][0].id,
                                       );
                                     }
                                   },
@@ -58,7 +58,7 @@ class HomeSideBar extends StatelessWidget {
                                   value: 14,
                                   icon: ShaderMask(
                                     shaderCallback: (Rect bounds) {
-                                      return __.posts[__.index].upvoted
+                                      return __.posts[__.index][0].upvoted
                                           ? LinearGradient(
                                               begin: Alignment.centerLeft,
                                               end: Alignment.centerRight,
@@ -151,14 +151,14 @@ class HomeSideBar extends StatelessWidget {
                                 SideBarItem(
                                   onTap: () async {
                                     HapticFeedback.mediumImpact();
-                                    bool isUser = __.posts[__.index].username !=
+                                    bool isUser = __.posts[__.index][0].username !=
                                         prefs_username;
                                     final link =
                                         await __.dynamicLink.createPostLink(
-                                      imageUrl: __.posts[__.index].thumbnailUrl,
-                                      postID: '${__.posts[__.index].id}',
-                                      username: __.posts[__.index].username,
-                                      description: __.posts[__.index].title,
+                                      imageUrl: __.posts[__.index][0].thumbnailUrl,
+                                      postID: '${__.posts[__.index][0].id}',
+                                      username: __.posts[__.index][0].username,
+                                      description: __.posts[__.index][0].title,
                                       isPost: true,
                                     );
                                     showModalBottomSheet(
@@ -225,43 +225,43 @@ class HomeSideBar extends StatelessWidget {
                                   //   ),
                                   // ),
                                 ),
-                                height7,
-                                SideBarItem(
-                                  onTap: () async {
-                                    HapticFeedback.heavyImpact();
-                                    if (__
-                                        .videoController(__.index)!
-                                        .value
-                                        .isPlaying) {
-                                      await __
-                                          .videoController(__.index)!
-                                          .pause();
-                                    }
-                                    __.showInspiredDialog(
-                                      context,
-                                      id: __.posts[__.index].id,
-                                    );
-                                  },
-                                  value: 10,
-                                  icon: Image.asset(
-                                    AppAsset.icon,
-                                  ),
-                                  text: shrink,
-                                ),
+                                // height7,
+                                // SideBarItem(
+                                //   onTap: () async {
+                                //     HapticFeedback.heavyImpact();
+                                //     if (__
+                                //         .videoController(__.index)!
+                                //         .value
+                                //         .isPlaying) {
+                                //       await __
+                                //           .videoController(__.index)!
+                                //           .pause();
+                                //     }
+                                //     __.showInspiredDialog(
+                                //       context,
+                                //       id: __.posts[__.index][0].id,
+                                //     );
+                                //   },
+                                //   value: 10,
+                                //   icon: Image.asset(
+                                //     AppAsset.icon,
+                                //   ),
+                                //   text: shrink,
+                                // ),
                                 height7,
                                 if (isAdmin) ...[
                                   SideBarItem(
                                     onTap: () {
                                       HapticFeedback.lightImpact();
-                                      __.posts[__.index].exitCount += 1;
+                                      __.posts[__.index][0].exitCount += 1;
                                       __.updateExitCount(
-                                        id: __.posts[__.index].id,
+                                        id: __.posts[__.index][0].id,
                                       );
                                     },
                                     value: 5,
                                     icon: Center(
                                       child: Text(
-                                        '${__.posts[__.index].exitCount}',
+                                        '${__.posts[__.index][0].exitCount}',
                                         style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w400,

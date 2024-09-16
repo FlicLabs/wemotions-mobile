@@ -23,8 +23,18 @@ class _WeMotionsState extends State<WeMotions> {
 
     await home.createIsolate(token: token);
     home.fetchingReplies = true;
-    await home.createReplyIsolate(home.posts[0], token: token);
-    reply.posts = home.hPosts;
+    await home.createReplyIsolate(0, token: token);
+    reply.posts = home.posts[0].sublist(1);
+    if(home.posts.length>1)
+    {
+      await home.createReplyIsolate(1, token: token);
+    }
+    if(home.posts.length>2)
+    {
+      await home.createReplyIsolate(2, token: token);
+    }
+    
+    // reply.posts = home.posts[0].sublist(1);
   }
 
   fetchProfile() async {

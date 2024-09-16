@@ -60,8 +60,8 @@ class LastPageGradient extends StatelessWidget {
               TransparentButton(
                 onTap: () async {
                   final link = await search.dynamicLink.createSubverseLink(
-                    imageUrl: home.posts[home.index].thumbnailUrl,
-                    id: '${home.posts[home.index].id}',
+                    imageUrl: home.posts[home.index][0].thumbnailUrl,
+                    id: '${home.posts[home.index][0].id}',
                     title: '',
                     count: '',
                     description: '',
