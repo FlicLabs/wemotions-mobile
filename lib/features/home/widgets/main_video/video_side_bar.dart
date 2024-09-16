@@ -220,27 +220,27 @@ class VideoSideBar extends StatelessWidget {
                                 //   ),
                                 // ),
                               ),
-                              height7,
-                              SideBarItem(
-                                onTap: () async {
-                                  HapticFeedback.heavyImpact();
-                                  if (__
-                                      .videoController(__.index)!
-                                      .value
-                                      .isPlaying) {
-                                    await __.videoController(__.index)!.pause();
-                                  }
-                                  home.showInspiredDialog(
-                                    context,
-                                    id: __.posts[__.index].id,
-                                  );
-                                },
-                                value: 10,
-                                icon: Image.asset(
-                                  AppAsset.icon,
-                                ),
-                                text: shrink,
-                              ),
+                              // height7,
+                              // SideBarItem(
+                              //   onTap: () async {
+                              //     HapticFeedback.heavyImpact();
+                              //     if (__
+                              //         .videoController(__.index)!
+                              //         .value
+                              //         .isPlaying) {
+                              //       await __.videoController(__.index)!.pause();
+                              //     }
+                              //     home.showInspiredDialog(
+                              //       context,
+                              //       id: __.posts[__.index].id,
+                              //     );
+                              //   },
+                              //   value: 10,
+                              //   icon: Image.asset(
+                              //     AppAsset.icon,
+                              //   ),
+                              //   text: shrink,
+                              // ),
                               height7,
                               if (isAdmin) ...[
                                 SideBarItem(
