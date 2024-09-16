@@ -45,6 +45,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
     _reply?.controllers.forEach((key, value) async {
       value.dispose();
     });
+    _reply?.controllers.clear();
     super.dispose();
   }
 
@@ -67,8 +68,12 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
           physics: CustomBouncingScrollPhysics(),
           itemCount: reply.posts.length,
           itemBuilder: (context, index) {
-            bool isReplyInit =
-                reply.videoController(index)!.value.isInitialized;
+            bool isReplyInit = false;
+            if(reply.videoController(index)!=null)
+            {
+              isReplyInit = reply.videoController(index)!.value.isInitialized;
+            }
+            
             return Stack(
               children: [
                 Listener(
@@ -246,7 +251,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                             color: Colors.transparent,
                             image: DecorationImage(
                                 image: CachedNetworkImageProvider(
-                                    home.posts[home.index].thumbnailUrl),
+                                    home.posts[home.index][0].thumbnailUrl),
                                 fit: BoxFit.cover),
                           ),
                           child: GestureDetector(
@@ -288,7 +293,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                   children: [
                                     TextSpan(
                                       text:
-                                          '${home.posts[home.index].firstName}${home.posts[home.index].lastName}@${home.posts[home.index].username}',
+                                          '${home.posts[home.index][0].firstName}${home.posts[home.index][0].lastName}@${home.posts[home.index][0].username}',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -300,7 +305,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                               ),
                               height5,
                               Text(
-                                home.posts[home.index].title,
+                                home.posts[home.index][0].title,
                                 style: const TextStyle(
                                   color: Color.fromARGB(255, 23, 23, 60),
                                   fontSize: 12,
