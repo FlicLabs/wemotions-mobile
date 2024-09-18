@@ -61,9 +61,10 @@ class _WeMotionsState extends State<WeMotions> {
           title: 'WeMotions',
           debugShowCheckedModeBanner: false,
           onGenerateRoute: CustomRouter.onGenerateRoute,
-          initialRoute: onboard == false
-              ? WelcomeScreen.routeName
-              : BottomNavBar.routeName,
+          initialRoute: BottomNavBar.routeName,
+          // onboard == false
+          //     ? WelcomeScreen.routeName
+          //     : BottomNavBar.routeName,
           routes: {
             BottomNavBar.routeName: (context) {
               return BottomNavBar(initialLink: widget.initialLink);
