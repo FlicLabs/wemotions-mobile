@@ -12,9 +12,5 @@
 	<array>
 		<string>applinks:holyvible.page.link</string>
 	</array>
-	<key>com.apple.security.application-groups</key>
-	<array>
-		<string>group.vible</string>
-	</array>
 </dict>
 </plist>
