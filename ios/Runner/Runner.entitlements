@@ -8,9 +8,5 @@
 	<array>
 		<string>Default</string>
 	</array>
-	<key>com.apple.developer.associated-domains</key>
-	<array>
-		<string>applinks:holyvible.page.link</string>
-	</array>
 </dict>
 </plist>
