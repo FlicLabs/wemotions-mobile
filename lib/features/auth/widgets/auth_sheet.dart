@@ -6,6 +6,7 @@ class AuthBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final home = Provider.of<HomeProvider>(context);
+    final reply = Provider.of<ReplyProvider>(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -37,6 +38,9 @@ class AuthBottomSheet extends StatelessWidget {
                 onTap: () {
                   if (home.isPlaying == true) {
                     home.videoController(home.index)?.pause();
+                  }
+                  if (reply.isPlaying == true) {
+                    reply.videoController(reply.index)?.pause();
                   }
                   Navigator.of(context).pushNamed(LoginScreen.routeName);
                 },

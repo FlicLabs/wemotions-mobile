@@ -47,6 +47,7 @@ class _BottomNavBarState extends State<BottomNavBar>
     final auth = Provider.of<AuthProvider>(context);
     final exit = Provider.of<ExitProvider>(context);
     final nav = Provider.of<BottomNavBarProvider>(context);
+    final reply = Provider.of<ReplyProvider>(context);
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -77,12 +78,36 @@ class _BottomNavBarState extends State<BottomNavBar>
                   } else {
                     nav.currentPage = index;
                     if (home.posts.isNotEmpty) {
-                      if (index == 0 && home.isPlaying == false) {
-                        home.isPlaying = true;
-                        home.videoController(home.index)?.play();
-                      } else {
-                        home.isPlaying = false;
-                        home.videoController(home.index)?.pause();
+                      if (reply.posts.isNotEmpty) {
+                        if (index == 1) {
+                          if (home.horizontalIndex>0) {
+                            reply.isPlaying = false;
+                            reply.videoController(reply.index)?.pause();
+                          } else {
+                            home.isPlaying = false;
+                            home.videoController(home.index)?.pause();
+                          }
+                        } else
+                        {
+                          if(home.horizontalIndex > 0)
+                          {
+                            reply.isPlaying = true;
+                            reply.videoController(reply.index)?.play();
+                          } else
+                          {
+                            home.isPlaying = true;
+                            home.videoController(home.index)?.play();
+                          }
+                        }
+                      } else
+                      {
+                        if (index == 0 && home.isPlaying == false) {
+                          home.isPlaying = true;
+                          home.videoController(home.index)?.play();
+                        } else {
+                          home.isPlaying = false;
+                          home.videoController(home.index)?.pause();
+                        }
                       }
                     }
                   }

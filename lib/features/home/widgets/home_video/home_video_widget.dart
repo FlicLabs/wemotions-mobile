@@ -105,11 +105,12 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                   if (value == 1) {
                     home.horizontalIndex = 1;
                     home.videoController(home.index)!.pause();
-
+                    reply.isPlaying = true;
                     home.videoController(home.index)!.seekTo(Duration.zero);
                   } else if (value == 0) {
                     home.horizontalIndex = 0;
                     home.videoController(home.index)!.play();
+                    reply.isPlaying = false;
                   }
                 },
                 scrollDirection: Axis.horizontal,
