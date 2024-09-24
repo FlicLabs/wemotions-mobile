@@ -1,19 +1,24 @@
 import 'package:socialverse/export.dart';
 
 class CameraScreenArgs {
+  bool isReply;
+  String? parent_video_id;
   final List<CameraDescription>? cameras;
-  const CameraScreenArgs({this.cameras});
+  CameraScreenArgs({this.cameras,required this.isReply,this.parent_video_id});
 }
 
 class CameraScreen extends StatefulWidget {
   static const String routeName = '/camera';
-  CameraScreen({Key? key, required this.cameras}) : super(key: key);
+
+  CameraScreen({Key? key, required this.cameras, required this.isReply, this.parent_video_id}) : super(key: key);
 
   final List<CameraDescription>? cameras;
+  bool isReply;
+  String? parent_video_id;
 
   static Route route({required CameraScreenArgs args}) {
     return SlideRoute(
-      page: CameraScreen(cameras: args.cameras),
+      page: CameraScreen(cameras: args.cameras,isReply: args.isReply,parent_video_id: args.parent_video_id,),
     );
   }
 
@@ -250,7 +255,9 @@ class _CameraScreenState extends State<CameraScreen> {
                                             .pushNamed(
                                           PostScreen.routeName,
                                           arguments: PostScreenArgs(
+                                            isReply: widget.isReply,
                                             path: __.selectedVideo,
+                                            parent_video_id: widget.parent_video_id
                                           ),
                                         )
                                             .then(

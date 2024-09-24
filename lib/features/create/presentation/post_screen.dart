@@ -1,17 +1,21 @@
 import 'package:socialverse/export.dart';
 
 class PostScreenArgs {
+  bool isReply;
   final XFile? path;
-  const PostScreenArgs({this.path});
+  String? parent_video_id;
+  PostScreenArgs({this.path,required this.isReply,this.parent_video_id});
 }
 
 class PostScreen extends StatefulWidget {
   static const String routeName = '/post';
-  const PostScreen({Key? key, this.path}) : super(key: key);
+  bool isReply;
+  String? parent_video_id;
+  PostScreen({Key? key, this.path, required this.isReply,this.parent_video_id}) : super(key: key);
 
   static Route route({required PostScreenArgs args}) {
     return SlideRoute(
-      page: PostScreen(path: args.path),
+      page: PostScreen(path: args.path, isReply: args.isReply,parent_video_id: args.parent_video_id,),
     );
   }
 
@@ -40,7 +44,7 @@ class _PostScreenState extends State<PostScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'New Post',
+          widget.isReply ? 'New Reply' : 'New Post',
           style: Theme.of(context).textTheme.bodyLarge,
         ),
       ),
@@ -106,12 +110,12 @@ class _PostScreenState extends State<PostScreen> {
                                         ..pop()
                                         ..pop();
                                     }
-                                    __.uploadVideo(path: widget.path!.path);
+                                    __.uploadVideo(path: widget.path!.path,isReply: widget.isReply,parent_video_id: widget.parent_video_id);
                                     nav.currentPage = 0;
                                     nav.jumpToPage();
                                   }
                                 },
-                                title: 'Post',
+                                title: widget.isReply ? 'Reply' : 'Post',
                               ),
                             )
                           ],

@@ -6,6 +6,7 @@ class HomeSideBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final video = Provider.of<VideoProvider>(context);
+    final auth = Provider.of<AuthProvider>(context);
     bool isAdmin = (prefs_username == 'afrobeezy' || prefs_username == 'jack');
 
     return Consumer<HomeProvider>(
@@ -84,6 +85,84 @@ class HomeSideBar extends StatelessWidget {
                                   text: shrink,
                                   //   Text(
                                   //     __.posts[__.index].upvoteCount.toString(),
+                                  //     style: TextStyle(
+                                  //       fontSize: 13,
+                                  //       fontWeight: FontWeight.w400,
+                                  //       color: Colors.white,
+                                  //       fontFamily: 'sofia',
+                                  //     ),
+                                  //   ),
+                                ),
+                                height7,
+
+                                SideBarItem(
+                                  onTap: () async {
+                                    // This is parent_video_id
+                                    // .posts[.index].id
+                                    // print(__.posts[__.index].id.toString());
+
+                                    if(logged_in == false){
+                                      auth.showAuthBottomSheet(context);
+                                    }else{
+                                      PermissionStatus status =
+                                      await Permission.camera.request();
+                                      if (status.isDenied ||
+                                          status.isPermanentlyDenied) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => CustomAlertDialog(
+                                            title: 'Permission Denied',
+                                            action: 'Open Settings',
+                                            content:
+                                            'Please allow access to camera to record videos',
+                                            tap: () {
+                                              openAppSettings();
+                                            },
+                                          ),
+                                        );
+                                      } else {
+                                        PermissionStatus status =
+                                        await Permission.camera.request();
+                                        if (status.isDenied ||
+                                            status.isPermanentlyDenied) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                CustomAlertDialog(
+                                                  title: 'Permission Denied',
+                                                  action: 'Open Settings',
+                                                  content:
+                                                  'Please allow access to camera to record videos',
+                                                  tap: () {
+                                                    openAppSettings();
+                                                  },
+                                                ),
+                                          );
+                                        } else {
+                                          await availableCameras().then(
+                                                (value) =>
+                                                Navigator.of(context).pushNamed(
+                                                  CameraScreen.routeName,
+                                                  arguments: CameraScreenArgs(
+                                                      cameras: value, isReply: true, parent_video_id: __.posts[__.index][0].id.toString()),
+                                                ),
+                                          );
+                                        }
+                                      }
+                                    }
+                                  },
+                                  value: 0,
+                                  icon: Padding(
+                                    padding: EdgeInsets.only(bottom: 3),
+                                    child: Icon(
+                                      UniconsLine.comment,
+                                      color: Colors.white,
+                                      size: 22,
+                                    ),
+                                  ),
+                                  text: shrink,
+                                  //   Text(
+                                  //     .posts[.index].upvoteCount.toString(),
                                   //     style: TextStyle(
                                   //       fontSize: 13,
                                   //       fontWeight: FontWeight.w400,
@@ -248,7 +327,6 @@ class HomeSideBar extends StatelessWidget {
                                 //   ),
                                 //   text: shrink,
                                 // ),
-                                height7,
                                 if (isAdmin) ...[
                                   SideBarItem(
                                     onTap: () {
