@@ -36,10 +36,10 @@ class AuthBottomSheet extends StatelessWidget {
               TransparentButton(
                 title: 'Sign In',
                 onTap: () {
-                  if (home.isPlaying == true) {
+                  if (home.posts.isNotEmpty && home.isPlaying == true) {
                     home.videoController(home.index)?.pause();
                   }
-                  if (reply.isPlaying == true) {
+                  if (reply.posts.isNotEmpty && reply.isPlaying == true) {
                     reply.videoController(reply.index)?.pause();
                   }
                   Navigator.of(context).pushNamed(LoginScreen.routeName);

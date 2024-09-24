@@ -74,7 +74,7 @@ class ProfileHeader extends StatelessWidget {
                   await availableCameras().then(
                     (value) => Navigator.of(context).pushNamed(
                       CameraScreen.routeName,
-                      arguments: CameraScreenArgs(cameras: value),
+                      arguments: CameraScreenArgs(cameras: value,isReply: false),
                     ),
                   );
                 }

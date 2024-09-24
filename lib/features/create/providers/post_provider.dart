@@ -66,7 +66,7 @@ class PostProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> uploadVideo({required path}) async {
+  Future<void> uploadVideo({required path, required isReply, String? parent_video_id}) async {
     Dio dio = new Dio();
     _is_uploading_post = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -90,7 +90,12 @@ class PostProvider extends ChangeNotifier {
         },
       ),
     );
-    await createPost();
+    if(isReply && parent_video_id != null){
+      await createReply(parent_video_id: parent_video_id);
+    }else{
+      await createPost();
+    }
+
   }
 
   Future<void> createPost() async {
@@ -126,6 +131,42 @@ class PostProvider extends ChangeNotifier {
       },
     );
   }
+
+  Future<void> createReply({required String parent_video_id}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? hash = prefs.getString('hash');
+    var response = await _service.createReply(
+      hash: hash ?? '',
+      title: description.text,
+      is_private: '${_is_private}',
+      category_id: '${_category_id}',
+      parent_video_id: parent_video_id
+    );
+
+    response.listen(
+          (value) {
+        dynamic response = jsonDecode(value);
+        if (response['status'] == 'success') {
+          // log(response.toString());
+          // log(response['status']);
+          HapticFeedback.mediumImpact();
+          _is_uploading_post = false;
+          _upload_percentage_value = 0;
+          description.clear();
+          notifyListeners();
+          notification.show(
+            title: 'Your reply has been created!',
+            type: NotificationType.local,
+          );
+        } else {
+          HapticFeedback.mediumImpact();
+          _is_uploading_post = false;
+          notifyListeners();
+        }
+      },
+    );
+  }
+
 
   void initVideo({required XFile file}) {
     videoController = VideoPlayerController.file(File(file.path))

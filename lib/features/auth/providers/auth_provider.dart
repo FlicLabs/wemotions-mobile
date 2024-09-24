@@ -321,7 +321,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: ["profile", "email"],).signIn();
 
     final GoogleSignInAuthentication? googleAuth =
         await googleUser?.authentication;

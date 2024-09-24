@@ -42,6 +42,41 @@ class PostService {
     return response.stream.transform(utf8.decoder);
   }
 
+  Future<dynamic> createReply({
+    required String hash,
+    required String title,
+    String? category_id,
+    String? is_private,
+    required String parent_video_id
+  }) async {
+    print({
+      'title': title,
+      'hash': hash,
+      'is_available_in_public_feed': is_private!,
+      'parent_video_id' : parent_video_id,
+      'category_id': category_id!,
+    });
+    var uri = Uri.parse('${API.endpoint}${API.posts}');
+    var request = http.MultipartRequest('POST', uri);
+    request.fields.addAll({
+      'title': title,
+      'hash': hash,
+      'is_available_in_public_feed': is_private!,
+      'parent_video_id' : parent_video_id,
+      // 'category_id': category_id!,
+    });
+    // log('flutter: ${title}');
+    // log('flutter: ${hash}');
+    // log('flutter: ${category_id}');
+    // log('flutter: ${is_private}');
+    request.headers.addAll({'Flic-Token': token ?? ''});
+    var response = await request.send();
+    print(response);
+    print(response.reasonPhrase);
+    print(response.statusCode);
+    return response.stream.transform(utf8.decoder);
+  }
+
   uploadVideo({
     required upload_url,
     required video_path,
