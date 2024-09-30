@@ -19,8 +19,14 @@ class AppTextStyle {
     fontWeight: FontWeight.bold,
   );
 
+  static const subheadlineMedium = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    fontFamily: 'sofia',
+  );
+
   static const displaySmall = TextStyle(
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     fontFamily: 'sofia',
     color: Colors.grey,
@@ -33,7 +39,7 @@ class AppTextStyle {
   );
 
   static const labelMedium = TextStyle(
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: FontWeight.w400,
     fontFamily: 'sofia',
   );
@@ -85,12 +91,6 @@ class AppTextStyle {
   );
 
   //////////////////////////////////////////////////
-  static const normalRegularGrey14 = TextStyle(
-    fontFamily: 'sofia',
-    fontSize: 14,
-    fontWeight: FontWeight.normal,
-    color: Colors.grey,
-  );
   static const normalRegular14 = TextStyle(
     fontFamily: 'sofia',
     fontSize: 14,
@@ -154,6 +154,24 @@ class AppTextStyle {
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: Colors.white,
+  );
+  static const normalSemiBold18Black = TextStyle(
+    fontFamily: 'sofia',
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+  );
+  static const normalSemiBold28Black = TextStyle(
+    fontFamily: 'sofia',
+    fontSize: 28,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+  );
+  static const normalSemiBold20Black = TextStyle(
+    fontFamily: 'sofia',
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
   );
   static const normalSemiBold13 = TextStyle(
     fontFamily: 'sofia',

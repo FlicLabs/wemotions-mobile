@@ -30,6 +30,10 @@ class CustomRouter {
         return WelcomeScreen.route();
       case LoginScreen.routeName:
         return LoginScreen.route();
+      case OnboardingScreen.routeName:
+        return OnboardingScreen.route();
+      case VerifyScreen.routeName:
+        return VerifyScreen.route();
       case CreateUsernameScreen.routeName:
         return CreateUsernameScreen.route(
           args: settings.arguments as CreateUsernameScreenArgs,

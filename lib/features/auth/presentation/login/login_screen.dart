@@ -5,9 +5,9 @@ class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   static Route route() {
-    return PageRouteBuilder(
+    return CupertinoPageRoute(
       settings: const RouteSettings(name: routeName),
-      pageBuilder: (_, __, ___) => LoginScreen(),
+      builder: (_) =>  LoginScreen(),
     );
   }
 
@@ -17,12 +17,43 @@ class LoginScreen extends StatelessWidget {
     final profile = Provider.of<ProfileProvider>(context);
     return Consumer<AuthProvider>(builder: (_, __, ___) {
       return Scaffold(
-        appBar: AppBar(
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(Icons.clear_sharp),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(80),
+          child: Padding(
+            padding: const EdgeInsets.only(right: 20,left: 5),
+            child: AppBar(
+              toolbarHeight: 80,
+              centerTitle: true,
+              leading: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                  __.emailError = null;
+                  __.passwordError = null;
+                  Navigator.pop(context);
+                },
+                child: Icon(Icons.arrow_back,size: 24,),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: (){
+                        __.emailError = null;
+                        __.passwordError = null;
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                            context, SignUpScreen.routeName);
+                      },
+                      child: Text(
+                        'Sign up',
+                        style: AppTextStyle.normalRegular14.copyWith(color: Theme.of(context).primaryColorDark),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
         body: WillPopScope(
@@ -36,33 +67,56 @@ class LoginScreen extends StatelessWidget {
                   Expanded(
                     child: SingleChildScrollView(
                       child: Padding(
-                        padding: EdgeInsets.only(left: 20, right: 20),
+                        padding: EdgeInsets.only(left: 24, right: 24),
                         child: Form(
                           key: __.loginFormKey,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Image.asset(
-                                AppAsset.icon,
-                                height: 180,
-                                width: cs().width(context) / 2,
-                                color: Theme.of(context).hintColor,
-                              ),
+                              Text("Login", style: AppTextStyle.normalSemiBold28Black.copyWith(color: Theme.of(context).focusColor),),
+                              height8,
+                              Text("Login to join the conversation and connect with your community", style: AppTextStyle.subheadlineMedium.copyWith(color: Theme.of(context).primaryColorDark),),
+                              height24,
+                              Text("Email or username",style: AppTextStyle.labelMedium.copyWith(color:  Theme.of(context).indicatorColor),),
+                              height8,
                               AuthTextFormField(
                                 keyboardType: TextInputType.emailAddress,
-                                hintText: 'Username or email',
+                                hintText: 'Bryan_Reichert15@hotmail.com ',
                                 controller: __.email,
-                                validator: (String? v) {
-                                  if (v!.isNotEmpty) {
-                                    return null;
-                                  } else {
-                                    return 'Please enter your password';
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    __.emailError = 'Please enter your email or username';
+                                    return ''; // Return empty to suppress default error message
                                   }
+                                  __.emailError = null;
+                                  return null; // No error
                                 },
                               ),
+                              // Display error message if exists
+                              if (__.emailError != null) ...[
+                                height8,
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start  ,
+                                  children: [
+                                    Icon(Icons.error_outline_rounded, color: Colors.red.shade600,size: 20,),
+                                    width5,
+                                    Center(
+                                      child: Text(
+                                        __.emailError!,
+                                        style: TextStyle(color: Colors.red.shade600),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                               height20,
+                              Text("Password"),
+                              height8,
                               AuthTextFormField(
+                                maxLines: 1,
                                 keyboardType: TextInputType.visiblePassword,
-                                hintText: 'Password',
+                                hintText: '*********',
                                 obscureText: __.obscureText,
                                 controller: __.password,
                                 onChanged: (value) {
@@ -74,17 +128,37 @@ class LoginScreen extends StatelessWidget {
                                   },
                                   child: AuthObscureIcon(),
                                 ),
-                                validator: (String? v) {
-                                  if (v!.isNotEmpty) {
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    __.passwordError = 'Please enter your password';
+                                    return ''; // Return empty to suppress default error message
+                                  }else{
                                     if (__.incorrectPassword == true) {
-                                      return 'Credentials don\'t match ';
+                                      __.passwordError = 'Credentials don\'t match';
+                                      return '';
                                     }
-                                    return null;
-                                  } else {
-                                    return 'Please enter your password';
+                                    __.passwordError = null;
+                                    return null; // No error
                                   }
                                 },
                               ),
+                              if (__.passwordError != null) ...[
+                                height8,
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start  ,
+                                  children: [
+                                    Icon(Icons.error_outline_rounded, color: Colors.red.shade600,size: 20,),
+                                    width5,
+                                    Center(
+                                      child: Text(
+                                        __.passwordError!,
+                                        style: TextStyle(color: Colors.red.shade600),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                               height10,
                               GestureDetector(
                                 onTap: () {
@@ -95,95 +169,100 @@ class LoginScreen extends StatelessWidget {
                                   alignment: Alignment.centerRight,
                                   child: Text(
                                     'Forgot Password?',
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
+                                    style: TextStyle(color: Theme.of(context).primaryColorDark),
                                   ),
                                 ),
                               ),
-                              height40,
-                              if (__.loggedInAuthStatus ==
-                                  AuthStatus.Authenticating) ...[
-                                SizedBox(
-                                  height: 45,
-                                  width: 45,
-                                  child: CustomProgressIndicator(),
-                                )
-                              ],
-                              if (__.loggedInAuthStatus !=
-                                  AuthStatus.Authenticating) ...[
-                                AuthButton(
-                                  onTap: () async {
-                                    if (__.loginFormKey.currentState!
-                                        .validate()) {
-                                      await __.login(
-                                        email: __.email.text,
-                                        password: __.password.text,
-                                      );
-                                      profile.fetchProfile(
-                                        username: prefs_username!,
-                                      );
-                                    }
-                                  },
-                                  title: 'Login',
-                                ),
-                              ],
-                              height20,
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Divider(
-                                      color: Colors.grey.shade400,
-                                    ),
-                                  ),
-                                  width20,
-                                  Text(
-                                    'OR',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w200,
-                                      color: Theme.of(context).indicatorColor,
-                                      fontFamily: 'sofia',
-                                    ),
-                                  ),
-                                  width20,
-                                  Expanded(
-                                    child: Divider(
-                                      color: Colors.grey.shade400,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              height20,
-                              if (Platform.isIOS) ...[
-                                SocialButton(
-                                  title: 'Sign in with Apple',
-                                  icon: Icons.apple,
-                                  onTap: () async {
-                                    await __.signInWithApple();
-                                    profile.fetchProfile(
-                                        username: prefs_username!);
-                                  },
-                                )
-                              ],
-                              if (Platform.isAndroid) ...[
-                                SocialButton(
-                                  title: 'Sign in with Google',
-                                  icon: UniconsLine.google,
-                                  onTap: () async {
-                                    await __.signInWithGoogle();
-                                    profile.fetchProfile(
-                                      username: prefs_username!,
-                                    );
-                                  },
-                                )
-                              ]
+                              // height20,
+                              // Row(
+                              //   children: [
+                              //     Expanded(
+                              //       child: Divider(
+                              //         color: Colors.grey.shade400,
+                              //       ),
+                              //     ),
+                              //     width20,
+                              //     Text(
+                              //       'OR',
+                              //       style: TextStyle(
+                              //         fontSize: 18,
+                              //         fontWeight: FontWeight.w200,
+                              //         color: Theme.of(context).indicatorColor,
+                              //         fontFamily: 'sofia',
+                              //       ),
+                              //     ),
+                              //     width20,
+                              //     Expanded(
+                              //       child: Divider(
+                              //         color: Colors.grey.shade400,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                              // height20,
+                              // if (Platform.isIOS) ...[
+                              //   SocialButton(
+                              //     title: 'Sign in with Apple',
+                              //     icon: Icons.apple,
+                              //     onTap: () async {
+                              //       await __.signInWithApple();
+                              //       profile.fetchProfile(
+                              //           username: prefs_username!);
+                              //     },
+                              //   )
+                              // ],
+                              // if (Platform.isAndroid) ...[
+                              //   SocialButton(
+                              //     title: 'Sign in with Google',
+                              //     icon: UniconsLine.google,
+                              //     onTap: () async {
+                              //       await __.signInWithGoogle();
+                              //       profile.fetchProfile(
+                              //         username: prefs_username!,
+                              //       );
+                              //     },
+                              //   )
+                              // ]
                             ],
                           ),
                         ),
                       ),
                     ),
                   ),
-                  isKeyboardShowing ? shrink : LoginNav()
+                  // isKeyboardShowing ? shrink : LoginNav()
+                  Padding(
+                      padding: EdgeInsets.only(left: 24,right: 24,top: 32,bottom: 32),
+                    child: Column(children: [
+                      if (__.loggedInAuthStatus ==
+                          AuthStatus.Authenticating) ...[
+                        SizedBox(
+                          height: 45,
+                          width: 45,
+                          child: CustomProgressIndicator(),
+                        )
+                      ],
+                      if (__.loggedInAuthStatus !=
+                          AuthStatus.Authenticating) ...[
+                        AuthButtonWithColor(
+                          onTap: () async {
+                            if (__.loginFormKey.currentState!
+                                .validate()) {
+                              await __.login(
+                                email: __.email.text,
+                                password: __.password.text,
+                              );
+                              profile.fetchProfile(
+                                username: prefs_username!,
+                              );
+                            }
+                          },
+                          isGradient: __.email.text.isNotEmpty && __.password.text.isNotEmpty,
+                          title: 'Continue',
+                        ),
+                      ],
+                    ],),
+                  ),
+
                 ],
               ),
             ),

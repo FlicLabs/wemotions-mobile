@@ -17,6 +17,7 @@ class AppAsset {
   static const icon = "assets/images/icon_logo.png";
 
   static const icflip = "assets/svg/flip.svg";
+  static const iclink = "assets/svg/iclink.svg";
   static const icspeed = "assets/svg/speed.svg";
   static const icShare = "assets/svg/icShare.svg";
   static const ictimer = "assets/svg/timer.svg";
@@ -25,7 +26,7 @@ class AppAsset {
   static const icupload = "assets/svg/upload.svg";
   static const icuser = "assets/svg/user.svg";
   static const icprivacy = "assets/svg/privacy.svg";
-  static const eyeoff = "assets/svg/eyeoff.svg";
+  static const eyeClose = "assets/svg/eyeClose.svg";
   static const eyeOpen = "assets/svg/eyeOpen.svg";
   static const icanalytics = "assets/svg/analytics.svg";
   static const icwallet = "assets/svg/Wallet.svg";
@@ -64,9 +65,13 @@ class AppAsset {
   static const icChat = "assets/svg/icChat.svg";
   static const filter = "assets/svg/filter.svg";
   static const sphereLogo = "assets/svg/sphere_logo.svg";
+  static const wemotionsLogo = "assets/svg/wemotions_logo.svg";
   static const icglobe = "assets/svg/globe.svg";
   static const icedit = "assets/svg/edit.svg";
   static const iccommentnew = "assets/svg/comment-new.svg";
   static const icbookmark = "assets/svg/bookmark.svg";
   static const bin = "assets/svg/metro-bin.svg";
+  static const onboardingHero = "assets/svg/onboarding_hero.svg";
+  static const verifyEmailHero = "assets/svg/verifyEmail_hero.svg";
+
 }
