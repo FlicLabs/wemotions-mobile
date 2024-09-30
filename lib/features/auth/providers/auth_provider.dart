@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:socialverse/features/auth/domain/service/auth_service.dart';
 import 'dart:math' show Random;
 import 'package:crypto/crypto.dart';
+import 'package:socialverse/features/auth/presentation/sign_up/verify_screen.dart';
 
 
 enum AuthStatus {
@@ -51,6 +52,46 @@ class AuthProvider extends ChangeNotifier {
 
   set registeredAuthStatus(AuthStatus value) {
     _registeredAuthStatus = value;
+  }
+
+  String? _lastnameError = null;
+  String? get lastnameError => _lastnameError;
+
+  set lastnameError(String? error) {
+    _lastnameError = error;
+    notifyListeners();
+  }
+
+  String? _firstnameError = null;
+  String? get firstnameError => _firstnameError;
+
+  set firstnameError(String? error) {
+    _firstnameError = error;
+    notifyListeners();
+  }
+
+  String? _usernameError = null;
+  String? get usernameError => _usernameError;
+
+  set usernameError(String? error) {
+    _usernameError = error;
+    notifyListeners();
+  }
+
+  String? _emailError = null;
+  String? get emailError => _emailError;
+
+  set emailError(String? error) {
+    _emailError = error;
+    notifyListeners();
+  }
+
+  String? _passwordError = null;
+  String? get passwordError => _passwordError;
+
+  set passwordError(String? error) {
+    _passwordError = error;
+    notifyListeners();
   }
 
   bool _loading = false;
@@ -154,6 +195,7 @@ class AuthProvider extends ChangeNotifier {
 
         navKey.currentState!
           ..pop()
+          ..pop()
           ..pop();
 
         log('Login Successful');
@@ -206,11 +248,7 @@ class AuthProvider extends ChangeNotifier {
         _registeredAuthStatus = AuthStatus.Registered;
         notifyListeners();
 
-        navKey.currentState!
-          ..pop()
-          ..pop()
-          ..pop()
-          ..pop();
+        navKey.currentState!.pushNamed(VerifyScreen.routeName);
 
         notification.show(
           title: 'Kindly check your email to verify your account',

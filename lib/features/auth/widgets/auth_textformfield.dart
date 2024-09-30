@@ -16,6 +16,7 @@ class AuthTextFormField extends StatelessWidget {
     this.keyboardType,
     this.suffixIcon,
     this.onChanged,
+    this.fillColor
   });
 
   final VoidCallback? onTap;
@@ -31,30 +32,51 @@ class AuthTextFormField extends StatelessWidget {
   final bool? autofocus;
   final TextInputType? keyboardType;
   final Widget? suffixIcon;
+  final Color? fillColor;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      // expands: true,
       controller: controller,
       onChanged: onChanged,
+      maxLines: maxLines,
       keyboardType: keyboardType,
       autofocus: autofocus ?? false,
       obscureText: obscureText ?? false,
       decoration: textFormFieldDecoration.copyWith(
         hintText: hintText,
-        fillColor: Theme.of(context).hoverColor,
+        fillColor: fillColor != null ? fillColor : Theme.of(context).primaryColor,
         hintStyle: AppTextStyle.displaySmall.copyWith(
-          color: Theme.of(context).indicatorColor,
+          color: Colors.grey.shade500,
         ),
-        errorStyle:
-            Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 12),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFF7C7C7C)),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFF7C7C7C)),
+        ),
+        // Error style
+        errorStyle: TextStyle(
+          color: Colors.transparent, // Hide default error message
+          fontSize: 0,
+          height: 0// Set font size to 0 to hide
+        ),
+        // errorStyle:
+        //     Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 12,color: Colors.red),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.grey),
+          borderSide: const BorderSide(color: Color(0xFFA858F4)),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.red),
+          borderSide: BorderSide(color: Colors.red.shade600),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.red.shade600),
         ),
         suffixIcon: suffixIcon,
       ),

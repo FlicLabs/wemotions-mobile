@@ -1,4 +1,5 @@
 import 'package:socialverse/export.dart';
+import 'package:socialverse/features/auth/presentation/onboarding/onboarding_screen.dart';
 
 class AuthBottomSheet extends StatelessWidget {
   const AuthBottomSheet({Key? key}) : super(key: key);
@@ -11,7 +12,7 @@ class AuthBottomSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.only(left: 24,right: 24,top: 16,bottom: 16),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(30.0),
@@ -20,21 +21,61 @@ class AuthBottomSheet extends StatelessWidget {
             color: Theme.of(context).shadowColor,
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              height10,
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.pop(context);
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.grey.shade600,
+                        size: 24,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              height40,
               Text(
-                "Please sign in to continue",
+                "Join Us to Continue",
                 style: TextStyle(
                   fontFamily: 'sofia',
-                  fontSize: 18,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).indicatorColor,
                 ),
               ),
-              height20,
-              TransparentButton(
-                title: 'Sign In',
+              height24,
+              Text(
+                "To continue, please log in or sign up for an",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'sofia',
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                  color: Theme.of(context).indicatorColor,
+                ),
+              ),
+              Text(
+                "account. Don't miss out on the full experience!",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'sofia',
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                  color: Theme.of(context).indicatorColor,
+                ),
+              ),
+              height40,
+              AuthButtonWithColor(
+                isGradient: true,
+                title: 'Join Us',
                 onTap: () {
                   if (home.posts.isNotEmpty && home.isPlaying == true) {
                     home.videoController(home.index)?.pause();
@@ -42,7 +83,7 @@ class AuthBottomSheet extends StatelessWidget {
                   if (reply.posts.isNotEmpty && reply.isPlaying == true) {
                     reply.videoController(reply.index)?.pause();
                   }
-                  Navigator.of(context).pushNamed(LoginScreen.routeName);
+                  Navigator.of(context).pushNamed(OnboardingScreen.routeName);
                 },
               ),
               height40,

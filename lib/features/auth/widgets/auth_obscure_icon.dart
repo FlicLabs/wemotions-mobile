@@ -11,18 +11,18 @@ class AuthObscureIcon extends StatelessWidget {
             ? Padding(
                 padding: const EdgeInsets.all(14.0),
                 child: SvgPicture.asset(
-                  AppAsset.eyeOpen,
-                  height: 17,
-                  width: 17,
+                  AppAsset.eyeClose,
+                  height: 24,
+                  width: 24,
                   color: Theme.of(context).indicatorColor,
                 ),
               )
             : Padding(
                 padding: const EdgeInsets.all(14.0),
                 child: SvgPicture.asset(
-                  AppAsset.eyeoff,
-                  height: 23,
-                  width: 23,
+                  AppAsset.eyeOpen,
+                  height: 24,
+                  width: 24,
                   color: Theme.of(context).indicatorColor,
                 ),
               );

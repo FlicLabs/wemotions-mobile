@@ -1,13 +1,13 @@
 import 'package:socialverse/export.dart';
 
-class AuthButton extends StatelessWidget {
+class AuthButtonWithBorder extends StatelessWidget {
   final String title;
   final VoidCallback? onTap;
   final double? height;
   final double? width;
   final String? image;
   final BorderRadiusGeometry? radius;
-  const AuthButton({
+  const AuthButtonWithBorder({
     Key? key,
     required this.title,
     required this.onTap,
@@ -32,7 +32,7 @@ class AuthButton extends StatelessWidget {
         child: Center(
           child: Text(
             title,
-            style: AppTextStyle.normalSemiBold18Black,
+            style: AppTextStyle.normalSemiBold18.copyWith(color: Theme.of(context).focusColor),
             textAlign: TextAlign.center,
           ),
         ),

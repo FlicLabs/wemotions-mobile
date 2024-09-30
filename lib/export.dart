@@ -87,6 +87,7 @@ export 'package:socialverse/features/home/utils/share_to_item.dart';
 export 'package:socialverse/features/home/utils/video_sheet_item.dart';
 export 'package:socialverse/core/utils/style/text_style.dart';
 export 'package:socialverse/features/home/utils/inspired_dialog.dart';
+export 'package:socialverse/features/home/utils/report_submit_dialog.dart';
 export 'package:socialverse/core/widgets/custom_circular_avatar.dart';
 export 'package:socialverse/core/widgets/custom_network_image.dart';
 export 'package:socialverse/core/utils/network/network_dio.dart';
@@ -141,6 +142,8 @@ export 'package:socialverse/features/auth/widgets/auth_obscure_icon.dart';
 export 'package:socialverse/features/auth/widgets/social_button.dart';
 export 'package:socialverse/features/auth/widgets/auth_save_button.dart';
 export 'package:socialverse/features/auth/widgets/auth_aligned_text.dart';
+export 'package:socialverse/features/auth/widgets/auth_button_withBorder.dart';
+export 'package:socialverse/features/auth/widgets/auth_button_withColor.dart';
 export 'package:socialverse/features/home/widgets/reply_video/reply_play_button.dart';
 export 'package:socialverse/features/home/widgets/reply_video/reply_video_progress_indicator.dart';
 export 'package:socialverse/features/home/widgets/reply_video/reply_info_side_bar.dart';
@@ -148,6 +151,10 @@ export 'package:socialverse/features/home/widgets/reply_video/reply_side_bar.dar
 export 'package:socialverse/features/home/widgets/reply_video/reply_video_sheet.dart';
 export 'package:socialverse/features/home/widgets/home_video/pop_menu_slider.dart';
 export 'package:socialverse/features/home/widgets/reply_video/reply_playback_sheet.dart';
+export 'package:socialverse/features/home/helper/custom_page_view_physics.dart';
+export 'package:socialverse/features/home/utils/video_sheet.dart';
+export 'package:socialverse/features/home/widgets/home_video/last_page_gradient.dart';
+export 'package:socialverse/features/home/widgets/reply_video/reply_video_widget.dart';
 
 // Models, Services, Repositories
 export 'package:socialverse/features/auth/domain/models/user.dart';
@@ -180,6 +187,7 @@ export 'package:socialverse/features/home/domain/models/single_post_model.dart';
 export 'package:socialverse/core/providers/theme_provider.dart';
 export 'package:socialverse/features/auth/providers/auth_provider.dart';
 export 'package:socialverse/core/providers/bottom_nav_provider.dart';
+export 'package:socialverse/core/providers/report_provider.dart';
 export 'package:socialverse/features/home/providers/home_provider.dart';
 export 'package:socialverse/features/search/providers/search_provider.dart';
 export 'package:socialverse/features/home/providers/video_provider.dart';
@@ -203,7 +211,9 @@ export 'package:socialverse/features/home/providers/reply_provider.dart';
 
 // Screens
 export 'package:socialverse/features/auth/presentation/login/login_screen.dart';
-export 'package:socialverse/features/auth/presentation/signup_screen.dart';
+export 'package:socialverse/features/auth/presentation/sign_up/signup_screen.dart';
+export 'package:socialverse/features/auth/presentation/onboarding/onboarding_screen.dart';
+export 'package:socialverse/features/auth/presentation/sign_up/verify_screen.dart';
 export 'package:socialverse/core/presentation/welcome_screen.dart';
 export 'package:socialverse/features/home/presentation/home_screen.dart';
 export 'package:socialverse/features/profile/presentation/profile/profile_screen.dart';
