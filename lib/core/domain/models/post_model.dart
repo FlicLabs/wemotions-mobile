@@ -23,6 +23,9 @@ class Posts {
     required this.thumbnailUrl,
     required this.following,
     required this.pictureUrl,
+    required this.voting_count,
+    required this.votings,
+    required this.tags,
   });
 
   late int id;
@@ -48,6 +51,9 @@ class Posts {
   late final String thumbnailUrl;
   late bool following;
   late final String pictureUrl;
+  late int voting_count;
+  late List<Votings> votings;
+  late List<Tags> tags;
 
   Posts.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -73,6 +79,11 @@ class Posts {
     thumbnailUrl = json['thumbnail_url'];
     following = json['following'];
     pictureUrl = json['picture_url'];
+    voting_count = json['voting_count'];
+    votings =
+        List.from(json['votings']).map((e) => Votings.fromJson(e)).toList();
+        tags =
+        List.from(json['tags']).map((e) => Tags.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -99,6 +110,92 @@ class Posts {
     _data['bookmarked'] = bookmarked;
     _data['thumbnail_url'] = thumbnailUrl;
     _data['following'] = following;
+    _data['picture_url'] = pictureUrl;
+    _data['voting_count'] = voting_count;
+    _data['votings'] = votings.map((e) => e.toJson()).toList();
+    _data['tags'] = tags.map((e) => e.toJson()).toList();
+    return _data;
+  }
+}
+
+class Votings {
+  Votings({
+    required this.id,
+    required this.votingIcon,
+    required this.user,
+    required this.createdAt,
+  });
+  late final int id;
+  late final String votingIcon;
+  late final VotingUserData user;
+  late final String createdAt;
+
+  Votings.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    votingIcon = json['voting_icon'];
+    user = VotingUserData.fromJson(json['user']);
+    createdAt = json['created_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['id'] = id;
+    _data['voting_icon'] = votingIcon;
+    _data['user'] = user.toJson();
+    _data['created_at'] = createdAt;
+    return _data;
+  }
+}
+
+class Tags {
+  Tags({
+    required this.id,
+    required this.user,
+    required this.createdAt,
+  });
+  late final int id;
+  late final VotingUserData user;
+  late final String createdAt;
+
+  Tags.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    user = VotingUserData.fromJson(json['user']);
+    createdAt = json['created_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['id'] = id;
+    _data['user'] = user.toJson();
+    _data['created_at'] = createdAt;
+    return _data;
+  }
+}
+
+class VotingUserData {
+  VotingUserData({
+    required this.firstName,
+    required this.lastName,
+    required this.username,
+    required this.pictureUrl,
+  });
+  late final String firstName;
+  late final String lastName;
+  late final String username;
+  late final String pictureUrl;
+
+  VotingUserData.fromJson(Map<String, dynamic> json) {
+    firstName = json['first_name'];
+    lastName = json['last_name'];
+    username = json['username'];
+    pictureUrl = json['picture_url'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['first_name'] = firstName;
+    _data['last_name'] = lastName;
+    _data['username'] = username;
     _data['picture_url'] = pictureUrl;
     return _data;
   }

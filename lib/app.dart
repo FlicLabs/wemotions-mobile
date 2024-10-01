@@ -1,4 +1,3 @@
-
 import 'export.dart';
 
 class WeMotions extends StatefulWidget {
@@ -22,18 +21,17 @@ class _WeMotionsState extends State<WeMotions> {
     final reply = Provider.of<ReplyProvider>(context, listen: false);
 
     await home.createIsolate(token: token);
+    await home.getVotings();
     home.fetchingReplies = true;
     await home.createReplyIsolate(0, token: token);
     reply.posts = home.posts[0].sublist(1);
-    if(home.posts.length>1)
-    {
+    if (home.posts.length > 1) {
       await home.createReplyIsolate(1, token: token);
     }
-    if(home.posts.length>2)
-    {
+    if (home.posts.length > 2) {
       await home.createReplyIsolate(2, token: token);
     }
-    
+
     // reply.posts = home.posts[0].sublist(1);
   }
 
