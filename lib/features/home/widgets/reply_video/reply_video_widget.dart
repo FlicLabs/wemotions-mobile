@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:socialverse/export.dart';
 
 class ReplyVideoWidget extends StatefulWidget {
@@ -69,11 +71,10 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
           itemCount: reply.posts.length,
           itemBuilder: (context, index) {
             bool isReplyInit = false;
-            if(reply.videoController(index)!=null)
-            {
+            if (reply.videoController(index) != null) {
               isReplyInit = reply.videoController(index)!.value.isInitialized;
             }
-            
+
             return Stack(
               children: [
                 Listener(
@@ -111,34 +112,34 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                         },
                       );
                     },
-                    onLongPress: () async {
-                      HapticFeedback.mediumImpact();
-                      showModalBottomSheet(
-                        context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30.0),
-                            topRight: Radius.circular(30.0),
-                          ),
-                        ),
-                        builder: (context) {
-                          return ReplyVideoSheet(
-                            isUser:
-                                reply.posts[index].username != prefs_username,
-                            isFromFeed: true,
-                            video_id: reply.posts[index].id,
-                            category_name: '',
-                            category_count: 0,
-                            category_id: 0,
-                            category_photo: '',
-                            category_desc: '',
-                            title: reply.posts[index].title,
-                            video_link: reply.posts[index].videoLink,
-                            current_index: index,
-                          );
-                        },
-                      );
-                    },
+                    // onLongPress: () async {
+                    //   HapticFeedback.mediumImpact();
+                    //   showModalBottomSheet(
+                    //     context: context,
+                    //     shape: const RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.only(
+                    //         topLeft: Radius.circular(30.0),
+                    //         topRight: Radius.circular(30.0),
+                    //       ),
+                    //     ),
+                    //     builder: (context) {
+                    //       return ReplyVideoSheet(
+                    //         isUser:
+                    //             reply.posts[index].username != prefs_username,
+                    //         isFromFeed: true,
+                    //         video_id: reply.posts[index].id,
+                    //         category_name: '',
+                    //         category_count: 0,
+                    //         category_id: 0,
+                    //         category_photo: '',
+                    //         category_desc: '',
+                    //         title: reply.posts[index].title,
+                    //         video_link: reply.posts[index].videoLink,
+                    //         current_index: index,
+                    //       );
+                    //     },
+                    //   );
+                    // },
                     onTap: () {
                       if (reply.videoController(index)!.value.isPlaying) {
                         reply.isPlaying = false;
@@ -224,102 +225,144 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                 ),
                 Container(
                   margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.09),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  height: 100,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color.fromARGB(220, 155, 166, 225),
-                        Color.fromARGB(220, 155, 150, 151),
-                      ],
-                    ),
+                    top: MediaQuery.of(context).size.height * 0.09,
+                    left: MediaQuery.of(context).size.width * 0.15,
+                    right: MediaQuery.of(context).size.width * 0.15,
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Colors.transparent,
-                            image: DecorationImage(
-                                image: CachedNetworkImageProvider(
-                                    home.posts[home.index][0].thumbnailUrl),
-                                fit: BoxFit.cover),
-                          ),
-                          child: GestureDetector(
-                            child: Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: Colors.black26,
-                              ),
-                              child: const Icon(
-                                Icons.play_arrow_rounded,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                            ),
-                            onTap: () {
-                              // pageController.jumpToPage(0);
-                            },
-                          ),
-                        ),
+                  height: 120,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(20)
+                      // gradient: LinearGradient(
+                      //   begin: Alignment.topLeft,
+                      //   end: Alignment.bottomRight,
+                      //   colors: [
+                      //     Color.fromARGB(220, 155, 166, 225),
+                      //     Color.fromARGB(220, 155, 150, 151),
+                      //   ],
+                      // ),
                       ),
-                      Flexible(
-                        flex: 5,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 10,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                  text: 'Response to: ',
-                                  style: const TextStyle(
-                                      color: Color.fromARGB(255, 23, 23, 60),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              flex: 4,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 10,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    TextSpan(
-                                      text:
-                                          '${home.posts[home.index][0].firstName}${home.posts[home.index][0].lastName}@${home.posts[home.index][0].username}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 10,
+                                    RichText(
+                                      text: TextSpan(
+                                        text: 'Replying to ',
+                                        style: AppTextStyle.normalRegular16,
+                                        children: [
+                                          TextSpan(),
+                                        ],
                                       ),
+                                    ),
+                                    height20,
+                                    Row(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(80),
+                                          child: CachedNetworkImage(
+                                            fadeInDuration:
+                                                Duration(milliseconds: 0),
+                                            fadeOutDuration:
+                                                Duration(milliseconds: 0),
+                                            fit: BoxFit.cover,
+                                            height: 35,
+                                            width: 35,
+                                            imageUrl: home.posts[home.index][0]
+                                                .pictureUrl,
+                                            progressIndicatorBuilder: (context,
+                                                    url, downloadProgress) =>
+                                                Image.asset(
+                                              AppAsset.load,
+                                              fit: BoxFit.cover,
+                                              height: cs().height(context),
+                                            ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Container(
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              padding: const EdgeInsets.all(8),
+                                              child: SvgPicture.asset(
+                                                AppAsset.icuser,
+                                                color:
+                                                    Theme.of(context).cardColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        width5,
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                home.posts[home.index][0]
+                                                    .username,
+                                                style: AppTextStyle
+                                                    .normalRegular14),
+                                            height10
+                                          ],
+                                        )
+                                      ],
                                     ),
                                   ],
                                 ),
                               ),
-                              height5,
-                              Text(
-                                home.posts[home.index][0].title,
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 23, 23, 60),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
+                            ),
+                            Flexible(
+                              flex: 1,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.transparent,
+                                  image: DecorationImage(
+                                      image: CachedNetworkImageProvider(home
+                                          .posts[home.index][0].thumbnailUrl),
+                                      fit: BoxFit.cover),
                                 ),
-                                softWrap: true,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                                child: GestureDetector(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: Colors.black26,
+                                    ),
+                                    child: const Icon(
+                                      Icons.play_arrow_rounded,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    // pageController.jumpToPage(0);
+                                  },
+                                ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 )
               ],

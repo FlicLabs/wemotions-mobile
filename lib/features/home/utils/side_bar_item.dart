@@ -33,12 +33,9 @@ class SideBarItem extends StatelessWidget {
           Container(
             height: 45,
             width: 50,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.10),
-            ),
-            padding: EdgeInsets.all(value),
+            padding: EdgeInsets.all(10),
             child: icon,
+            decoration: BoxDecoration(color: Colors.transparent),
           ),
           video.isViewMode ? shrink : height2,
           text,

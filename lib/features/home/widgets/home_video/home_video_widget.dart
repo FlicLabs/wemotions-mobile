@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/home/helper/custom_page_view_physics.dart';
@@ -151,34 +154,34 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                           },
                         );
                       },
-                      onLongPress: () async {
-                        HapticFeedback.mediumImpact();
-                        showModalBottomSheet(
-                          context: context,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(30.0),
-                              topRight: Radius.circular(30.0),
-                            ),
-                          ),
-                          builder: (context) {
-                            return VideoSheet(
-                              isUser: home.posts[index][0].username !=
-                                  prefs_username,
-                              isFromFeed: widget.isFromFeed,
-                              video_id: home.posts[index][0].id,
-                              category_name: '',
-                              category_count: 0,
-                              category_id: 0,
-                              category_photo: '',
-                              category_desc: '',
-                              title: home.posts[index][0].title,
-                              video_link: home.posts[index][0].videoLink,
-                              current_index: index,
-                            );
-                          },
-                        );
-                      },
+                      // onLongPress: () async {
+                      //   HapticFeedback.mediumImpact();
+                      //   showModalBottomSheet(
+                      //     context: context,
+                      //     shape: const RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.only(
+                      //         topLeft: Radius.circular(30.0),
+                      //         topRight: Radius.circular(30.0),
+                      //       ),
+                      //     ),
+                      //     builder: (context) {
+                      //       return VideoSheet(
+                      //         isUser: home.posts[index][0].username !=
+                      //             prefs_username,
+                      //         isFromFeed: widget.isFromFeed,
+                      //         video_id: home.posts[index][0].id,
+                      //         category_name: '',
+                      //         category_count: 0,
+                      //         category_id: 0,
+                      //         category_photo: '',
+                      //         category_desc: '',
+                      //         title: home.posts[index][0].title,
+                      //         video_link: home.posts[index][0].videoLink,
+                      //         current_index: index,
+                      //       );
+                      //     },
+                      //   );
+                      // },
                       onTap: () {
                         if (home.videoController(index)!.value.isPlaying) {
                           home.isPlaying = false;
@@ -321,11 +324,6 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                   ]
                 ],
               );
-              /*
-                  When replies have been fetched, control moves to the reply provider.
-                  Since new video controller is created for horizontal feed, the video restarts.
-                  Happens due to the delay in fetching replies.
-                  */
             },
           ),
         ),
@@ -337,8 +335,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
               //     : reply.posts.length == 0
               //         ? 18
               //         : 0,
-              right: cs().width(context) * 0.5,
-              left: cs().width(context) * 0.5,
+              right: reply.posts.length + 1 == 1 ? 33 : 15,
               bottom: 70,
               child: AnimatedSmoothIndicator(
                 // controller: reply.home,
@@ -349,16 +346,16 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                     fixedCenter: true,
                     dotHeight: 10,
                     dotWidth: 10,
-                    activeDotColor: Colors.white,
+                    activeDotColor: Theme.of(context).hintColor,
                     dotColor: Colors.grey),
               ),
             ),
           ]
         ],
         Positioned(
-          right: cs().width(context) * 0.5,
-          left: cs().width(context) * 0.5,
-          bottom: 50,
+          right: 35,
+          // left: cs().width(context) * 0.5,
+          bottom: home.posts.length == 1 ? 68 : 50,
           // top: home.posts.length == 3
           //     ? 202
           //     : home.posts.length == 1
@@ -373,7 +370,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                 fixedCenter: true,
                 dotHeight: 10,
                 dotWidth: 10,
-                activeDotColor: Colors.white,
+                activeDotColor: Theme.of(context).hintColor,
                 dotColor: Colors.grey),
           ),
         ),

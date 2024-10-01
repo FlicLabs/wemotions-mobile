@@ -97,12 +97,13 @@ class _PostScreenState extends State<PostScreen> {
                                 )
                               ],
                             ),
-                            height20,
-                            PostListTile(),
+                            // height20,
+                            // PostListTile(),
                             height40,
                             Padding(
                               padding: EdgeInsets.only(bottom: 20),
                               child: TransparentButton(
+                                color: Constants.primaryColor,
                                 onTap: () {
                                   if (__.formKey.currentState!.validate()) {
                                     if (mounted) {
