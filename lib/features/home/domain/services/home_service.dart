@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 
 class HomeService {
-  Dio dio = new Dio();
+  Dio dio = new Dio(BaseOptions(followRedirects: false));
 
   getFeed(int page, String token) async {
     print('${API.endpoint}${API.feed}?page=$page');
@@ -151,6 +151,145 @@ class HomeService {
       ;
       // print(response.statusCode);
       // print(response.data);
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      return e.response?.statusCode;
+    }
+  }
+
+  getVotings() async {
+    print('${API.endpoint}get/votings');
+    try {
+      Response response = await dio.get(
+        '${API.endpoint}get/votings',
+        options: Options(headers: {'Flic-Token': token}),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      return e.response?.statusCode;
+    }
+  }
+
+  addVoting({required data}) async {
+    print('${API.endpoint}${API.posts}/add/votings');
+    try {
+      Response response = await dio.post(
+        '${API.endpoint}${API.posts}/add/votings',
+        data: data,
+        options: Options(
+          headers: {'Flic-Token': token},
+        ),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      return e.response?.statusCode;
+    }
+  }
+
+  removeVoting({required data}) async {
+    print('${API.endpoint}${API.posts}/remove/votings');
+    try {
+      Response response = await dio.delete(
+        '${API.endpoint}${API.posts}/remove/votings',
+        data: data,
+        options: Options(
+          headers: {'Flic-Token': token},
+        ),
+      );
+
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      return e.response?.statusCode;
+    }
+  }
+
+  updateVoting(int postId) async {
+    print('${API.endpoint}${API.posts}/$postId');
+    try {
+      Response response = await dio.get(
+        '${API.endpoint}${API.posts}/$postId',
+        options: Options(
+          headers: {'Flic-Token': token},
+        ),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      return e.response?.statusCode;
+    }
+  }
+
+  searchUserForTagging(String query) async {
+    print('${API.endpoint}search?type=user&query=$query');
+    try {
+      Response response = await dio.get(
+        '${API.endpoint}search?type=user&query=$query',
+        options: Options(
+          headers: {'Flic-Token': token},
+        ),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      return e.response?.statusCode;
+    }
+  }
+
+  tagUser({required data}) async{
+    print('${API.endpoint}${API.posts}/tag');
+    try {
+      Response response = await dio.post(
+        '${API.endpoint}${API.posts}/tag',
+        data: data,
+        options: Options(
+          headers: {'Flic-Token': token},
+        ),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      return e.response?.statusCode;
+    }
+  }
+
+  removeTag({required data}) async {
+    print('${API.endpoint}${API.posts}/remove/tag');
+    try {
+      Response response = await dio.delete(
+        '${API.endpoint}${API.posts}/remove/tag',
+        data: data,
+        options: Options(
+          headers: {'Flic-Token': token},
+        ),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      return e.response?.statusCode;
+    }
+  }
+
+  updateTags(int postId) async {
+    print('${API.endpoint}${API.posts}/$postId');
+    try {
+      Response response = await dio.get(
+        '${API.endpoint}${API.posts}/$postId',
+        options: Options(
+          headers: {'Flic-Token': token},
+        ),
+      );
       return response.data;
     } on DioError catch (e) {
       print(e.response?.statusCode);

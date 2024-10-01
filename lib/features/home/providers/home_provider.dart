@@ -1,6 +1,7 @@
 import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
+import 'package:socialverse/features/home/domain/models/voting_model.dart';
 
 enum RateItem { LOVE_IT, LIKE_IT, OKAY, DISLIKE_IT, HATE_IT }
 
@@ -702,7 +703,7 @@ class HomeProvider extends ChangeNotifier {
     createIsolate(token: token);
     // createReplyIsolate(posts_page++, token: token);
     if (_index < index) {
-      if (index - 3 >= 0 && posts[index-3].length > 1) {
+      if (index - 3 >= 0 && posts[index - 3].length > 1) {
         posts[index - 3].removeRange(1, posts[index - 3].length);
       }
     } else if (_index > index) {
@@ -862,4 +863,142 @@ class HomeProvider extends ChangeNotifier {
       }
     }
   }
+
+  //Voting Feature Data
+  List<VotingModel> _votings = [];
+  List<VotingModel> get votings => _votings;
+
+  String? _currentEmote;
+  String? get currentEmote => _currentEmote;
+
+  Future<void> getVotings() async {
+    final response = await _homeService.getVotings();
+
+    _votings = List<VotingModel>.from(
+        response['votings'].map((x) => VotingModel(voting: x, marked: false)));
+    notifyListeners();
+  }
+
+  Future<void> addVoting(int postId, String voting) async {
+    Map data = {
+      "post_id": postId,
+      "votingIcon": voting,
+    };
+    _currentEmote = voting;
+    await _homeService.addVoting(data: data);
+    await updateVoting(postId);
+    // votings.forEach(
+    //   (element) {
+    //     if (element.marked) {
+    //       element.marked = false;
+    //     }
+    //   },
+    // );
+
+    notifyListeners();
+  }
+
+  Future<void> removeVoting(int postId) async {
+    Map data = {
+      "post_id": postId,
+    };
+    await _homeService.removeVoting(data: data);
+    await updateVoting(postId);
+    notifyListeners();
+  }
+
+  Future<void> updateVoting(int postId) async {
+    final response = await _homeService.updateVoting(postId);
+    Posts newPost =
+        List.from(response['post']).map((e) => Posts.fromJson(e)).toList()[0];
+    posts[index][0].voting_count = newPost.voting_count;
+    posts[index][0].votings = newPost.votings;
+    notifyListeners();
+  }
+
+  //Tagging Feature Data
+  List<UserSearchModel> _searched_users = [];
+  List<UserSearchModel> get searched_users => _searched_users;
+
+  List<String> _selected_users = [];
+  List<String> get selected_users => _selected_users;
+
+  Future<void> selectUsers(String username) async {
+    if (selected_users.contains(username)) {
+      selected_users.remove(username);
+    } else {
+      selected_users.add(username);
+    }
+    notifyListeners();
+  }
+
+  final TextEditingController _searchController = TextEditingController();
+  TextEditingController get searchController => _searchController;
+
+  Timer? _debounce;
+  Timer? get debounce => _debounce;
+
+  void onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      if (query.isNotEmpty) {
+        searchUsers(query);
+      } else {
+        _searched_users = [];
+      }
+    });
+  }
+
+  Future<void> searchUsers(String query) async {
+    final response = await _homeService.searchUserForTagging(query);
+    _searched_users =
+        List.from(response).map((e) => UserSearchModel.fromJson(e)).toList();
+    notifyListeners();
+  }
+
+  Future<void> addTag(int postId) async {
+    for (String name in selected_users) {
+      Map data = {
+        "post_id": postId,
+        "username": name,
+      };
+      await _homeService.tagUser(data: data);
+    }
+    await updateTags(postId);
+
+    notifyListeners();
+  }
+
+  Future<void> removeTag(int postId, String username) async {
+    Map data = {
+      "post_id": postId,
+      "username": username,
+    };
+    await _homeService.removeTag(data: data);
+    await updateTags(postId);
+    notifyListeners();
+  }
+
+  Future<void> updateTags(int postId) async {
+    final response = await _homeService.updateTags(postId);
+    Posts newPost =
+        List.from(response['post']).map((e) => Posts.fromJson(e)).toList()[0];
+    posts[index][0].tags = newPost.tags;
+    notifyListeners();
+  }
+
+  // var items = <Item>[];
+  // var started = false;
+
+  // late AnimationController animationController;
+
+  // void makeItems(String emote) {
+  //   items.clear();
+  //   for (int i = 0; i < 15; i++) {
+  //     items.add(Item(emote));
+  //   }
+  //   animationController.reset();
+  //   animationController.forward();
+  //   notifyListeners();
+  // }
 }

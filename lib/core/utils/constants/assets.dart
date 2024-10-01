@@ -15,17 +15,18 @@ class AppAsset {
   static const home = "assets/images/home.png";
   static const imagePicker = "assets/images/imagePicker.png";
   static const icon = "assets/images/icon_logo.png";
+  static const noVideos = "assets/images/no_videos.png";
 
   static const icflip = "assets/svg/flip.svg";
   static const iclink = "assets/svg/iclink.svg";
   static const icspeed = "assets/svg/speed.svg";
-  static const icShare = "assets/svg/icShare.svg";
+  static const icShare = "assets/svg/share.svg";
   static const ictimer = "assets/svg/timer.svg";
   static const icflash = "assets/svg/flash.svg";
   static const icflash2 = "assets/svg/flash2.svg";
   static const icupload = "assets/svg/upload.svg";
   static const icuser = "assets/svg/user.svg";
-  static const icprivacy = "assets/svg/privacy.svg";
+  static const icprivacy = "assets/svg/privacy_policy.svg";
   static const eyeClose = "assets/svg/eyeClose.svg";
   static const eyeOpen = "assets/svg/eyeOpen.svg";
   static const icanalytics = "assets/svg/analytics.svg";
@@ -41,7 +42,7 @@ class AppAsset {
   static const iclike = "assets/svg/like.svg";
   static const iccomment = "assets/svg/message.svg";
   static const icadd = "assets/svg/icadd.svg";
-  static const icsetting = "assets/svg/setting.svg";
+  static const icsetting = "assets/svg/settings.svg";
   static const iclogout = "assets/svg/logout.svg";
   static const icemail = "assets/svg/email.svg";
   static const icemjois = "assets/svg/emojis.svg";
@@ -73,5 +74,13 @@ class AppAsset {
   static const bin = "assets/svg/metro-bin.svg";
   static const onboardingHero = "assets/svg/onboarding_hero.svg";
   static const verifyEmailHero = "assets/svg/verifyEmail_hero.svg";
+  static const icreply = "assets/svg/reply-post.svg";
+  static const icoptions = "assets/svg/options.svg";
+  static const ichome_active = "assets/svg/home-active.svg";
+  static const icuser_active = "assets/svg/user-active.svg";
+  static const iccopy_link = "assets/svg/copy-link.svg";
+  static const icreport = "assets/svg/report.svg";
+  static const icdownload = "assets/svg/download.svg";
+  static const icterms = "assets/svg/terms.svg";
 
 }
