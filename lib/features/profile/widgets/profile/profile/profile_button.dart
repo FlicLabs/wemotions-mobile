@@ -12,13 +12,26 @@ class ProfileButton extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(left: 40, right: 40),
           child: SizedBox(
-            width: cs().height(context) * 0.75,
+            width: cs().width(context) * 0.4,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
                   child: TransparentButton(
                     title: 'Edit Profile',
+                    isBorder: false,
+                    gradient: LinearGradient(
+                        colors: [
+                          Color(0xFFA858F4),
+                          Color(0xFF9032E6),
+                        ],
+                        stops: [
+                          0.0,
+                          1.0
+                        ],
+                        begin: FractionalOffset.topCenter,
+                        end: FractionalOffset.bottomCenter,
+                        tileMode: TileMode.repeated),
                     onTap: () {
                       Navigator.of(context).pushNamed(
                         EditProfileScreen.routeName,

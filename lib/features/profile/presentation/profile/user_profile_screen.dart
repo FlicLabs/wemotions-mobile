@@ -63,7 +63,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   void initState() {
     super.initState();
     fetchData();
-    _controller = TabController(length: 2, vsync: this);
+    _controller = TabController(length: 1, vsync: this);
 
     _posts = ScrollController();
 
@@ -161,6 +161,21 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                             children: [
                               Expanded(
                                 child: ProfileStatsItem(
+                                    value: __.user.followerCount,
+                                    label: 'Followers',
+                                    onTap: () {
+                                      if (__.user.followerCount != 0) {
+                                        Navigator.of(context).pushNamed(
+                                          FollowersScreen.routeName,
+                                          arguments: FollowersScreenArgs(
+                                            username: __.user.username,
+                                          ),
+                                        );
+                                      }
+                                    }),
+                              ),
+                              Expanded(
+                                child: ProfileStatsItem(
                                   value: __.user.followingCount,
                                   label: 'Following',
                                   onTap: () {
@@ -177,28 +192,13 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               ),
                               Expanded(
                                 child: ProfileStatsItem(
-                                    value: __.user.followerCount,
-                                    label: 'Followers',
-                                    onTap: () {
-                                      if (__.user.followerCount != 0) {
-                                        Navigator.of(context).pushNamed(
-                                          FollowersScreen.routeName,
-                                          arguments: FollowersScreenArgs(
-                                            username: __.user.username,
-                                          ),
-                                        );
-                                      }
-                                    }),
-                              ),
-                              Expanded(
-                                child: ProfileStatsItem(
                                   value: __.user.postCount,
-                                  label: 'Posts',
+                                  label: 'Videos',
                                 ),
                               ),
                             ],
                           ),
-                          height10,
+                          height20,
                           UserProfileButton(
                             isFollowing: widget.isFollowing,
                             username: __.user.username,
@@ -211,6 +211,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                             youtube: __.user.youtubeUrl,
                             site: __.user.website,
                           ),
+                          height20,
                         ],
                       ),
                     ),
@@ -218,15 +219,20 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                       delegate: _SliverAppBarDelegate(
                         TabBar(
                           controller: _controller,
-                          labelStyle: Theme.of(context).textTheme.labelLarge,
-                          unselectedLabelStyle:
-                              Theme.of(context).textTheme.labelMedium,
-                          indicatorColor: Theme.of(context).indicatorColor,
+                          labelStyle: AppTextStyle.bodyLarge
+                              .copyWith(color: Constants.primaryColor),
+                          labelColor: Constants.primaryColor,
+                          unselectedLabelStyle: AppTextStyle.bodyLarge
+                              .copyWith(color: Theme.of(context).focusColor),
+                          unselectedLabelColor: Theme.of(context).focusColor,
+                          indicatorColor: Theme.of(context).hintColor,
                           indicatorSize: TabBarIndicatorSize.label,
+                          indicatorWeight: 2.5,
+                          indicatorPadding: EdgeInsets.symmetric(vertical: 6),
                           dividerColor: Colors.transparent,
                           tabs: [
-                            Tab(text: 'Posts'),
-                            Tab(text: 'Liked'),
+                            Tab(text: 'Videos'),
+                            // Tab(text: 'Liked'),
                           ],
                         ),
                       ),
@@ -240,18 +246,20 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                     PostsGrid(
                       posts: __.posts,
                       isFromProfile: false,
+                      likedTab: false,
+                      isSelfProfile: false,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Text(
-                        'This user\'s liked videos are private',
-                        style: Theme.of(context)
-                            .textTheme
-                            .displaySmall!
-                            .copyWith(fontSize: 15),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(20),
+                    //   child: Text(
+                    //     'This user\'s liked videos are private',
+                    //     style: Theme.of(context)
+                    //         .textTheme
+                    //         .displaySmall!
+                    //         .copyWith(fontSize: 15),
+                    //     textAlign: TextAlign.center,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

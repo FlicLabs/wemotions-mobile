@@ -19,90 +19,140 @@ class AccountInformationScreen extends StatelessWidget {
     final profile = Provider.of<ProfileProvider>(context);
     return Consumer<AccountProvider>(
       builder: (_, __, ___) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'Account Info',
-              style: Theme.of(context).textTheme.bodyLarge,
-              textAlign: TextAlign.start,
+        String updatedUsername = prefs_username!;
+        return WillPopScope(
+          onWillPop: () {
+            Navigator.pop(context);
+            __.username.text = profile.user.username;
+            return Future.value(false);
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(
+                'Account Info',
+                style: Theme.of(context).textTheme.bodyLarge,
+                textAlign: TextAlign.start,
+              ),
             ),
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Column(
-              children: [
-                height20,
-                ProfileAlignedText(
-                  title: 'Username',
-                ),
-                height5,
-                ProfileTextFormField(
-                  controller: __.username,
-                  hintText: 'Username',
-                  readOnly: true,
-                  enabled: true,
-                  onTap: () {
-                    __.edited = false;
-                    Navigator.of(context).pushNamed(
-                      ChangeUsernameScreen.routeName,
-                      arguments: ChangeUsernameScreenArgs(
-                        username: prefs_username!,
+            body: Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          height20,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ProfileAlignedText(
+                                  title: 'First name',
+                                ),
+                                height5,
+                                ProfileTextFormField(
+                                  enabled: true,
+                                  hintText: 'First name',
+                                  controller: __.firstName,
+                                ),
+                              ],
+                            ),
+                          ),
+                          width20,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // AuthAlignedText(title: 'Last Name'),
+                                ProfileAlignedText(
+                                  title: 'Last name',
+                                ),
+                                height5,
+                                ProfileTextFormField(
+                                  enabled: true,
+                                  hintText: 'Last name',
+                                  controller: __.lastName,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                ),
-                height20,
-                ProfileAlignedText(
-                  title: 'Email',
-                ),
-                height5,
-                ProfileTextFormField(
-                  controller: __.email,
-                  hintText: 'Username',
-                  readOnly: true,
-                  enabled: false,
-                  onTap: () {
-                    // Navigator.of(context).pushNamed(
-                    //   EditUsernameScreen.routeName,
-                    //   arguments: EditUsernameScreenArgs(
-                    //     username: prefs_username!,
-                    //   ),
-                    // );
-                  },
-                ),
-                height10,
-                Text(
-                  'Your email ${__.email.text} cannot be changed at the moment',
-                  style: Theme.of(context)
-                      .textTheme
-                      .displaySmall!
-                      .copyWith(fontSize: 15),
-                ),
-                height40,
-                IconListTile(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => CustomAlertDialog(
-                        title: prefs_username!,
-                        action: 'Log Out',
-                        content: 'Are you sure you want to log out of Vible?',
-                        tap: () {
-                          HapticFeedback.heavyImpact();
-                          nav.currentPage = 0;
-                          profile.user = ProfileModel.empty;
-                          profile.posts.clear();
-                          account.logout(context);
+                      height20,
+                      ProfileAlignedText(
+                        title: 'Username',
+                      ),
+                      height5,
+                      ProfileTextFormField(
+                        controller: __.username,
+                        hintText: 'Username',
+                        // readOnly: true,
+                        enabled: true,
+                        onChanged: (val) {
+                          updatedUsername = val;
+                          if (prefs_username! == updatedUsername) {
+                            __.edited = false;
+                          } else {
+                            __.edited = true;
+                          }
+                        },
+                        // onTap: () {
+                        //   __.edited = false;
+                        //   Navigator.of(context).pushNamed(
+                        //     ChangeUsernameScreen.routeName,
+                        //     arguments: ChangeUsernameScreenArgs(
+                        //       username: prefs_username!,
+                        //     ),
+                        //   );
+                        // },
+                      ),
+                      height20,
+                      ProfileAlignedText(
+                        title: 'Email',
+                      ),
+                      height5,
+                      ProfileTextFormField(
+                        controller: __.email,
+                        hintText: 'Username',
+                        readOnly: true,
+                        enabled: false,
+                        onTap: () {
+                          // Navigator.of(context).pushNamed(
+                          //   EditUsernameScreen.routeName,
+                          //   arguments: EditUsernameScreenArgs(
+                          //     username: prefs_username!,
+                          //   ),
+                          // );
                         },
                       ),
-                    );
-                  },
-                  svg: AppAsset.iclogout,
-                  label: 'Log out',
-                  trailing: shrink,
-                  color: Colors.red,
-                ),
-              ],
+                      height10,
+                      Text(
+                        'Your email ${__.email.text} cannot be changed at the moment',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(fontSize: 15),
+                      ),
+                    ],
+                  ),
+                  AuthButtonWithColor(
+                      title: 'Confirm',
+                      onTap: () async {
+                        final response = await __.updateUsername(context);
+                        if (response == 200 || response == 201) {
+                          await profile.fetchProfile(
+                            username: prefs_username!,
+                            forceRefresh: true,
+                          );
+                        }
+                      },
+                      isGradient: __.username.text.isNotEmpty && __.edited)
+                ],
+              ),
             ),
           ),
         );

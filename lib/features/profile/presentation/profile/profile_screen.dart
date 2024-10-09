@@ -123,6 +123,21 @@ class _ProfileScreenState extends State<ProfileScreen>
                             children: [
                               Expanded(
                                 child: ProfileStatsItem(
+                                    value: __.user.followerCount,
+                                    label: 'Followers',
+                                    onTap: () {
+                                      if (__.user.followerCount != 0) {
+                                        Navigator.of(context).pushNamed(
+                                          FollowersScreen.routeName,
+                                          arguments: FollowersScreenArgs(
+                                            username: __.user.username,
+                                          ),
+                                        );
+                                      }
+                                    }),
+                              ),
+                              Expanded(
+                                child: ProfileStatsItem(
                                   value: __.user.followingCount,
                                   label: 'Following',
                                   onTap: () {
@@ -139,30 +154,16 @@ class _ProfileScreenState extends State<ProfileScreen>
                               ),
                               Expanded(
                                 child: ProfileStatsItem(
-                                    value: __.user.followerCount,
-                                    label: 'Followers',
-                                    onTap: () {
-                                      if (__.user.followerCount != 0) {
-                                        Navigator.of(context).pushNamed(
-                                          FollowersScreen.routeName,
-                                          arguments: FollowersScreenArgs(
-                                            username: __.user.username,
-                                          ),
-                                        );
-                                      }
-                                    }),
-                              ),
-                              Expanded(
-                                child: ProfileStatsItem(
                                   value: __.user.postCount,
-                                  label: 'Posts',
+                                  label: 'Videos',
                                   onTap: () {},
                                 ),
                               ),
                             ],
                           ),
-                          height10,
+                          height20,
                           ProfileButton(),
+                          height10,
                           Bio(bio: __.user.bio),
                           ProfileInfo(
                             instagram: __.user.instagramUrl,
@@ -177,16 +178,21 @@ class _ProfileScreenState extends State<ProfileScreen>
                       delegate: _SliverAppBarDelegate(
                         TabBar(
                           controller: _controller,
-                          labelStyle: Theme.of(context).textTheme.labelLarge,
-                          unselectedLabelStyle:
-                              Theme.of(context).textTheme.labelMedium,
-                          indicatorColor: Theme.of(context).indicatorColor,
+                          labelStyle: AppTextStyle.bodyLarge
+                              .copyWith(color: Constants.primaryColor),
+                          labelColor: Constants.primaryColor,
+                          unselectedLabelStyle: AppTextStyle.bodyLarge
+                              .copyWith(color: Theme.of(context).focusColor),
+                          unselectedLabelColor: Theme.of(context).focusColor,
+                          indicatorColor: Theme.of(context).hintColor,
                           indicatorSize: TabBarIndicatorSize.label,
+                          indicatorWeight: 2.5,
+                          indicatorPadding: EdgeInsets.symmetric(vertical: 6),
                           dividerColor: Colors.transparent,
                           splashFactory: NoSplash.splashFactory,
                           tabs: [
-                            Tab(text: 'Posts'),
-                            Tab(text: 'Liked'),
+                            Tab(text: 'Videos'),
+                            Tab(text: 'Motions'),
                           ],
                         ),
                       ),
@@ -200,10 +206,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                     PostsGrid(
                       posts: __.posts,
                       isFromProfile: true,
+                      likedTab: false,
                     ),
                     PostsGrid(
                       posts: __.likedPosts,
                       isFromProfile: true,
+                      likedTab: true,
                     ),
                   ],
                 ),

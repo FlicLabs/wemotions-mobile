@@ -21,13 +21,17 @@ class ProfileStatsItem extends StatelessWidget {
         children: [
           Text(
             '$value',
-            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                  color: value == 0 ? Theme.of(context).cardColor : null,
-                ),
+            style: AppTextStyle.normalBold24.copyWith(
+              color: value == 0
+                  ? Theme.of(context).focusColor.withOpacity(0.5)
+                  : Theme.of(context).focusColor,
+            ),
           ),
           Text(
             label,
-            style: Theme.of(context).textTheme.displaySmall,
+            style: AppTextStyle.normalBold14.copyWith(
+              color: Theme.of(context).focusColor.withOpacity(0.8),
+            ),
           ),
         ],
       ),

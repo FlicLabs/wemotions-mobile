@@ -11,6 +11,7 @@ class IconListTile extends StatelessWidget {
     this.color,
     this.height,
     this.width,
+    this.textStyle,
   }) : super(key: key);
 
   final VoidCallback onTap;
@@ -21,6 +22,7 @@ class IconListTile extends StatelessWidget {
   final Color? color;
   final double? height;
   final double? width;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,9 @@ class IconListTile extends StatelessWidget {
           ),
       title: Text(
         label,
-        style: Theme.of(context).textTheme.displayMedium,
+        style: textStyle ??
+            AppTextStyle.normalBold18
+                .copyWith(color: Theme.of(context).focusColor.withOpacity(0.8)),
       ),
       trailing: trailing ??
           Icon(

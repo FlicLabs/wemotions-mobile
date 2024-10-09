@@ -14,13 +14,17 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final nav = Provider.of<BottomNavBarProvider>(context);
+    final account = Provider.of<AccountProvider>(context);
+    final profile = Provider.of<ProfileProvider>(context);
     return Consumer<SettingsProvider>(
       builder: (_, __, ___) {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              'Settings & Privacy',
-              style: Theme.of(context).textTheme.bodyLarge,
+              'Settings',
+              style: AppTextStyle.normalBold24
+                  .copyWith(color: Theme.of(context).focusColor),
               textAlign: TextAlign.start,
             ),
           ),
@@ -32,8 +36,9 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   height20,
                   Text(
-                    'ACCOUNT',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    'Account',
+                    style: AppTextStyle.normalBold24
+                        .copyWith(color: Theme.of(context).focusColor, fontSize: 20),
                   ),
                   IconListTile(
                     onTap: () {
@@ -41,14 +46,15 @@ class SettingsScreen extends StatelessWidget {
                         ManageAccountScreen.routeName,
                       );
                     },
-                    svg: AppAsset.icuser,
+                    svg: AppAsset.icuser_active,
+                    color: Theme.of(context).focusColor.withOpacity(0.8),
                     label: 'Manage Account',
                   ),
-                  Divider(color: Colors.grey),
-                  height10,
+                  // Divider(color: Colors.grey),
+                  height20,
                   Text(
-                    'GENERAL',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    'General',
+                    style: AppTextStyle.normalBold24.copyWith(color: Theme.of(context).focusColor,fontSize: 20),
                   ),
                   // CustomListTile(
                   //   onTap: () async {
@@ -77,74 +83,6 @@ class SettingsScreen extends StatelessWidget {
                   //   height: 24,
                   // ),
                   IconListTile(
-                    onTap: () async {
-                      await launchUrl(
-                        Uri.parse(
-                          'http://indoctrinate.holyvible.com/',
-                        ),
-                        mode: LaunchMode.inAppWebView,
-                      );
-                    },
-                    svg: AppAsset.icglobe,
-                    label: 'Explore the Holy Vible',
-                    trailing: shrink,
-                    height: 24,
-                  ),
-                  IconListTile(
-                    onTap: () async {
-                      await launchUrl(
-                        Uri.parse(
-                          'http://app.holyvible.com/',
-                        ),
-                        mode: LaunchMode.inAppWebView,
-                      );
-                    },
-                    svg: AppAsset.icglobe,
-                    label: 'Search for the best vibes',
-                    trailing: shrink,
-                    height: 24,
-                  ),
-                  IconListTile(
-                    onTap: () async {
-                      await launchUrl(
-                        Uri.parse(
-                          'http://holyvibles.com/',
-                        ),
-                        mode: LaunchMode.inAppWebView,
-                      );
-                    },
-                    svg: AppAsset.icglobe,
-                    label: 'One Vibe Tribe',
-                    trailing: shrink,
-                    height: 24,
-                  ),
-                  IconListTile(
-                    onTap: () async {
-                      await launchUrl(
-                        Uri.parse(
-                          'https://holyvible.com/privacy-policy',
-                        ),
-                        mode: LaunchMode.inAppWebView,
-                      );
-                    },
-                    svg: AppAsset.icprivacy,
-                    label: 'Privacy Policy',
-                    trailing: shrink,
-                  ),
-                  IconListTile(
-                    onTap: () async {
-                      await launchUrl(
-                        Uri.parse(
-                          'https://holyvible.com/terms-and-conditions',
-                        ),
-                        mode: LaunchMode.inAppWebView,
-                      );
-                    },
-                    svg: AppAsset.icdigital,
-                    label: 'Terms & Conditions',
-                    trailing: shrink,
-                  ),
-                  IconListTile(
                     onTap: () {
                       Navigator.pushNamed(
                         context,
@@ -152,8 +90,62 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                     svg: AppAsset.ictheme,
+                    color: Theme.of(context).focusColor.withOpacity(0.8),
                     label: 'Theme',
                   ),
+                  IconListTile(
+                    onTap: () async {
+                      // await launchUrl(
+                      //   Uri.parse(
+                      //     '',
+                      //   ),
+                      //   mode: LaunchMode.inAppWebView,
+                      // );
+                    },
+                    svg: AppAsset.icprivacy,
+                    label: 'Privacy Policy',
+                    color: Theme.of(context).focusColor.withOpacity(0.8),
+                    trailing: shrink,
+                  ),
+                  IconListTile(
+                    onTap: () async {
+                      // await launchUrl(
+                      //   Uri.parse(
+                      //     '',
+                      //   ),
+                      //   mode: LaunchMode.inAppWebView,
+                      // );
+                    },
+                    svg: AppAsset.icterms,
+                    label: 'Terms & Conditions',
+                    color: Theme.of(context).focusColor.withOpacity(0.8),
+                    trailing: shrink,
+                  ),
+                  IconListTile(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => CustomAlertDialog(
+                          title: prefs_username!,
+                          action: 'Sign Out',
+                          content: 'Are you sure you want to log out of Vible?',
+                          tap: () {
+                            HapticFeedback.heavyImpact();
+                            nav.currentPage = 0;
+                            profile.user = ProfileModel.empty;
+                            profile.posts.clear();
+                            account.logout(context);
+                          },
+                        ),
+                      );
+                    },
+                    svg: AppAsset.iclogout,
+                    label: 'Sign out',
+                    textStyle:  AppTextStyle.normalBold18.copyWith(color: Colors.red),
+                    trailing: shrink,
+                    color: Colors.red,
+                  ),
+                  
                   // Divider(color: Colors.grey),
                 ],
               ),

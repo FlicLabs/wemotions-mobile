@@ -15,28 +15,10 @@ class ProfileHeader extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () async {
-              PermissionStatus status = await Permission.contacts.request();
-              if (status.isDenied || status.isPermanentlyDenied) {
-                showDialog(
-                  context: context,
-                  builder: (context) => CustomAlertDialog(
-                    title: 'Permission Denied',
-                    action: 'Open Settings',
-                    content:
-                        'Please allow access to contacts to invite friends',
-                    tap: () {
-                      openAppSettings();
-                    },
-                  ),
-                );
-              } else {
-                Navigator.of(context).pushNamed(
-                  AddFriendsScreen.routeName,
-                );
-              }
+
             },
             child: Icon(
-              UniconsLine.link_add,
+              UniconsLine.link_alt,
               color: Theme.of(context).indicatorColor,
             ),
           ),

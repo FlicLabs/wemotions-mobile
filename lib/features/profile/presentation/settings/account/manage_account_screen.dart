@@ -20,6 +20,8 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
     final edit = Provider.of<AccountProvider>(context, listen: false);
     final profile = Provider.of<ProfileProvider>(context, listen: false);
     edit.username.text = profile.user.username;
+    edit.firstName.text = profile.user.firstName;
+    edit.lastName.text = profile.user.lastName;
     edit.email.text = prefs_email!;
     super.didChangeDependencies();
   }
@@ -30,7 +32,8 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
       appBar: AppBar(
         title: Text(
           'Manage Account',
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: AppTextStyle.normalBold24
+              .copyWith(color: Theme.of(context).focusColor),
           textAlign: TextAlign.start,
         ),
       ),
@@ -48,11 +51,32 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
             ),
             CustomListTile(
               onTap: () {
+                // Navigator.of(context).pushNamed(
+                //   AccountInformationScreen.routeName,
+                // );
+              },
+              label: 'Change Password',
+            ),
+            CustomListTile(
+              onTap: () {
+                // Navigator.of(context).pushNamed(
+                //   AccountInformationScreen.routeName,
+                // );
+              },
+              label: 'Blocked User',
+            ),
+            CustomListTile(
+              onTap: () {
                 Navigator.of(context).pushNamed(
                   DataControlsScreen.routeName,
                 );
               },
               label: 'Delete Account',
+              textStyle: AppTextStyle.normalBold18.copyWith(color: Colors.red),
+              trailing: Icon(
+                Icons.keyboard_arrow_right_sharp, 
+                color: Colors.red,
+              ),
             ),
           ],
         ),
