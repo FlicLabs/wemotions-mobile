@@ -5,12 +5,13 @@ class CustomListTile extends StatelessWidget {
     Key? key,
     required this.onTap,
     required this.label,
-    this.trailing,
+    this.trailing, this.textStyle,
   }) : super(key: key);
 
   final VoidCallback onTap;
   final String label;
   final Widget? trailing;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,8 @@ class CustomListTile extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(vertical: 0),
       title: Text(
         label,
-        style: Theme.of(context).textTheme.displayMedium,
+        style: textStyle?? AppTextStyle.normalBold18
+            .copyWith(color: Theme.of(context).focusColor.withOpacity(0.8)),
       ),
       trailing: trailing ??
           Icon(

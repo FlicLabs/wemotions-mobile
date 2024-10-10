@@ -6,12 +6,13 @@ class PostGridItem extends StatelessWidget {
     required this.onTap,
     required this.imageUrl,
     required this.createdAt,
-    required this.viewCount,
+    required this.viewCount, required this.voteCount,
   }) : super(key: key);
   final VoidCallback onTap;
   final String imageUrl;
   final int createdAt;
   final int viewCount;
+  final int voteCount;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +35,34 @@ class PostGridItem extends StatelessWidget {
           Positioned(
             bottom: 5,
             left: 5,
+            child: Row(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      AppAsset.icon,
+                      color: Colors.white,
+                      width: 16,
+                      height: 16,
+                    ),
+                    width2,
+                    Text(
+                      '${voteCount}',
+                      style: AppTextStyle.bodySmall.copyWith(
+                        fontSize: 13,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 5,
+            right: 5,
             child: Row(
               children: [
                 Row(

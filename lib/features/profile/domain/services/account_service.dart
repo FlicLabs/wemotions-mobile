@@ -52,4 +52,20 @@ class AccountService {
       return (e.response?.statusCode);
     }
   }
+
+  updateProfile(Map data) async {
+    try {
+      Response response = await dio.put(
+        '${API.endpoint}${API.updateProfile}',
+        data: data,
+        options: Options(headers: {'Flic-Token': token ?? ''}),
+      );
+      print(response.data);
+      print(response.statusCode);
+      return response.statusCode;
+    } catch (e) {
+      print(e);
+      return e;
+    }
+  }
 }

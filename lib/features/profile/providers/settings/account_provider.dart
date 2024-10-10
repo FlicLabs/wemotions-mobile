@@ -5,6 +5,8 @@ import 'package:socialverse/export.dart';
 class AccountProvider extends ChangeNotifier {
   final username = TextEditingController();
   final email = TextEditingController();
+  final firstName = TextEditingController();
+  final lastName = TextEditingController();
 
   final notification = getIt<NotificationProvider>();
 
@@ -55,8 +57,6 @@ class AccountProvider extends ChangeNotifier {
 
         navKey.currentState!
           ..pop()
-          ..pop()
-          ..pop()
           ..pop();
       }
 
@@ -98,8 +98,6 @@ class AccountProvider extends ChangeNotifier {
       notifyListeners();
       Navigator.of(context, rootNavigator: true)
         ..pop()
-        ..pop()
-        ..pop()
         ..pop();
       return response;
     } else if (response != 200) {
@@ -116,7 +114,6 @@ class AccountProvider extends ChangeNotifier {
       Navigator.of(context, rootNavigator: true)
         ..pop()
         ..pop()
-        ..pop()
         ..pop();
     } else {
       notification.show(
@@ -124,5 +121,37 @@ class AccountProvider extends ChangeNotifier {
         type: NotificationType.local,
       );
     }
+  }
+
+  Future<int> updateProfile(context) async {
+    log('init');
+    _loading = true;
+    notifyListeners();
+    
+    Map data = {
+      "first_name": firstName.text.trim(),
+      "last_name": lastName.text.trim(),
+      "new_username": username.text.trim(),
+    };
+
+    final response = await _service.updateProfile(data);
+    if (response == 200 || response == 201) {
+      _loading = false;
+      notifyListeners();
+      Navigator.pop(context);
+      notification.show(
+        title: 'Your profile has been updated',
+        type: NotificationType.local,
+      );
+    } else {
+      _loading = false;
+      notifyListeners();
+      notification.show(
+        title: 'Something went wrong',
+        type: NotificationType.local,
+      );
+    }
+
+    return response;
   }
 }

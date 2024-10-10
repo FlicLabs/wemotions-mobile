@@ -31,17 +31,17 @@ class ThemeSwitchScreen extends StatelessWidget {
     List<AppTheme> appThemes = [
       AppTheme(
         mode: ThemeMode.light,
-        title: 'Light',
+        title: 'Light Mode',
         icon: Icons.brightness_5_rounded,
       ),
       AppTheme(
         mode: ThemeMode.dark,
-        title: 'Dark',
+        title: 'Dark Mode',
         icon: Icons.brightness_2_rounded,
       ),
       AppTheme(
         mode: ThemeMode.system,
-        title: 'System',
+        title: 'System Default',
         icon: Icons.brightness_4_rounded,
       ),
     ];
@@ -51,7 +51,8 @@ class ThemeSwitchScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).primaryColor,
         title: Text(
           'Theme',
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: AppTextStyle.normalBold24
+              .copyWith(color: Theme.of(context).focusColor),
           textAlign: TextAlign.start,
         ),
       ),
@@ -73,7 +74,7 @@ class ThemeSwitchScreen extends StatelessWidget {
                     }
                   },
                   child: Container(
-                    height: 80,
+                    height: 60,
                     decoration: BoxDecoration(
                       color: _isSelectedTheme
                           ? Theme.of(context).primaryColor
@@ -87,38 +88,39 @@ class ThemeSwitchScreen extends StatelessWidget {
                     child: Center(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 7,
+                          horizontal: 5,
+                          // vertical: 7,
                         ),
                         margin: const EdgeInsets.symmetric(
                           horizontal: 15,
                         ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Theme.of(context).hoverColor,
-                        ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
+                            Transform.scale(
+                              scale: 1.2,
+                              child: Radio(
+                                fillColor:
+                                    MaterialStateProperty.resolveWith((states) {
+                                  if (states.contains(MaterialState.selected)) {
+                                    return Theme.of(context).hintColor;
+                                  }
+                                  return Theme.of(context).indicatorColor;
+                                }),
+                                value: appThemes[i].mode,
+                                groupValue: _groupValue,
+                                onChanged: (value) {
+                                  __.setSelectedThemeMode(
+                                    value as ThemeMode,
+                                  );
+                                },
+                              ),
+                            ),
+                            width2,
                             Text(
                               appThemes[i].title,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            Radio(
-                              fillColor:
-                                  MaterialStateProperty.resolveWith((states) {
-                                if (states.contains(MaterialState.selected)) {
-                                  return Theme.of(context).hintColor;
-                                }
-                                return Theme.of(context).indicatorColor;
-                              }),
-                              value: appThemes[i].mode,
-                              groupValue: _groupValue,
-                              onChanged: (value) {
-                                __.setSelectedThemeMode(
-                                  value as ThemeMode,
-                                );
-                              },
+                              style: AppTextStyle.normalRegular18.copyWith(
+                                  color: Theme.of(context).focusColor),
                             ),
                           ],
                         ),
