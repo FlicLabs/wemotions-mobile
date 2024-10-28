@@ -44,87 +44,95 @@ class _PostScreenState extends State<PostScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.isReply ? 'New Reply' : 'New Post',
-          style: Theme.of(context).textTheme.bodyLarge,
+          widget.isReply ? 'Upload Reply' : 'Upload Post',
+          style: TextStyle(color: Theme.of(context).indicatorColor, fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
       body: Consumer<PostProvider>(
         builder: (_, __, ___) {
-          return __.is_token_loading
-              ? CustomProgressIndicator()
-              : Padding(
+          if (__.is_token_loading) {
+            return CustomProgressIndicator();
+          } else {
+            return Container(
+            height: cs().height(context),
+            width: cs().width(context),
                   padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 10),
-                        child: Column(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Form(
-                                      key: __.formKey,
-                                      child: PostTextFormField(
-                                        controller: __.description,
-                                      ),
-                                    ),
-                                    width10,
-                                    Expanded(
-                                      child: Container(
-                                        height: cs().height(context) / 5,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          border: Border.all(
-                                            color: Colors.transparent,
+                  child: SafeArea(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Column(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 200,
+                                            height: 320,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              border: Border.all(
+                                                color: Colors.transparent,
+                                              ),
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              child: VideoPlayer(
+                                                __.videoController!,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          child: VideoPlayer(
-                                            __.videoController!,
+                                          height16,
+                                          Form(
+                                            key: __.formKey,
+                                            child: PostTextFormField(
+                                              controller: __.description,
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                            // height20,
-                            // PostListTile(),
-                            height40,
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 20),
-                              child: TransparentButton(
-                                color: Constants.primaryColor,
-                                onTap: () {
-                                  if (__.formKey.currentState!.validate()) {
-                                    if (mounted) {
-                                      Navigator.of(context, rootNavigator: true)
-                                        ..pop()
-                                        ..pop();
-                                    }
-                                    __.uploadVideo(path: widget.path!.path,isReply: widget.isReply,parent_video_id: widget.parent_video_id);
-                                    nav.currentPage = 0;
-                                    nav.jumpToPage();
-                                  }
-                                },
-                                title: widget.isReply ? 'Reply' : 'Post',
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  height24,
+                                  PostTagTile(),
+                                ],
                               ),
-                            )
-                          ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20),
+                          child: AuthButtonWithColor(
+                            isGradient: true,
+                            onTap: () {
+                              if (__.formKey.currentState!.validate()) {
+                                if (mounted) {
+                                  Navigator.of(context, rootNavigator: true)
+                                    ..pop()
+                                    ..pop();
+                                }
+                                __.uploadVideo(path: widget.path!.path,isReply: widget.isReply,parent_video_id: widget.parent_video_id);
+                                nav.currentPage = 0;
+                                nav.jumpToPage();
+                              }
+                            },
+                            title: 'Upload Video',
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 );
+          }
         },
       ),
     );

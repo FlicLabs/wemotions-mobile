@@ -18,43 +18,50 @@ class InfoSideBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(80),
-                    child: CachedNetworkImage(
-                      fadeInDuration: Duration(milliseconds: 0),
-                      fadeOutDuration: Duration(milliseconds: 0),
-                      fit: BoxFit.cover,
-                      height: 45,
-                      width: 45,
-                      imageUrl: __.posts[__.index][0].pictureUrl,
-                      progressIndicatorBuilder:
-                          (context, url, downloadProgress) => Image.asset(
-                        AppAsset.load,
+              GestureDetector(
+                onTap: (){
+                  Navigator.of(context).pushNamed(UserProfileScreen.routeName, arguments: UserProfileScreenArgs(
+                    username: __.posts[__.index][0].username,
+                  ),);
+                },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(80),
+                      child: CachedNetworkImage(
+                        fadeInDuration: Duration(milliseconds: 0),
+                        fadeOutDuration: Duration(milliseconds: 0),
                         fit: BoxFit.cover,
-                        height: cs().height(context),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Theme.of(context).primaryColor,
-                        padding: const EdgeInsets.all(8),
-                        child: SvgPicture.asset(
-                          AppAsset.icuser,
-                          color: Theme.of(context).cardColor,
+                        height: 45,
+                        width: 45,
+                        imageUrl: __.posts[__.index][0].pictureUrl,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) => Image.asset(
+                          AppAsset.load,
+                          fit: BoxFit.cover,
+                          height: cs().height(context),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: Theme.of(context).primaryColor,
+                          padding: const EdgeInsets.all(8),
+                          child: SvgPicture.asset(
+                            AppAsset.icuser,
+                            color: Theme.of(context).cardColor,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  width5,
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(__.posts[__.index][0].username,
-                          style: AppTextStyle.normalRegular16),
-                    ],
-                  )
-                ],
+                    width5,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(__.posts[__.index][0].username,
+                            style: AppTextStyle.normalRegular16),
+                      ],
+                    )
+                  ],
+                ),
               ),
               height10,
               Row(

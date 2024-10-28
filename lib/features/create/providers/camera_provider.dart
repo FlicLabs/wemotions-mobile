@@ -5,14 +5,27 @@ class CameraProvider extends ChangeNotifier {
   VideoPlayerController? videoController;
   XFile? selectedVideo;
   late bool _isCameraReady;
-  late Timer clickTimer;
   late Timer timer;
+  String _recordingDuration = "00:00";
+  String get recordingDuration => _recordingDuration;
+
+  Timer? _recordingTimer;
+  int _recordingSeconds = 0;
+  bool _isDisposed = false;
 
   List<AssetEntity> _assets = <AssetEntity>[];
   List<AssetEntity> get assets => _assets;
 
   int _timer_value = 0;
   int get timer_value => _timer_value;
+
+  int _selectedTimerDuration = 0;
+  int get selectedTimerDuration => _selectedTimerDuration;
+
+  set selectedTimerDuration(int value) {
+    _selectedTimerDuration = value;
+    notifyListeners();
+  }
 
   double _video_speed = 1.0;
   double get video_speed => _video_speed;
@@ -97,7 +110,7 @@ class CameraProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  double _percent_indicator_radius = 40.0;
+  double _percent_indicator_radius = 70.0;
   double get percent_indicator_radius => _percent_indicator_radius;
 
   set percent_indicator_radius(double value) {
@@ -125,15 +138,23 @@ class CameraProvider extends ChangeNotifier {
     cameraController = CameraController(
       value,
       ResolutionPreset.max,
+      enableAudio: true,  // Make sure audio is enabled if needed
     );
+
     try {
       await cameraController.initialize().then((_) {
         _isCameraReady = true;
         if (!mounted) return;
         notifyListeners();
       });
+
+      // Make sure flash is initially off
+      await cameraController.setFlashMode(FlashMode.off);
+      _is_camera_flash_on = false;
+
     } on CameraException catch (e) {
       debugPrint("camera error $e");
+      _isCameraReady = false;
     }
   }
 
@@ -148,6 +169,123 @@ class CameraProvider extends ChangeNotifier {
         videoController?.setPlaybackSpeed(_video_speed);
         videoController?.play();
       });
+    }
+  }
+
+  Future<void> showTimerSelectionDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+
+          backgroundColor: Colors.transparent,
+          child: Container(
+            width: 304, // Set your custom width here
+            constraints: BoxConstraints(maxHeight: 400,minHeight: 80),
+            decoration: BoxDecoration(
+              color: Colors.grey[850],
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(onTap:(){
+                    selectedTimerDuration = 0;
+                    Navigator.pop(context);},child: Icon(Icons.block, color: Colors.white,size: 30,)),
+                  SizedBox(width: 16),
+                  TextButton(
+                    onPressed: () {
+                      selectedTimerDuration = 3;
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "3SC",
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
+                    ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  TextButton(
+                    onPressed: () {
+                      selectedTimerDuration = 5;
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "5SC",
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
+                    ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  TextButton(
+                    onPressed: () {
+                      selectedTimerDuration = 10;
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "10SC",
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
+                    ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    notifyListeners();
+  }
+
+  void startRecordingTimer() {
+    _recordingSeconds = 0;
+    _recordingDuration = "00:00";
+
+    _recordingTimer?.cancel();
+
+    if (!_isDisposed) {
+      _recordingTimer = Timer.periodic(
+        const Duration(seconds: 1),
+            (Timer timer) {
+          if (!_isDisposed) {
+            _recordingSeconds++;
+
+            // Format minutes and seconds
+            final minutes = (_recordingSeconds ~/ 60).toString().padLeft(2, '0');
+            final seconds = (_recordingSeconds % 60).toString().padLeft(2, '0');
+
+            _recordingDuration = "$minutes:$seconds";
+            print("crop");
+            print(_recordingDuration);
+            notifyListeners();
+          } else {
+            timer.cancel();
+          }
+        },
+      );
+    }
+  }
+
+  void stopRecordingTimer() {
+    if (!_isDisposed) {
+      _recordingTimer?.cancel();
+      _recordingTimer = null;
+      _recordingSeconds = 0;
+      _recordingDuration = "00:00";
+      // Only notify if not disposed
+      if (!_isDisposed) {
+        notifyListeners();
+      }
     }
   }
 
@@ -169,10 +307,17 @@ class CameraProvider extends ChangeNotifier {
 
   void startTimerButton() {
     const oneSec = Duration(seconds: 1);
+    _timer_value = 0; // Reset timer value
+
     timer = Timer.periodic(
       oneSec,
-      (Timer timerButton) async {
-        if (_timer_value == 3.0) {
+          (Timer timerButton) async {
+        if (_isDisposed) {
+          timerButton.cancel();
+          return;
+        }
+
+        if (_timer_value == _selectedTimerDuration) {
           is_timer_count = !is_timer_count;
 
           timerButton.cancel();
@@ -183,10 +328,14 @@ class CameraProvider extends ChangeNotifier {
             );
           }
           await cameraController.startVideoRecording();
-          startTimer();
-          notifyListeners();
+          if (!_isDisposed) {
+            startRecordingTimer();
+            notifyListeners();
+          }
 
           Timer(const Duration(seconds: 30), () async {
+            if (_isDisposed) return;
+
             if (_is_video_pause == false) {
               _is_timer_selected = true;
               is_video_record = !_is_video_record;
@@ -195,56 +344,94 @@ class CameraProvider extends ChangeNotifier {
                   FlashMode.off,
                 );
               }
+              stopRecordingTimer();
               selectedVideo = await cameraController.stopVideoRecording();
-              initVideo();
-              startTimer();
-              cameraController.buildPreview();
-              notifyListeners();
+              if (!_isDisposed) {
+                initVideo();
+                cameraController.buildPreview();
+                notifyListeners();
+              }
             }
           });
         } else {
           _timer_value++;
-          notifyListeners();
+          if (!_isDisposed) {
+            notifyListeners();
+          }
         }
       },
     );
   }
 
-  void startTimer() {
-    const duration = Duration(seconds: 1);
-    clickTimer = Timer.periodic(
-      duration,
-      (Timer timer) {
-        if (_record_percentage == 30.0 || _is_timer_selected) {
-          timer.cancel();
-          notifyListeners();
-        } else {
-          _record_percentage++;
-          notifyListeners();
-        }
-      },
-    );
-  }
-
-  void toggleFlash() {
-    if (_isCameraReady) {
-      _is_camera_flash_on = !_is_camera_flash_on;
-      cameraController
-          .setFlashMode(_is_camera_flash_on ? FlashMode.torch : FlashMode.off);
-      notifyListeners();
-    }
-  }
 
   void resetValues() {
+    if (_isDisposed) return;
+    if(videoController != null){
+      videoController!.pause();
+      videoController!.dispose();
+    }
     selectedVideo = null;
     videoController = null;
     _record_percentage_value = 0.0;
     _timer_value = 0;
     _video_speed = 1.0;
+    _is_camera_flip = false;
     _is_video_pause = false;
-    _is_timer_on = false;
+    _is_timer_on = true;
     _is_record_start = true;
     _is_first_click = false;
+    _selectedTimerDuration = 3; // Reset to default timer duration
+    _recordingTimer?.cancel();
+    _recordingTimer = null;
+    _recordingSeconds = 0;
+    _recordingDuration = "00:00";
+  }
+
+  // void startTimer() {
+  //   const duration = Duration(seconds: 1);
+  //   clickTimer = Timer.periodic(
+  //     duration,
+  //     (Timer timer) {
+  //       if (_record_percentage == 30.0 || _is_timer_selected) {
+  //         timer.cancel();
+  //         notifyListeners();
+  //       } else {
+  //         _record_percentage++;
+  //         notifyListeners();
+  //       }
+  //     },
+  //   );
+  // }
+
+  Future<void> toggleFlash() async {
+    if (_isCameraReady) {
+      try {
+        _is_camera_flash_on = !_is_camera_flash_on;
+        notifyListeners(); // Notify first for immediate UI update
+
+        if (_is_camera_flash_on) {
+          await cameraController.setFlashMode(FlashMode.torch);
+          print("Flash ON"); // Debug print
+        } else {
+          await cameraController.setFlashMode(FlashMode.off);
+          print("Flash OFF"); // Debug print
+        }
+      } catch (e) {
+        print('Flash error: $e');
+        // Reset flash state if there's an error
+        _is_camera_flash_on = false;
+        notifyListeners();
+      }
+    } else {
+      print('Camera not ready'); // Debug print
+    }
+  }
+
+
+  @override
+  void dispose() {
+    _recordingTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> imagePicker(context) async {
@@ -259,7 +446,7 @@ class CameraProvider extends ChangeNotifier {
       await value![0].originFile.then((value) {
         selectedVideo = XFile(value!.path);
         initVideo();
-        startTimer();
+        // startTimer();
         cameraController.buildPreview();
         notifyListeners();
       });

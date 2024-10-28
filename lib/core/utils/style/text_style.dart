@@ -91,6 +91,12 @@ class AppTextStyle {
   );
 
   //////////////////////////////////////////////////
+  static const normalRegular10 = TextStyle(
+    fontFamily: 'sofia',
+    fontSize: 10,
+    fontWeight: FontWeight.w100,
+    color: Colors.white,
+  );
   static const normalRegular14 = TextStyle(
     fontFamily: 'sofia',
     fontSize: 14,

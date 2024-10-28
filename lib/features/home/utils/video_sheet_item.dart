@@ -17,25 +17,20 @@ class VideoSheetItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: color ?? Theme.of(context).disabledColor,
-            child: Center(
-              child: Icon(
-                icon,
-                color: Theme.of(context).indicatorColor,
-              ),
-            ),
+          Icon(
+            icon,
+            color: Theme.of(context).indicatorColor,
+            size: 24,
           ),
-          height5,
+          width16,
           Text(
             label,
             style:
-                Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 12),
+                Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 14),
           ),
         ],
       ),
@@ -45,11 +40,13 @@ class VideoSheetItem extends StatelessWidget {
 
 class VideoSheetItemSVG extends StatelessWidget {
   final VoidCallback onTap;
+  final SvgPicture iconSVG;
   final String label;
 
   const VideoSheetItemSVG({
     Key? key,
     required this.onTap,
+    required this.iconSVG,
     required this.label,
   }) : super(key: key);
 
@@ -57,27 +54,16 @@ class VideoSheetItemSVG extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: Theme.of(context).disabledColor,
-            child: Center(
-              child: Image.asset(
-                AppAsset.v,
-                height: 18,
-                width: 18,
-                color: Theme.of(context).focusColor,
-              ),
-            ),
-          ),
-          height5,
+          iconSVG,
+          width16,
           Text(
             label,
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  fontSize: 12,
+                  fontSize: 14,
                 ),
           ),
         ],

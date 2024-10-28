@@ -1,3 +1,4 @@
+import 'package:socialverse/core/providers/report_provider.dart';
 import 'export.dart';
 
 @pragma('vm:entry-point')
@@ -87,6 +88,7 @@ void main() async {
             ChangeNotifierProvider(create: (_) => ProfileProvider()),
             ChangeNotifierProvider(create: (_) => UserProfileProvider()),
             ChangeNotifierProvider(create: (_) => BottomNavBarProvider()),
+            ChangeNotifierProvider(create: (_) => ReportProvider()),
             ChangeNotifierProvider(create: (_) => CreateSubverseProvider()),
             ChangeNotifierProvider(create: (_) => EditSubverseProvider()),
             ChangeNotifierProvider(create: (_) => EditProfileProvider()),

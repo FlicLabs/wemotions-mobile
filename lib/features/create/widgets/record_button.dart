@@ -8,8 +8,9 @@ class RecordButton extends StatelessWidget {
     return Consumer<CameraProvider>(
       builder: (_, __, ___) {
         return CircularPercentIndicator(
-          radius: __.percent_indicator_radius,
+          radius: 50,
           lineWidth: 5.0,
+          backgroundColor:__.is_record_start ?  Colors.white : Theme.of(context).hintColor,
           percent: (__.record_percentage_value * 3.33) / 100,
           progressColor: Theme.of(context).hintColor,
           animation: true,
@@ -28,8 +29,6 @@ class RecordButton extends StatelessWidget {
                   __.startTimerButton();
                   __.is_first_click = !__.is_first_click;
                 } else {
-                  __.percent_indicator_radius = 40;
-                  __.button_press_size = 50;
                   __.is_video_pause = !__.is_video_pause;
                   __.is_video_record = !__.is_video_record;
                   __.is_timer_selected = true;
@@ -41,7 +40,7 @@ class RecordButton extends StatelessWidget {
                   __.selectedVideo =
                       await __.cameraController.stopVideoRecording();
                   __.initVideo();
-                  __.startTimer();
+                  __.stopRecordingTimer();
                   __.cameraController.buildPreview();
                 }
               }
@@ -53,7 +52,7 @@ class RecordButton extends StatelessWidget {
                 __.is_record_start = !__.is_record_start;
                 __.is_timer_selected = false;
                 __.is_video_record = !__.is_video_record;
-                __.startTimer();
+                __.startRecordingTimer();
                 if (__.is_camera_flash_on == true) {
                   __.cameraController.setFlashMode(
                     FlashMode.torch,
@@ -73,12 +72,12 @@ class RecordButton extends StatelessWidget {
                     FlashMode.off,
                   );
                 }
-
+                __.stopRecordingTimer();
                 __.selectedVideo = await __.cameraController
                     .stopVideoRecording()
                     .then((value) => XFile(value.path));
                 __.initVideo();
-                __.startTimer();
+
                 __.cameraController.buildPreview();
               }
             },
@@ -100,14 +99,45 @@ class RecordButton extends StatelessWidget {
             //     __.cameraController.buildPreview();
             //   }
             // },
-            child: AnimatedContainer(
-              duration: const Duration(seconds: 1),
-              height: __.button_press_size,
-              width: __.button_press_size,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Theme.of(context).hintColor,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  height: 86,
+                  width: 86,
+                  decoration
+                      : BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  Colors.transparent,
+                  Colors.white10,
+                  Colors.white12,
+                  Colors.white38,
+                ],
+                stops: [0.5, 0.6,0.7, 1.0],
               ),
+            ),
+                ),
+                Container(
+                  height: 56,
+                  width: 56,
+                  decoration
+                      : BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                ),
+                Container(
+                  height: 18,
+                  width: 18,
+                  decoration
+                      : BoxDecoration(
+                    shape: __.is_record_start ? BoxShape.circle : BoxShape.rectangle ,
+                    color: Theme.of(context).hintColor,
+                  ),
+                ),
+              ],
             ),
           ),
         );

@@ -31,13 +31,10 @@ class SideBarItem extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 45,
-            width: 50,
-            padding: EdgeInsets.all(10),
             child: icon,
             decoration: BoxDecoration(color: Colors.transparent),
           ),
-          video.isViewMode ? shrink : height2,
+          height2,
           text,
         ],
       ),
