@@ -76,6 +76,10 @@ class CustomRouter {
         return CameraScreen.route(
           args: settings.arguments as CameraScreenArgs,
         );
+      case InstantCameraScreen.routeName:
+        return InstantCameraScreen.route(
+          args: settings.arguments as InstantCameraScreenArgs,
+        );
       case PostScreen.routeName:
         return PostScreen.route(
           args: settings.arguments as PostScreenArgs,

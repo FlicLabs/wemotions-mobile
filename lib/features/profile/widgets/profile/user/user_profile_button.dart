@@ -24,51 +24,57 @@ class UserProfileButton extends StatelessWidget {
               if (!__.isBlocked) ...[
                 Padding(
                   padding: const EdgeInsets.only(
-                    left: 40,
-                    right: 40,
+                    left: 0,
+                    right: 0,
                   ),
                   child: SizedBox(
-                    width: cs().height(context) * 0.75,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: __.isFollowing == true
-                              ? TransparentButton(
-                                  title: 'Unsubscribe',
-                                  onTap: () {
-                                    if (logged_in == true) {
-                                      if (isFollowing != null) {
-                                        isFollowing!(false);
-                                      }
-                                      __.isFollowing = false;
-                                      __.userUnfollow(
-                                        username: username,
-                                      );
-                                    } else {
-                                      auth.showAuthBottomSheet(context);
-                                    }
-                                  },
-                                )
-                              : TransparentButton(
-                                  title: 'Subscribe',
-                                  onTap: () {
-                                    if (logged_in == true) {
-                                      if (isFollowing != null) {
-                                        isFollowing!(true);
-                                      }
-                                      __.isFollowing = true;
-                                      __.userFollow(
-                                        username: username,
-                                      );
-                                    } else {
-                                      auth.showAuthBottomSheet(context);
-                                    }
-                                  },
-                                ),
-                        ),
-                      ],
-                    ),
+                    width: 177,
+                    child: __.isFollowing == true
+                        ? CustomTransparentButton(
+                            borderColor: Color(0xFF9032E6),
+                            textColor: Color(0xFF9032E6),
+                            title: 'Following',
+                            // textColor: Theme.of(context).indicatorColor,
+                            onTap: () {
+                              if (logged_in == true) {
+                                if (isFollowing != null) {
+                                  isFollowing!(false);
+                                }
+                                __.isFollowing = false;
+                                __.userUnfollow(
+                                  username: username,
+                                );
+                              } else {
+                                auth.showAuthBottomSheet(context);
+                              }
+                            },
+                          )
+                        : TransparentButton(
+                            gradient: LinearGradient(
+                                colors: [
+                                  Color(0xFFA858F4),
+                                  Color(0xFF9032E6),
+                                ],
+                                stops: [0.0, 1.0],
+                                begin: FractionalOffset.topCenter,
+                                end: FractionalOffset.bottomCenter,
+                                tileMode: TileMode.repeated
+                            ) ,
+                            title: 'Follow',
+                            onTap: () {
+                              if (logged_in == true) {
+                                if (isFollowing != null) {
+                                  isFollowing!(true);
+                                }
+                                __.isFollowing = true;
+                                __.userFollow(
+                                  username: username,
+                                );
+                              } else {
+                                auth.showAuthBottomSheet(context);
+                              }
+                            },
+                          ),
                   ),
                 ),
               ],

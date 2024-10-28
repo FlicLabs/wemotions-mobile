@@ -74,8 +74,8 @@ class _AltTaggingSheetState extends State<AltTaggingSheet> {
                     // deleteIcon: Icon(Icons.cancel),
                     deleteIconColor: Colors.white,
                     onDeleted: () {
-                      __.removeTag(
-                          __.posts[__.index][0].id, e.user.username);
+                      // __.removeTag(
+                      //     __.posts[__.index][0].id, e.user);
                     },
                   );
                 }).toList(),

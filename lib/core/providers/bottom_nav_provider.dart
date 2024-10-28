@@ -15,4 +15,14 @@ class BottomNavBarProvider extends ChangeNotifier {
     bottomPageController.jumpToPage(currentPage);
     notifyListeners();
   }
+
+  String _selectedVideoUploadType = "Video";
+
+  String get selectedVideoUploadType => _selectedVideoUploadType;
+
+  set selectedVideoUploadType(val) {
+    _selectedVideoUploadType = val;
+    notifyListeners();
+  }
+
 }

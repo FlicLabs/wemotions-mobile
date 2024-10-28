@@ -1,33 +1,33 @@
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/create/utils/discard_dialog.dart';
 
-class CameraScreenArgs {
+class InstantCameraScreenArgs {
   bool isReply;
   String? parent_video_id;
   final List<CameraDescription>? cameras;
-  CameraScreenArgs({this.cameras,required this.isReply,this.parent_video_id});
+  InstantCameraScreenArgs({this.cameras,required this.isReply,this.parent_video_id});
 }
 
-class CameraScreen extends StatefulWidget {
-  static const String routeName = '/camera';
+class InstantCameraScreen extends StatefulWidget {
+  static const String routeName = '/instantcamera';
 
-  CameraScreen({Key? key, required this.cameras, required this.isReply, this.parent_video_id}) : super(key: key);
+  InstantCameraScreen({Key? key, required this.cameras, required this.isReply, this.parent_video_id}) : super(key: key);
 
   final List<CameraDescription>? cameras;
   bool isReply;
   String? parent_video_id;
 
-  static Route route({required CameraScreenArgs args}) {
+  static Route route({required InstantCameraScreenArgs args}) {
     return SlideRoute(
-      page: CameraScreen(cameras: args.cameras,isReply: args.isReply,parent_video_id: args.parent_video_id,),
+      page: InstantCameraScreen(cameras: args.cameras,isReply: args.isReply,parent_video_id: args.parent_video_id,),
     );
   }
 
   @override
-  State<CameraScreen> createState() => _CameraScreenState();
+  State<InstantCameraScreen> createState() => _InstantCameraScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen> {
+class _InstantCameraScreenState extends State<InstantCameraScreen> {
   CameraProvider? _cameraProvider;
   @override
   void initState() {
@@ -37,6 +37,39 @@ class _CameraScreenState extends State<CameraScreen> {
       value: widget.cameras![1],
       mounted: mounted,
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      startVideoRecordingInit(_cameraProvider);
+    });
+  }
+
+  void startVideoRecordingInit(_cameraProvider) async{
+    _cameraProvider.is_timer_on = true;
+    if (_cameraProvider.is_timer_on) {
+      _cameraProvider.selectedTimerDuration = 3;
+    }
+    if (_cameraProvider.is_timer_on == true) {
+      if (_cameraProvider.is_first_click == false) {
+        _cameraProvider.is_record_start = !_cameraProvider.is_record_start;
+        _cameraProvider.is_timer_count = !_cameraProvider.is_timer_count;
+        _cameraProvider.is_video_record = !_cameraProvider.is_video_record;
+        _cameraProvider.startTimerButton();
+        _cameraProvider.is_first_click = !_cameraProvider.is_first_click;
+      } else {
+        _cameraProvider.is_video_pause = !_cameraProvider.is_video_pause;
+        _cameraProvider.is_video_record = !_cameraProvider.is_video_record;
+        _cameraProvider.is_timer_selected = true;
+        if (_cameraProvider.is_camera_flash_on == true) {
+          _cameraProvider.cameraController.setFlashMode(
+            FlashMode.off,
+          );
+        }
+        _cameraProvider.selectedVideo =
+        await _cameraProvider.cameraController.stopVideoRecording();
+        _cameraProvider.initVideo();
+        _cameraProvider.stopRecordingTimer();
+        _cameraProvider.cameraController.buildPreview();
+      }
+    }
   }
 
   @override
@@ -57,6 +90,7 @@ class _CameraScreenState extends State<CameraScreen> {
     return Consumer<CameraProvider>(
       builder: (_, __, ___) {
         bool video = __.videoController == null;
+
         return Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: Colors.black,
@@ -147,95 +181,6 @@ class _CameraScreenState extends State<CameraScreen> {
                                     __.is_camera_flip = !__.is_camera_flip;
                                   },
                                   icon: AppAsset.icflip,
-                                ),
-                                height24,
-                                // Container(
-                                //   height: 50,
-                                //   width: 50,
-                                //   decoration: BoxDecoration(
-                                //     shape: BoxShape.circle,
-                                //     color: Colors.white.withOpacity(0.10),
-                                //   ),
-                                //   child: PopupMenuButton<int>(
-                                //     color: Colors.white,
-                                //     icon: SvgPicture.asset(
-                                //       AppAsset.icspeed,
-                                //       height: 25,
-                                //       color: Colors.black,
-                                //     ),
-                                //     onSelected: (value) async {
-                                //       if (value == 1) {
-                                //         __.video_speed = 0.5;
-                                //       }
-                                //       if (value == 2) {
-                                //         __.video_speed = 1.0;
-                                //       }
-                                //       if (value == 3) {
-                                //         __.video_speed = 10.0;
-                                //       }
-                                //     },
-                                //     itemBuilder: (context) => [
-                                //       PopupMenuItem(
-                                //         child: Text(
-                                //           "0.5",
-                                //           style: AppTextStyle.normalBold14
-                                //               .copyWith(color: Colors.black),
-                                //         ),
-                                //         value: 1,
-                                //         height: 30,
-                                //       ),
-                                //       PopupMenuDivider(),
-                                //       PopupMenuItem(
-                                //         child: Text(
-                                //           "1",
-                                //           style: AppTextStyle.normalBold14
-                                //               .copyWith(color: Colors.black),
-                                //         ),
-                                //         height: 30,
-                                //         value: 2,
-                                //       ),
-                                //       PopupMenuDivider(),
-                                //       PopupMenuItem(
-                                //         child: Text(
-                                //           "10",
-                                //           style: AppTextStyle.normalBold14
-                                //               .copyWith(color: Colors.black),
-                                //         ),
-                                //         height: 30,
-                                //         value: 3,
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
-                                // height5,
-                                // Text(
-                                //   "Speed",
-                                //   style: AppTextStyle.normalBold14
-                                //       .copyWith(color: Colors.white),
-                                // ),
-                                // height24,
-                                CameraBarItem(
-                                  iconColor: __.is_timer_on ? Color(0xFFA858F4) : Colors.white,
-                                  icon: AppAsset.ictimer,
-                                  label: 'Timer',
-                                  onTap: () {
-                                    __.is_timer_on = !__.is_timer_on;
-                                    if (__.is_timer_on) {
-                                      __.showTimerSelectionDialog(context); // Show timer selection when timer is turned on
-                                    }
-                                  },
-                                ),
-                                height24,
-                                CameraBarItem(
-                                  iconColor: Colors.white,
-                                  icon: __.is_camera_flash_on
-                                      ? AppAsset.icflash2
-                                      : AppAsset.icflash,
-                                  label: "Flash",
-                                  onTap: () {
-                                    // Only toggle if flash is supported
-                                      __.toggleFlash();
-                                  },
                                 ),
                               ],
                             ),

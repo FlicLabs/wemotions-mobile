@@ -8,7 +8,7 @@ class Constants {
   //static Color lightSecondary = Color(0xfffafafa);
   static Color darkPrimary = Colors.black;
 
-  static Color primaryColor = Color.fromRGBO(107, 39, 207, 1);
+  static Color primaryColor = Color(0xFFA858F4);
 
   static Color primaryGrey = Colors.grey.shade100;
   static Color secondaryGrey = Colors.grey.shade900;

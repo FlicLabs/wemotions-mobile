@@ -1,4 +1,6 @@
+import 'package:socialverse/core/providers/report_provider.dart';
 import 'export.dart';
+import 'package:socialverse/core/widgets/online_status_manager.dart';
 
 @pragma('vm:entry-point')
 Future<void> _backgroundHandler(RemoteMessage message) async {
@@ -87,6 +89,7 @@ void main() async {
             ChangeNotifierProvider(create: (_) => ProfileProvider()),
             ChangeNotifierProvider(create: (_) => UserProfileProvider()),
             ChangeNotifierProvider(create: (_) => BottomNavBarProvider()),
+            ChangeNotifierProvider(create: (_) => ReportProvider()),
             ChangeNotifierProvider(create: (_) => CreateSubverseProvider()),
             ChangeNotifierProvider(create: (_) => EditSubverseProvider()),
             ChangeNotifierProvider(create: (_) => EditProfileProvider()),
@@ -101,7 +104,9 @@ void main() async {
             create: (_) => ThemeProvider(
               value ? Constants.darkTheme : Constants.lightTheme,
             ),
-            builder: (context, child) => WeMotions(initialLink: initialLink),
+            builder: (context, child) => logged_in == true ? OnlineStatusManager(
+                flicToken: token!,
+                child: WeMotions(initialLink: initialLink)) : WeMotions(initialLink: initialLink),
           ),
         ),
       );

@@ -19,6 +19,15 @@ class AppAsset {
 
   static const icflip = "assets/svg/flip.svg";
   static const iclink = "assets/svg/iclink.svg";
+  static const icloop = "assets/svg/loop.svg";
+  static const icdiscover = "assets/svg/icdiscover.svg";
+  static const icreply = "assets/svg/icreply.svg";
+  static const icvideopost = "assets/svg/icvideopost.svg";
+  static const icdiscover_active = "assets/svg/icdiscoveractive.svg";
+  static const icwemotionslogo = "assets/svg/icwemotionslogo.svg";
+  static const icvideo = "assets/svg/icvideo.svg";
+  static const icdiscard = "assets/svg/discard.svg";
+  static const ictaguser = "assets/svg/taguser.svg";
   static const icspeed = "assets/svg/speed.svg";
   static const icShare = "assets/svg/share.svg";
   static const ictimer = "assets/svg/timer.svg";
@@ -34,7 +43,8 @@ class AppAsset {
   static const ictools = "assets/svg/tools.svg";
   static const icshareprofile = "assets/svg/shareprofile.svg";
   static const icfliccode = "assets/svg/fliccode.svg";
-  static const icnotification = "assets/svg/notification.svg";
+  static const icnotification = "assets/svg/icnotification.svg";
+  static const icnotification_active = "assets/svg/icnotificationactive.svg";
   static const iclanguage = "assets/svg/language.svg";
   static const icdigital = "assets/svg/digital.svg";
   static const icaccessbility = "assets/svg/accessbility.svg";
@@ -74,7 +84,6 @@ class AppAsset {
   static const bin = "assets/svg/metro-bin.svg";
   static const onboardingHero = "assets/svg/onboarding_hero.svg";
   static const verifyEmailHero = "assets/svg/verifyEmail_hero.svg";
-  static const icreply = "assets/svg/reply-post.svg";
   static const icoptions = "assets/svg/options.svg";
   static const ichome_active = "assets/svg/home-active.svg";
   static const icuser_active = "assets/svg/user-active.svg";

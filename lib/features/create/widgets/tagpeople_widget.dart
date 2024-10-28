@@ -2,19 +2,19 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:socialverse/export.dart';
 
-class TaggingWidget extends StatelessWidget {
-  const TaggingWidget({Key? key}) : super(key: key);
+class TagPeopleWidget extends StatelessWidget {
+  const TagPeopleWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeProvider>(
+    return Consumer<PostProvider>(
       builder: (_, __, ___) {
         return Container(
 
           height: cs().height(context) / 1.45,
           width: cs().width(context),
           decoration: BoxDecoration(
-            color: Color(0xFFEFEFEF),
+            color: Theme.of(context).canvasColor,
             borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20))
           ),
           child: Column(
@@ -100,15 +100,12 @@ class TaggingWidget extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: __.selected_users.length,
                     itemBuilder: (context, index) {
-                      if (__.selected_users[index].username == prefs_username ||
-                          __.posts[__.index][0].tags.any((element) =>
-                          element.user.username ==
-                              __.selected_users[index].username)) {
+                      if (__.selected_users[index].username == prefs_username) {
                         return Container();
                       }
                       return GestureDetector(
                         onTap: () {
-                          __.selectUsers(__.posts[__.index][0].id,__.selected_users[index]);
+                          __.selectUsers(__.selected_users[index]);
                           print(__.selected_users);
                           __.searched_users.clear();
                           __.searchController.clear();
@@ -183,15 +180,12 @@ class TaggingWidget extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: __.searched_users.length,
                     itemBuilder: (context, index) {
-                      if (__.searched_users[index].username == prefs_username ||
-                          __.posts[__.index][0].tags.any((element) =>
-                          element.user.username ==
-                              __.searched_users[index].username)) {
+                      if (__.searched_users[index].username == prefs_username) {
                         return Container();
                       }
                       return GestureDetector(
                         onTap: () {
-                          __.selectUsers(__.posts[__.index][0].id,__.searched_users[index]);
+                          __.selectUsers(__.searched_users[index]);
                           print(__.selected_users);
                           __.searched_users.clear();
                           __.searchController.clear();

@@ -285,7 +285,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                                 if (!_isLastPage) ...[
                                   video.isViewMode ? shrink : HomeSideBar(),
                                 ],
-                                HomeVideoProgressIndicator(),
+                                // HomeVideoProgressIndicator(),
                               ],
                             ),
                           ),
@@ -335,8 +335,8 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
               //     : reply.posts.length == 0
               //         ? 18
               //         : 0,
-              right: reply.posts.length + 1 == 1 ? 33 : 15,
-              bottom: 70,
+              right: reply.posts.length + 1 == 1 ? 33 : 25,
+              bottom: 68,
               child: AnimatedSmoothIndicator(
                 // controller: reply.home,
                 count: reply.posts.length + 1,
@@ -344,16 +344,17 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                 effect: ScrollingDotsEffect(
                     maxVisibleDots: 3,
                     fixedCenter: true,
-                    dotHeight: 10,
-                    dotWidth: 10,
+                    dotHeight: 7,
+                    dotWidth: 7,
                     activeDotColor: Theme.of(context).hintColor,
+                    activeStrokeWidth:0,
                     dotColor: Colors.grey),
               ),
             ),
           ]
         ],
         Positioned(
-          right: 35,
+          right: 44,
           // left: cs().width(context) * 0.5,
           bottom: home.posts.length == 1 ? 68 : 50,
           // top: home.posts.length == 3
@@ -368,9 +369,10 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             effect: ScrollingDotsEffect(
                 maxVisibleDots: 3,
                 fixedCenter: true,
-                dotHeight: 10,
-                dotWidth: 10,
+                dotHeight: 7,
+                dotWidth: 7,
                 activeDotColor: Theme.of(context).hintColor,
+                activeStrokeWidth:0,
                 dotColor: Colors.grey),
           ),
         ),

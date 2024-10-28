@@ -20,7 +20,7 @@ class HomeSideBar extends StatelessWidget {
         return __.posts.isEmpty
             ? shrink
             : Positioned(
-                bottom: 50,
+                bottom: 120,
                 right: 10,
                 child: Container(
                   height: cs().height(context),
@@ -29,96 +29,92 @@ class HomeSideBar extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(right: 0),
+                        padding: EdgeInsets.only(right: 16),
                         child: Column(
                           children: [
                             GestureDetector(
                               child: Column(
                                 children: [
-                                  SideBarItem(
-                                    onTap: () async {
-                                      // This is parent_video_id
-                                      // .posts[.index].id
-                                      // print(__.posts[__.index].id.toString());
-
-                                      if (logged_in == false) {
-                                        auth.showAuthBottomSheet(context);
-                                      } else {
-                                        PermissionStatus status =
-                                            await Permission.camera.request();
-                                        if (status.isDenied ||
-                                            status.isPermanentlyDenied) {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                CustomAlertDialog(
-                                              title: 'Permission Denied',
-                                              action: 'Open Settings',
-                                              content:
-                                                  'Please allow access to camera to record videos',
-                                              tap: () {
-                                                openAppSettings();
-                                              },
-                                            ),
-                                          );
-                                        } else {
-                                          PermissionStatus status =
-                                              await Permission.camera.request();
-                                          if (status.isDenied ||
-                                              status.isPermanentlyDenied) {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  CustomAlertDialog(
-                                                title: 'Permission Denied',
-                                                action: 'Open Settings',
-                                                content:
-                                                    'Please allow access to camera to record videos',
-                                                tap: () {
-                                                  openAppSettings();
-                                                },
-                                              ),
-                                            );
-                                          } else {
-                                            await availableCameras().then(
-                                              (value) => Navigator.of(context)
-                                                  .pushNamed(
-                                                CameraScreen.routeName,
-                                                arguments: CameraScreenArgs(
-                                                    cameras: value,
-                                                    isReply: true,
-                                                    parent_video_id: __
-                                                        .posts[__.index][0].id
-                                                        .toString()),
-                                              ),
-                                            );
-                                          }
-                                        }
-                                      }
-                                    },
-                                    value: 0,
-                                    icon: Padding(
-                                      padding: EdgeInsets.only(bottom: 3),
-                                      child: SvgPicture.asset(
-                                        AppAsset.icreply,
-                                        color: Colors.white,
-                                        // height: 30,
-                                        // width: 30,
-                                        fit: BoxFit.scaleDown,
-                                      ),
-                                    ),
-                                    text: Text(
-                                      (__.posts[__.index].length - 1)
-                                          .toString(),
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white,
-                                        fontFamily: 'sofia',
-                                      ),
-                                    ),
-                                  ), //Reply
-                                  height10,
+                                  // SideBarItem(
+                                  //   onTap: () async {
+                                  //     // This is parent_video_id
+                                  //     // .posts[.index].id
+                                  //     // print(__.posts[__.index].id.toString());
+                                  //
+                                  //     if (logged_in == false) {
+                                  //       auth.showAuthBottomSheet(context);
+                                  //     } else {
+                                  //       PermissionStatus status =
+                                  //           await Permission.camera.request();
+                                  //       if (status.isDenied ||
+                                  //           status.isPermanentlyDenied) {
+                                  //         showDialog(
+                                  //           context: context,
+                                  //           builder: (context) =>
+                                  //               CustomAlertDialog(
+                                  //             title: 'Permission Denied',
+                                  //             action: 'Open Settings',
+                                  //             content:
+                                  //                 'Please allow access to camera to record videos',
+                                  //             tap: () {
+                                  //               openAppSettings();
+                                  //             },
+                                  //           ),
+                                  //         );
+                                  //       } else {
+                                  //         PermissionStatus status =
+                                  //             await Permission.camera.request();
+                                  //         if (status.isDenied ||
+                                  //             status.isPermanentlyDenied) {
+                                  //           showDialog(
+                                  //             context: context,
+                                  //             builder: (context) =>
+                                  //                 CustomAlertDialog(
+                                  //               title: 'Permission Denied',
+                                  //               action: 'Open Settings',
+                                  //               content:
+                                  //                   'Please allow access to camera to record videos',
+                                  //               tap: () {
+                                  //                 openAppSettings();
+                                  //               },
+                                  //             ),
+                                  //           );
+                                  //         } else {
+                                  //           await availableCameras().then(
+                                  //             (value) => Navigator.of(context)
+                                  //                 .pushNamed(
+                                  //               CameraScreen.routeName,
+                                  //               arguments: CameraScreenArgs(
+                                  //                   cameras: value,
+                                  //                   isReply: true,
+                                  //                   parent_video_id: __
+                                  //                       .posts[__.index][0].id
+                                  //                       .toString()),
+                                  //             ),
+                                  //           );
+                                  //         }
+                                  //       }
+                                  //     }
+                                  //   },
+                                  //   value: 0,
+                                  //   icon: SvgPicture.asset(
+                                  //     AppAsset.icreply,
+                                  //     color: Colors.white,
+                                  //     fit: BoxFit.scaleDown,
+                                  //   ),
+                                  //   text: Text(
+                                  //     // (__.posts[__.index].length - 1)
+                                  //     //     .toString(),
+                                  //     "Reply",
+                                  //     style: TextStyle(
+                                  //       fontSize: 10,
+                                  //       fontWeight: FontWeight.w400,
+                                  //       color: Colors.white,
+                                  //       fontFamily: 'sofia',
+                                  //     ),
+                                  //   ),
+                                  // ), //Reply
+                                  // height16,
                                   SideBarItem(
                                     onTap: () {
                                       if (__.posts[__.index][0].upvoted) {
@@ -149,32 +145,12 @@ class HomeSideBar extends StatelessWidget {
                                     //   );
                                     // },
                                     value: 14,
-                                    icon: ShaderMask(
-                                      shaderCallback: (Rect bounds) {
-                                        return __.posts[__.index][0].upvoted
-                                            ? LinearGradient(
-                                                begin: Alignment.centerLeft,
-                                                end: Alignment.centerRight,
-                                                colors: <Color>[
-                                                  Theme.of(context).hintColor,
-                                                  Colors.red,
-                                                  Theme.of(context).hintColor,
-                                                ],
-                                                tileMode: TileMode.repeated,
-                                              ).createShader(bounds)
-                                            : const LinearGradient(
-                                                colors: <Color>[
-                                                  Colors.white,
-                                                  Colors.white
-                                                ],
-                                              ).createShader(bounds);
-                                      },
-                                      child: SvgPicture.asset(
-                                        AppAsset.iclike,
-                                        color: Colors.white,
-                                        fit: BoxFit.scaleDown,
-                                      ),
+                                    icon: SvgPicture.asset(
+                                      AppAsset.icwemotionslogo,
+                                      color: __.posts[__.index][0].upvoted ? Color(0xFFA858F4) : Colors.white,
+                                      fit: BoxFit.scaleDown,
                                     ),
+
                                     text: Text(
                                       __.posts[__.index][0].upvoteCount
                                           .toString(),
@@ -186,7 +162,7 @@ class HomeSideBar extends StatelessWidget {
                                       ),
                                     ),
                                   ), //Upvote
-                                  height10,
+                                  // height16,
                                   // SideBarItem(
                                   //     onTap: () {
                                   //       __.videoController(__.index)!.pause();
@@ -276,66 +252,121 @@ class HomeSideBar extends StatelessWidget {
                                   //     ),
                                   //   ),
                                   // ), //Tagging
-                                  // height10,
-                                  // SideBarItem(
-                                  //   onTap: () async {
-                                  //     HapticFeedback.mediumImpact();
-                                  //     bool isUser =
-                                  //         __.posts[__.index][0].username !=
-                                  //             prefs_username;
-                                  //     final link =
-                                  //         await __.dynamicLink.createPostLink(
-                                  //       imageUrl:
-                                  //           __.posts[__.index][0].thumbnailUrl,
-                                  //       postID: '${__.posts[__.index][0].id}',
-                                  //       username:
-                                  //           __.posts[__.index][0].username,
-                                  //       description:
-                                  //           __.posts[__.index][0].title,
-                                  //       isPost: true,
-                                  //     );
-                                  //     showModalBottomSheet(
-                                  //       context: context,
-                                  //       backgroundColor: Colors.black,
-                                  //       shape: const RoundedRectangleBorder(
-                                  //         borderRadius: BorderRadius.only(
-                                  //           topLeft: Radius.circular(30.0),
-                                  //           topRight: Radius.circular(30.0),
-                                  //         ),
-                                  //       ),
-                                  //       builder: (context) {
-                                  //         return ShareSheet(
-                                  //           isUser: isUser,
-                                  //           dynamicLink: link,
-                                  //         );
-                                  //       },
-                                  //     );
-                                  //   },
-                                  //   value: 0,
-                                  //   icon: Padding(
-                                  //     padding: EdgeInsets.only(bottom: 3),
-                                  //     child: SvgPicture.asset(
-                                  //       AppAsset.icShare,
-                                  //       color: Colors.white,
-                                  //       fit: BoxFit.scaleDown,
-                                  //     ),
-                                  //   ),
-                                  //   text: Text(
-                                  //     (__.posts[__.index][0].shareCount)
-                                  //         .toString(),
-                                  //     style: TextStyle(
-                                  //       fontSize: 13,
-                                  //       fontWeight: FontWeight.w400,
-                                  //       color: Colors.white,
-                                  //       fontFamily: 'sofia',
-                                  //     ),
-                                  //   ),
-                                  // ), //Share
-                                  // height10,
+                                  height10,
+                                  SideBarItem(
+                                    onTap: () async {
+                                      HapticFeedback.mediumImpact();
+                                      bool isUser =
+                                          __.posts[__.index][0].username !=
+                                              prefs_username;
+                                      final link =
+                                      await __.dynamicLink.createPostLink(
+                                        imageUrl:
+                                        __.posts[__.index][0].thumbnailUrl,
+                                        postID: '${__.posts[__.index][0].id}',
+                                        username:
+                                        __.posts[__.index][0].username,
+                                        description:
+                                        __.posts[__.index][0].title,
+                                        isPost: true,
+                                      );
+                                      showModalBottomSheet(
+                                        context: context,
+                                        backgroundColor: Colors.black,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(30.0),
+                                            topRight: Radius.circular(30.0),
+                                          ),
+                                        ),
+                                        builder: (context) {
+                                          return ShareSheet(
+                                            isUser: isUser,
+                                            dynamicLink: link,
+                                          );
+                                        },
+                                      );
+                                    },
+                                    value: 0,
+                                    icon: Padding(
+                                      padding: EdgeInsets.only(bottom: 3),
+                                      child: SvgPicture.asset(
+                                        AppAsset.icvideo,
+                                        color: Colors.white,
+                                        fit: BoxFit.scaleDown,
+                                      ),
+                                    ),
+                                    text: Text(
+                                      // (__.posts[__.index][0].shareCount)
+                                      //     .toString(),
+                                      "0",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.white,
+                                        fontFamily: 'sofia',
+                                      ),
+                                    ),
+                                  ), //Share
+                                  height16,
+                                  SideBarItem(
+                                    onTap: () async {
+                                      HapticFeedback.mediumImpact();
+                                      bool isUser =
+                                          __.posts[__.index][0].username !=
+                                              prefs_username;
+                                      final link =
+                                          await __.dynamicLink.createPostLink(
+                                        imageUrl:
+                                            __.posts[__.index][0].thumbnailUrl,
+                                        postID: '${__.posts[__.index][0].id}',
+                                        username:
+                                            __.posts[__.index][0].username,
+                                        description:
+                                            __.posts[__.index][0].title,
+                                        isPost: true,
+                                      );
+                                      showModalBottomSheet(
+                                        context: context,
+                                        backgroundColor: Colors.black,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(30.0),
+                                            topRight: Radius.circular(30.0),
+                                          ),
+                                        ),
+                                        builder: (context) {
+                                          return ShareSheet(
+                                            isUser: isUser,
+                                            dynamicLink: link,
+                                          );
+                                        },
+                                      );
+                                    },
+                                    value: 0,
+                                    icon: Padding(
+                                      padding: EdgeInsets.only(bottom: 3),
+                                      child: SvgPicture.asset(
+                                        AppAsset.icShare,
+                                        color: Colors.white,
+                                        fit: BoxFit.scaleDown,
+                                      ),
+                                    ),
+                                    text: Text(
+                                      (__.posts[__.index][0].shareCount)
+                                          .toString(),
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.white,
+                                        fontFamily: 'sofia',
+                                      ),
+                                    ),
+                                  ), //Share
+                                  height16,
                                   SideBarItem(
                                     onTap: () {
                                       showModalBottomSheet(
-                                        isScrollControlled: true,
                                         context: context,
                                         shape: const RoundedRectangleBorder(
                                           borderRadius: BorderRadius.only(
@@ -344,9 +375,8 @@ class HomeSideBar extends StatelessWidget {
                                           ),
                                         ),
                                         builder: (context) {
-                                          return ActionSheet(
-                                            isUser: __.posts[__.index][0]
-                                                    .username !=
+                                          return VideoSheet(
+                                            isUser: __.posts[__.index][0].username !=
                                                 prefs_username,
                                             isFromFeed: true,
                                             video_id: __.posts[__.index][0].id,
@@ -356,22 +386,30 @@ class HomeSideBar extends StatelessWidget {
                                             category_photo: '',
                                             category_desc: '',
                                             title: __.posts[__.index][0].title,
-                                            video_link:
-                                                __.posts[__.index][0].videoLink,
+                                            video_link: __.posts[__.index][0].videoLink,
                                             current_index: __.index,
                                           );
                                         },
                                       );
                                     },
                                     value: 5,
-                                    icon: SvgPicture.asset(
-                                      AppAsset.icoptions,
+                                    icon: Icon(
+                                      Icons.more_vert,
                                       color: Colors.white,
-                                      fit: BoxFit.scaleDown,
+                                      size: 27,
                                     ),
                                     text: shrink,
-                                  ), //Options
-                                  height10,
+                                    // Text(
+                                    //   'View',
+                                    //   style: TextStyle(
+                                    //     fontSize: 13,
+                                    //     fontWeight: FontWeight.w400,
+                                    //     color: Colors.white,
+                                    //     fontFamily: 'sofia',
+                                    //   ),
+                                    // ),
+                                  ),
+                                  height16,
                                   // SideBarItem(
                                   //   onTap: () {
                                   //     HapticFeedback.lightImpact();
@@ -449,10 +487,7 @@ class HomeSideBar extends StatelessWidget {
                               ),
                             ),
                             SizedBox(
-                              height: video.downloading == true ||
-                                      video.downloadingCompleted
-                                  ? 40
-                                  : 40,
+                              height: 40,
                             )
                           ],
                         ),

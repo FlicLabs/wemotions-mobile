@@ -920,14 +920,16 @@ class HomeProvider extends ChangeNotifier {
   List<UserSearchModel> _searched_users = [];
   List<UserSearchModel> get searched_users => _searched_users;
 
-  List<String> _selected_users = [];
-  List<String> get selected_users => _selected_users;
+  List<UserSearchModel> _selected_users = [];
+  List<UserSearchModel> get selected_users => _selected_users;
 
-  Future<void> selectUsers(String username) async {
-    if (selected_users.contains(username)) {
-      selected_users.remove(username);
+  Future<void> selectUsers(int postId,UserSearchModel user) async {
+    if (selected_users.contains(user)) {
+      selected_users.remove(user);
+      removeTag(postId, user);
     } else {
-      selected_users.add(username);
+      selected_users.add(user);
+      addTag(postId, user);
     }
     notifyListeners();
   }
@@ -956,23 +958,20 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addTag(int postId) async {
-    for (String name in selected_users) {
+  Future<void> addTag(int postId, UserSearchModel user) async {
       Map data = {
         "post_id": postId,
-        "username": name,
+        "username": user.username,
       };
       await _homeService.tagUser(data: data);
-    }
     await updateTags(postId);
-
     notifyListeners();
   }
 
-  Future<void> removeTag(int postId, String username) async {
+  Future<void> removeTag(int postId, UserSearchModel user) async {
     Map data = {
       "post_id": postId,
-      "username": username,
+      "username": user.username,
     };
     await _homeService.removeTag(data: data);
     await updateTags(postId);

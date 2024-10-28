@@ -30,10 +30,6 @@ class PostService {
       'is_available_in_public_feed': is_private!,
       'category_id': category_id!,
     });
-    // log('flutter: ${title}');
-    // log('flutter: ${hash}');
-    // log('flutter: ${category_id}');
-    // log('flutter: ${is_private}');
     request.headers.addAll({'Flic-Token': token ?? ''});
     var response = await request.send();
     print(response);
@@ -65,10 +61,6 @@ class PostService {
       'parent_video_id' : parent_video_id,
       // 'category_id': category_id!,
     });
-    // log('flutter: ${title}');
-    // log('flutter: ${hash}');
-    // log('flutter: ${category_id}');
-    // log('flutter: ${is_private}');
     request.headers.addAll({'Flic-Token': token ?? ''});
     var response = await request.send();
     print(response);
@@ -99,5 +91,79 @@ class PostService {
         },
       ),
     );
+  }
+
+  searchUserForTagging(String query) async {
+    print('${API.endpoint}search?type=user&query=$query');
+    try {
+      Response response = await dio.get(
+        '${API.endpoint}search?type=user&query=$query',
+        options: Options(
+          headers: {'Flic-Token': token},
+        ),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      return e.response?.statusCode;
+    }
+  }
+
+  tagUser({required data}) async{
+    print('${API.endpoint}${API.posts}/tag');
+    try {
+      Response response = await dio.post(
+        '${API.endpoint}${API.posts}/tag',
+        data: data,
+        options: Options(
+          headers: {'Flic-Token': token},
+        ),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      print(e.response);
+      print(e);
+      return e.response?.statusCode;
+    }
+  }
+
+  removeTag({required data}) async {
+    print('${API.endpoint}${API.posts}/remove/tag');
+    try {
+      Response response = await dio.delete(
+        '${API.endpoint}${API.posts}/remove/tag',
+        data: data,
+        options: Options(
+          headers: {'Flic-Token': token},
+        ),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      print(e.response);
+      print(e);
+      return e.response?.statusCode;
+    }
+  }
+
+  updateTags(int postId) async {
+    print('${API.endpoint}${API.posts}/$postId');
+    try {
+      Response response = await dio.get(
+        '${API.endpoint}${API.posts}/$postId',
+        options: Options(
+          headers: {'Flic-Token': token},
+        ),
+      );
+      return response.data;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.statusMessage);
+      return e.response?.statusCode;
+    }
   }
 }
