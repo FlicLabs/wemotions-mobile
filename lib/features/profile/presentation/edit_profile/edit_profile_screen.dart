@@ -286,7 +286,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ],
                   if (__.loading == false) ...[
-                    TransparentButton(
+                    CustomTransparentButton(
                       title: 'Update',
                       onTap: () async {
                         if (__.selectedImage?.path != null) {

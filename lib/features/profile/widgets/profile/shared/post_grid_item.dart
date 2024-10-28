@@ -26,10 +26,30 @@ class PostGridItem extends StatelessWidget {
       child: Stack(
         children: [
           Center(
-            child: CustomNetworkImage(
-              imageUrl: imageUrl,
-              fit: BoxFit.cover,
-              width: 500,
+            child: Stack(
+
+              children: [CustomNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+                width: 500,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [
+                          Colors.black,
+                          Colors.transparent,
+                        ],
+                        stops: [
+                          0.0,
+                          1.0
+                        ],
+                        end: FractionalOffset.topCenter,
+                    begin: FractionalOffset.bottomCenter,
+                        )
+                ),
+              )
+              ],
             ),
           ),
           Positioned(

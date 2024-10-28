@@ -220,12 +220,12 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                         TabBar(
                           controller: _controller,
                           labelStyle: AppTextStyle.bodyLarge
-                              .copyWith(color: Constants.primaryColor),
-                          labelColor: Constants.primaryColor,
+                              .copyWith(color: Color(0xFF9032E6)),
+                          labelColor:  Color(0xFF9032E6),
                           unselectedLabelStyle: AppTextStyle.bodyLarge
                               .copyWith(color: Theme.of(context).focusColor),
                           unselectedLabelColor: Theme.of(context).focusColor,
-                          indicatorColor: Theme.of(context).hintColor,
+                          indicatorColor:  Color(0xFF9032E6),
                           indicatorSize: TabBarIndicatorSize.label,
                           indicatorWeight: 2.5,
                           indicatorPadding: EdgeInsets.symmetric(vertical: 6),
