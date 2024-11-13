@@ -22,7 +22,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: "3.10.5"
+          flutter-version: '3.19.5'
 
       - name: Decode Service Account Key JSON File
         uses: timheuer/base64-to-file@v1
