@@ -1,5 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/home/widgets/home_video/tagged_list.dart';
 
 class InfoSideBar extends StatelessWidget {
   const InfoSideBar({Key? key}) : super(key: key);

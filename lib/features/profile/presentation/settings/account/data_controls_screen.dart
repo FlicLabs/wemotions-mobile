@@ -1,5 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/widgets/settings/icon_list_tile.dart';
 
 class DataControlsScreen extends StatelessWidget {
   static const String routeName = '/data-controls';

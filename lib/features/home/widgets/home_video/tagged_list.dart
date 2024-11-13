@@ -1,12 +1,6 @@
 import 'dart:math';
-import 'dart:ui';
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:socialverse/core/utils/constants/static_sizes.dart';
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/home/providers/home_provider.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AltTaggingSheet extends StatefulWidget {
   const AltTaggingSheet({super.key});

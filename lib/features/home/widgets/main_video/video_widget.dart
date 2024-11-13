@@ -1,6 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/home/helper/custom_page_view_physics.dart';
-import 'package:socialverse/features/home/utils/video_sheet.dart';
 
 class VideoWidgetArgs {
   final dynamic posts;

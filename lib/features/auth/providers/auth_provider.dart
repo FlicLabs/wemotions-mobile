@@ -7,7 +7,6 @@ import 'package:dio/dio.dart';
 import 'package:socialverse/features/auth/domain/service/auth_service.dart';
 import 'dart:math' show Random;
 import 'package:crypto/crypto.dart';
-import 'package:socialverse/features/auth/presentation/sign_up/verify_screen.dart';
 
 
 enum AuthStatus {

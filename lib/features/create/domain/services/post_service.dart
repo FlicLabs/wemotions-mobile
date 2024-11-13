@@ -57,7 +57,7 @@ class PostService {
     request.fields.addAll({
       'title': title,
       'hash': hash,
-      'is_available_in_public_feed': is_private!,
+      'is_available_in_public_feed': is_private,
       'parent_video_id' : parent_video_id,
       // 'category_id': category_id!,
     });

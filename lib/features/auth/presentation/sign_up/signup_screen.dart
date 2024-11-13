@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/auth/presentation/sign_up/verify_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
   static const String routeName = '/signup';

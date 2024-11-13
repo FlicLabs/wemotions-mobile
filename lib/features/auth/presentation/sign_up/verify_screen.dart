@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:socialverse/export.dart';
 
 class VerifyScreen extends StatelessWidget {

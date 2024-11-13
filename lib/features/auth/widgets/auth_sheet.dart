@@ -1,5 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/auth/presentation/onboarding/onboarding_screen.dart';
 
 class AuthBottomSheet extends StatelessWidget {
   const AuthBottomSheet({Key? key}) : super(key: key);
