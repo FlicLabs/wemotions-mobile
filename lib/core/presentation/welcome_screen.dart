@@ -75,9 +75,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           context,
                           BottomNavBar.routeName,
                           (route) => false,
-                          arguments: BottomNavBarArgs(
-                            initialLink: null,
-                          ),
                         );
                       },
                     ),

@@ -4,7 +4,6 @@ import 'package:socialverse/features/profile/domain/models/profile_posts_model.d
 import 'package:socialverse/features/profile/domain/models/users_model.dart';
 
 class UserProfileProvider extends ChangeNotifier {
-  final dynamicLink = DynamicLinkRepository();
   final notification = getIt<NotificationProvider>();
 
   ProfileModel _user = ProfileModel.empty;

@@ -7,7 +7,6 @@ class SearchProvider extends ChangeNotifier {
   // final controller = ScrollController();
   late TabController tabController;
   final _service = SubverseService();
-  final dynamicLink = DynamicLinkRepository();
 
   ScrollController _controller = ScrollController();
   ScrollController get controller => _controller;

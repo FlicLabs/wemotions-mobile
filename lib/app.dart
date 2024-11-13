@@ -1,8 +1,7 @@
 import 'export.dart';
 
 class WeMotions extends StatefulWidget {
-  final PendingDynamicLinkData? initialLink;
-  const WeMotions({Key? key, this.initialLink}) : super(key: key);
+  const WeMotions({Key? key}) : super(key: key);
 
   @override
   State<WeMotions> createState() => _WeMotionsState();
@@ -65,7 +64,7 @@ class _WeMotionsState extends State<WeMotions> {
           //     : BottomNavBar.routeName,
           routes: {
             BottomNavBar.routeName: (context) {
-              return BottomNavBar(initialLink: widget.initialLink);
+              return BottomNavBar();
             }
           },
         );

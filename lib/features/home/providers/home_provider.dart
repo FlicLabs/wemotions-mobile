@@ -8,7 +8,6 @@ enum RateItem { LOVE_IT, LIKE_IT, OKAY, DISLIKE_IT, HATE_IT }
 class HomeProvider extends ChangeNotifier {
   final home = PageController();
   final replies = PageController();
-  final dynamicLink = DynamicLinkRepository();
 
   final _homeService = HomeService();
   final _subverseService = SubverseService();

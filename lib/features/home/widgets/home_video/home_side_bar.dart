@@ -1,9 +1,5 @@
-import 'dart:ui';
 
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/home/widgets/home_video/alt_voting_sheet.dart';
-import 'package:socialverse/features/home/widgets/home_video/home_actions_sheet.dart';
-import 'package:socialverse/features/home/widgets/home_video/tagging_widget.dart';
 
 class HomeSideBar extends StatelessWidget {
   const HomeSideBar({Key? key}) : super(key: key);
@@ -259,17 +255,6 @@ class HomeSideBar extends StatelessWidget {
                                       bool isUser =
                                           __.posts[__.index][0].username !=
                                               prefs_username;
-                                      final link =
-                                      await __.dynamicLink.createPostLink(
-                                        imageUrl:
-                                        __.posts[__.index][0].thumbnailUrl,
-                                        postID: '${__.posts[__.index][0].id}',
-                                        username:
-                                        __.posts[__.index][0].username,
-                                        description:
-                                        __.posts[__.index][0].title,
-                                        isPost: true,
-                                      );
                                       showModalBottomSheet(
                                         context: context,
                                         backgroundColor: Colors.black,
@@ -282,7 +267,7 @@ class HomeSideBar extends StatelessWidget {
                                         builder: (context) {
                                           return ShareSheet(
                                             isUser: isUser,
-                                            dynamicLink: link,
+                                            dynamicLink: 'link',
                                           );
                                         },
                                       );
@@ -315,17 +300,6 @@ class HomeSideBar extends StatelessWidget {
                                       bool isUser =
                                           __.posts[__.index][0].username !=
                                               prefs_username;
-                                      final link =
-                                          await __.dynamicLink.createPostLink(
-                                        imageUrl:
-                                            __.posts[__.index][0].thumbnailUrl,
-                                        postID: '${__.posts[__.index][0].id}',
-                                        username:
-                                            __.posts[__.index][0].username,
-                                        description:
-                                            __.posts[__.index][0].title,
-                                        isPost: true,
-                                      );
                                       showModalBottomSheet(
                                         context: context,
                                         backgroundColor: Colors.black,
@@ -338,7 +312,7 @@ class HomeSideBar extends StatelessWidget {
                                         builder: (context) {
                                           return ShareSheet(
                                             isUser: isUser,
-                                            dynamicLink: link,
+                                            dynamicLink: 'link',
                                           );
                                         },
                                       );

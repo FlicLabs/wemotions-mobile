@@ -145,13 +145,7 @@ class BottomSideBar extends StatelessWidget {
                           HapticFeedback.mediumImpact();
                           bool isUser =
                               __.posts[__.index].username != prefs_username;
-                          final link = await home.dynamicLink.createPostLink(
-                            imageUrl: __.posts[__.index].thumbnailUrl,
-                            postID: '${__.posts[__.index].id}',
-                            username: __.posts[__.index].username,
-                            description: __.posts[__.index].title,
-                            isPost: true,
-                          );
+                         
                           showModalBottomSheet(
                             context: context,
                             backgroundColor: Colors.black,
@@ -164,7 +158,7 @@ class BottomSideBar extends StatelessWidget {
                             builder: (context) {
                               return ShareSheet(
                                 isUser: isUser,
-                                dynamicLink: link,
+                                dynamicLink: 'link',
                               );
                             },
                           );

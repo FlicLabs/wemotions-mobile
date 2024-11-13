@@ -49,9 +49,7 @@ class CustomRouter {
       case SignUpScreen.routeName:
         return SignUpScreen.route();
       case BottomNavBar.routeName:
-        return BottomNavBar.route(
-          args: settings.arguments as BottomNavBarArgs,
-        );
+        return BottomNavBar.route();
       case SearchScreen.routeName:
         return SearchScreen.route();
       case CreateSubverseScreen.routeName:

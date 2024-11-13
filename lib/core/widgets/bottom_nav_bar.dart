@@ -1,25 +1,15 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/create/presentation/instant_camera_screen.dart';
-
-class BottomNavBarArgs {
-  final PendingDynamicLinkData? initialLink;
-  const BottomNavBarArgs({this.initialLink});
-}
 
 class BottomNavBar extends StatefulWidget {
   static const String routeName = '/bottom-nav';
-  const BottomNavBar({Key? key, this.initialLink}) : super(key: key);
+  const BottomNavBar({Key? key}) : super(key: key);
 
-  static Route route({required BottomNavBarArgs args}) {
+  static Route route() {
     return PageRouteBuilder(
       settings: const RouteSettings(name: routeName),
-      pageBuilder: (_, __, ___) => BottomNavBar(
-        initialLink: args.initialLink,
-      ),
+      pageBuilder: (_, __, ___) => BottomNavBar(),
     );
   }
-
-  final PendingDynamicLinkData? initialLink;
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
@@ -27,8 +17,6 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar>
     with WidgetsBindingObserver {
-  final linkRepository = DynamicLinkRepository();
-
   final List<Widget> _screens = [
     HomeScreen(),
     Container(),
@@ -38,7 +26,6 @@ class _BottomNavBarState extends State<BottomNavBar>
   @override
   void initState() {
     super.initState();
-    linkRepository.retrieveDynamicLink(context);
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -74,182 +61,180 @@ class _BottomNavBarState extends State<BottomNavBar>
           animationDuration: 1000,
           animateFromLastPercent: true,
           center: GestureDetector(
-            onTap: nav.selectedVideoUploadType == "Video" ?  ()async {
-              PermissionStatus status = await Permission.camera.request();
-              if (logged_in == false) {
-                auth.showAuthBottomSheet(context);
-              }else {
-                if (status.isDenied || status.isPermanentlyDenied) {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        CustomAlertDialog(
-                          title: 'Permission Denied',
-                          action: 'Open Settings',
-                          content: 'Please allow access to camera to record videos',
-                          tap: () {
-                            openAppSettings();
-                          },
-                        ),
-                  );
-                } else {
-                  PermissionStatus status = await Permission.camera.request();
-                  if (status.isDenied || status.isPermanentlyDenied) {
-                    showDialog(
-                      context: context,
-                      builder: (context) =>
-                          CustomAlertDialog(
-                            title: 'Permission Denied',
-                            action: 'Open Settings',
-                            content: 'Please allow access to camera to record videos',
-                            tap: () {
-                              openAppSettings();
-                            },
-                          ),
-                    );
-                  } else {
-                    await availableCameras().then(
-                          (value) =>
-                          Navigator.of(context).pushNamed(
-                            CameraScreen.routeName,
-                            arguments: CameraScreenArgs(cameras: value,
-                                isReply: false),
-                          ),
-                    );
-                  }
-                }
-              }
-            } : ()async {
-              // This is parent_video_id
-              // .posts[.index].id
-              // print(__.posts[__.index].id.toString());
-
-              if (logged_in == false) {
-                auth.showAuthBottomSheet(context);
-              } else {
-                PermissionStatus status =
-                await Permission.camera.request();
-                if (status.isDenied ||
-                    status.isPermanentlyDenied) {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        CustomAlertDialog(
-                          title: 'Permission Denied',
-                          action: 'Open Settings',
-                          content:
-                          'Please allow access to camera to record videos',
-                          tap: () {
-                            openAppSettings();
-                          },
-                        ),
-                  );
-                } else {
-                  PermissionStatus status =
-                  await Permission.camera.request();
-                  if (status.isDenied ||
-                      status.isPermanentlyDenied) {
-                    showDialog(
-                      context: context,
-                      builder: (context) =>
-                          CustomAlertDialog(
+            onTap: nav.selectedVideoUploadType == "Video"
+                ? () async {
+                    PermissionStatus status = await Permission.camera.request();
+                    if (logged_in == false) {
+                      auth.showAuthBottomSheet(context);
+                    } else {
+                      if (status.isDenied || status.isPermanentlyDenied) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => CustomAlertDialog(
                             title: 'Permission Denied',
                             action: 'Open Settings',
                             content:
-                            'Please allow access to camera to record videos',
+                                'Please allow access to camera to record videos',
                             tap: () {
                               openAppSettings();
                             },
                           ),
-                    );
-                  } else {
-                    await availableCameras().then(
-                          (value) => Navigator.of(context)
-                          .pushNamed(
-                        CameraScreen.routeName,
-                        arguments: CameraScreenArgs(
-                            cameras: value,
-                            isReply: true,
-                            parent_video_id: home
-                                .posts[home.index][0].id
-                                .toString()),
-                      ),
-                    );
+                        );
+                      } else {
+                        PermissionStatus status =
+                            await Permission.camera.request();
+                        if (status.isDenied || status.isPermanentlyDenied) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => CustomAlertDialog(
+                              title: 'Permission Denied',
+                              action: 'Open Settings',
+                              content:
+                                  'Please allow access to camera to record videos',
+                              tap: () {
+                                openAppSettings();
+                              },
+                            ),
+                          );
+                        } else {
+                          await availableCameras().then(
+                            (value) => Navigator.of(context).pushNamed(
+                              CameraScreen.routeName,
+                              arguments: CameraScreenArgs(
+                                  cameras: value, isReply: false),
+                            ),
+                          );
+                        }
+                      }
+                    }
                   }
-                }
-              }
-            },
-            onLongPress:  nav.selectedVideoUploadType == "Video" ?  ()async  {
-              PermissionStatus status = await Permission.camera.request();
-              if (logged_in == false) {
-                auth.showAuthBottomSheet(context);
-              }else {
-                if (status.isDenied || status.isPermanentlyDenied) {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        CustomAlertDialog(
-                          title: 'Permission Denied',
-                          action: 'Open Settings',
-                          content: 'Please allow access to camera to record videos',
-                          tap: () {
-                            openAppSettings();
-                          },
-                        ),
-                  );
-                } else {
-                  PermissionStatus status = await Permission.camera.request();
-                  if (status.isDenied || status.isPermanentlyDenied) {
-                    showDialog(
-                      context: context,
-                      builder: (context) =>
-                          CustomAlertDialog(
+                : () async {
+                    // This is parent_video_id
+                    // .posts[.index].id
+                    // print(__.posts[__.index].id.toString());
+
+                    if (logged_in == false) {
+                      auth.showAuthBottomSheet(context);
+                    } else {
+                      PermissionStatus status =
+                          await Permission.camera.request();
+                      if (status.isDenied || status.isPermanentlyDenied) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => CustomAlertDialog(
                             title: 'Permission Denied',
                             action: 'Open Settings',
-                            content: 'Please allow access to camera to record videos',
+                            content:
+                                'Please allow access to camera to record videos',
                             tap: () {
                               openAppSettings();
                             },
                           ),
-                    );
-                  } else {
-                    await availableCameras().then(
-                          (value) =>
-                          Navigator.of(context).pushNamed(
-                            InstantCameraScreen.routeName,
-                            arguments: InstantCameraScreenArgs(cameras: value,
-                                isReply: false),
+                        );
+                      } else {
+                        PermissionStatus status =
+                            await Permission.camera.request();
+                        if (status.isDenied || status.isPermanentlyDenied) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => CustomAlertDialog(
+                              title: 'Permission Denied',
+                              action: 'Open Settings',
+                              content:
+                                  'Please allow access to camera to record videos',
+                              tap: () {
+                                openAppSettings();
+                              },
+                            ),
+                          );
+                        } else {
+                          await availableCameras().then(
+                            (value) => Navigator.of(context).pushNamed(
+                              CameraScreen.routeName,
+                              arguments: CameraScreenArgs(
+                                  cameras: value,
+                                  isReply: true,
+                                  parent_video_id:
+                                      home.posts[home.index][0].id.toString()),
+                            ),
+                          );
+                        }
+                      }
+                    }
+                  },
+            onLongPress: nav.selectedVideoUploadType == "Video"
+                ? () async {
+                    PermissionStatus status = await Permission.camera.request();
+                    if (logged_in == false) {
+                      auth.showAuthBottomSheet(context);
+                    } else {
+                      if (status.isDenied || status.isPermanentlyDenied) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => CustomAlertDialog(
+                            title: 'Permission Denied',
+                            action: 'Open Settings',
+                            content:
+                                'Please allow access to camera to record videos',
+                            tap: () {
+                              openAppSettings();
+                            },
                           ),
-                    );
+                        );
+                      } else {
+                        PermissionStatus status =
+                            await Permission.camera.request();
+                        if (status.isDenied || status.isPermanentlyDenied) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => CustomAlertDialog(
+                              title: 'Permission Denied',
+                              action: 'Open Settings',
+                              content:
+                                  'Please allow access to camera to record videos',
+                              tap: () {
+                                openAppSettings();
+                              },
+                            ),
+                          );
+                        } else {
+                          await availableCameras().then(
+                            (value) => Navigator.of(context).pushNamed(
+                              InstantCameraScreen.routeName,
+                              arguments: InstantCameraScreenArgs(
+                                  cameras: value, isReply: false),
+                            ),
+                          );
+                        }
+                      }
+                    }
                   }
-                }
-              }
-            } : ()async {
-
-            },
+                : () async {},
             child: Stack(
               alignment: Alignment.center,
               children: [
                 Container(
                   height: 48,
                   width: 48,
-                  decoration
-                      : BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: new LinearGradient(
-                        colors: [
-                          Color(0xFFA858F4),
-                          Color(0xFF9032E6),
-                        ],
-                        stops: [0.0, 1.0],
-                        begin: FractionalOffset.topCenter,
-                        end: FractionalOffset.bottomCenter,
-                        tileMode: TileMode.repeated
-                    )
-                  ),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: new LinearGradient(
+                          colors: [
+                            Color(0xFFA858F4),
+                            Color(0xFF9032E6),
+                          ],
+                          stops: [
+                            0.0,
+                            1.0
+                          ],
+                          begin: FractionalOffset.topCenter,
+                          end: FractionalOffset.bottomCenter,
+                          tileMode: TileMode.repeated)),
                 ),
                 Container(
-                  child: nav.selectedVideoUploadType == "Video" ? SvgPicture.asset(AppAsset.icvideopost) :  SvgPicture.asset(AppAsset.icreply),
+                  child: nav.selectedVideoUploadType == "Video"
+                      ? SvgPicture.asset(AppAsset.icvideopost)
+                      : SvgPicture.asset(AppAsset.icreply),
                 ),
               ],
             ),
@@ -259,8 +244,8 @@ class _BottomNavBarState extends State<BottomNavBar>
         bottomNavigationBar: exit.isInit
             ? shrink
             : Container(
-          height: 66,
-              child: BottomNavigationBar(
+                height: 100,
+                child: BottomNavigationBar(
                   currentIndex: nav.currentPage,
                   backgroundColor: Theme.of(context).canvasColor,
                   // backgroundColor: Color(0xFF2C2C2C),
@@ -278,27 +263,23 @@ class _BottomNavBarState extends State<BottomNavBar>
                       if (home.posts.isNotEmpty) {
                         if (reply.posts.isNotEmpty) {
                           if (index == 2) {
-                            if (home.horizontalIndex>0) {
+                            if (home.horizontalIndex > 0) {
                               reply.isPlaying = false;
                               reply.videoController(reply.index)?.pause();
                             } else {
                               home.isPlaying = false;
                               home.videoController(home.index)?.pause();
                             }
-                          } else
-                          {
-                            if(home.horizontalIndex > 0)
-                            {
+                          } else {
+                            if (home.horizontalIndex > 0) {
                               reply.isPlaying = true;
                               reply.videoController(reply.index)?.play();
-                            } else
-                            {
+                            } else {
                               home.isPlaying = true;
                               home.videoController(home.index)?.play();
                             }
                           }
-                        } else
-                        {
+                        } else {
                           if (index == 0 && home.isPlaying == false) {
                             home.isPlaying = true;
                             home.videoController(home.index)?.play();
@@ -312,22 +293,24 @@ class _BottomNavBarState extends State<BottomNavBar>
                   },
                   items: [
                     BottomNavigationBarItem(
-                      icon: nav.currentPage == 0 ?  SvgPicture.asset(
-                        AppAsset.ichome_active,
-                        height: 24,
-                        width: 24,
-                        // color: nav.currentPage == 0
-                        //     ? Theme.of(context).hintColor
-                        //     : Theme.of(context).primaryColorDark,
-                      ) :SvgPicture.asset(
-                        AppAsset.ichome,
-                       color: Theme.of(context).focusColor,
-                        height: 24,
-                        width: 24,
-                        // color: nav.currentPage == 0
-                        //     ? Theme.of(context).hintColor
-                        //     : Theme.of(context).primaryColorDark,
-                      ),
+                      icon: nav.currentPage == 0
+                          ? SvgPicture.asset(
+                              AppAsset.ichome_active,
+                              height: 24,
+                              width: 24,
+                              // color: nav.currentPage == 0
+                              //     ? Theme.of(context).hintColor
+                              //     : Theme.of(context).primaryColorDark,
+                            )
+                          : SvgPicture.asset(
+                              AppAsset.ichome,
+                              color: Theme.of(context).focusColor,
+                              height: 24,
+                              width: 24,
+                              // color: nav.currentPage == 0
+                              //     ? Theme.of(context).hintColor
+                              //     : Theme.of(context).primaryColorDark,
+                            ),
                       label: '',
                     ),
                     // BottomNavigationBarItem(
@@ -355,15 +338,29 @@ class _BottomNavBarState extends State<BottomNavBar>
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              GestureDetector(onTap: (){
-
-                                nav.selectedVideoUploadType = "Video";
-
-                              },child: Text("Video",style: TextStyle(color: nav.selectedVideoUploadType == "Video" ? Theme.of(context).focusColor : Color(0xFF7C7C7C)),)),
+                              GestureDetector(
+                                  onTap: () {
+                                    nav.selectedVideoUploadType = "Video";
+                                  },
+                                  child: Text(
+                                    "Video",
+                                    style: TextStyle(
+                                        color: nav.selectedVideoUploadType ==
+                                                "Video"
+                                            ? Theme.of(context).focusColor
+                                            : Color(0xFF7C7C7C)),
+                                  )),
                               width15,
-                              GestureDetector(onTap: (){
-                                nav.selectedVideoUploadType = "Reply";
-                              },child: Text("Reply",style: TextStyle(color: nav.selectedVideoUploadType == "Reply" ? Theme.of(context).focusColor : Color(0xFF7C7C7C)))),
+                              GestureDetector(
+                                  onTap: () {
+                                    nav.selectedVideoUploadType = "Reply";
+                                  },
+                                  child: Text("Reply",
+                                      style: TextStyle(
+                                          color: nav.selectedVideoUploadType ==
+                                                  "Reply"
+                                              ? Theme.of(context).focusColor
+                                              : Color(0xFF7C7C7C)))),
                             ],
                           )
                         ],
@@ -383,21 +380,23 @@ class _BottomNavBarState extends State<BottomNavBar>
                     //   label: '',
                     // ),
                     BottomNavigationBarItem(
-                      icon:nav.currentPage == 2 ? SvgPicture.asset(
-                        AppAsset.icuser_active,
-                        height: 24,
-                        width: 24,
-                      ) : SvgPicture.asset(
-                        AppAsset.icuser,
-                        color: Theme.of(context).focusColor,
-                        height: 24,
-                        width: 24,
-                      ),
+                      icon: nav.currentPage == 2
+                          ? SvgPicture.asset(
+                              AppAsset.icuser_active,
+                              height: 24,
+                              width: 24,
+                            )
+                          : SvgPicture.asset(
+                              AppAsset.icuser,
+                              color: Theme.of(context).focusColor,
+                              height: 24,
+                              width: 24,
+                            ),
                       label: '',
                     ),
                   ],
                 ),
-            ),
+              ),
       ),
     );
   }

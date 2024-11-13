@@ -1,6 +1,4 @@
-import 'package:socialverse/core/providers/report_provider.dart';
 import 'export.dart';
-import 'package:socialverse/core/widgets/online_status_manager.dart';
 
 @pragma('vm:entry-point')
 Future<void> _backgroundHandler(RemoteMessage message) async {
@@ -68,7 +66,6 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
-  final initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
   SharedPreferences.getInstance().then(
     (prefs) {
       var mode = prefs.getString('themeMode') ?? 'ThemeMode.system';
@@ -104,9 +101,7 @@ void main() async {
             create: (_) => ThemeProvider(
               value ? Constants.darkTheme : Constants.lightTheme,
             ),
-            builder: (context, child) => logged_in == true ? OnlineStatusManager(
-                flicToken: token!,
-                child: WeMotions(initialLink: initialLink)) : WeMotions(initialLink: initialLink),
+            builder: (context, child) => WeMotions(),
           ),
         ),
       );

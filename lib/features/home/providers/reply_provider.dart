@@ -5,7 +5,6 @@ import 'package:socialverse/export.dart';
 
 class ReplyProvider extends ChangeNotifier {
   final home = PageController();
-  final dynamicLink = DynamicLinkRepository();
 
   final _homeService = HomeService();
   final _subverseService = SubverseService();

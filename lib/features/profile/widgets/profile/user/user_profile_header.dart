@@ -43,15 +43,6 @@ class UserProfileHeader extends StatelessWidget {
                     GestureDetector(
                       onTap: () async {
                         await HapticFeedback.mediumImpact();
-                        // final link = await __.dynamicLink.createProfileLink(
-                        //   imageUrl: __.user.profilePictureUrl,
-                        //   username: __.user.username,
-                        //   first_name: __.user.firstName,
-                        //   followers: '${__.user.followerCount}',
-                        //   following: '${__.user.followingCount}',
-                        //   posts: '${__.user.postCount}',
-                        //   isProfile: true,
-                        // );
                         showModalBottomSheet(
                           context: context,
                           shape: const RoundedRectangleBorder(
@@ -62,7 +53,7 @@ class UserProfileHeader extends StatelessWidget {
                           ),
                           builder: (context) {
                             return ProfileShareSheet(
-                              // dynamicLink: link,
+                              dynamicLink: 'link',
                             );
                           },
                         );

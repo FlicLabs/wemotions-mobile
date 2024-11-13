@@ -59,15 +59,8 @@ class LastPageGradient extends StatelessWidget {
               height20,
               TransparentButton(
                 onTap: () async {
-                  final link = await search.dynamicLink.createSubverseLink(
-                    imageUrl: home.posts[home.index][0].thumbnailUrl,
-                    id: '${home.posts[home.index][0].id}',
-                    title: '',
-                    count: '',
-                    description: '',
-                    isSubverse: true,
-                  );
-                  Share.share(link);
+                  
+                  Share.share('link');
                 },
                 title: 'Share',
               ),

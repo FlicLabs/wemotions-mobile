@@ -11,7 +11,6 @@ export 'dart:io';
 
 // Packages
 export 'package:firebase_core/firebase_core.dart';
-export 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 export 'package:flutter_screenutil/flutter_screenutil.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:share_plus/share_plus.dart';
@@ -126,7 +125,6 @@ export 'package:socialverse/features/profile/utils/link_sheet.dart';
 export 'package:socialverse/features/profile/widgets/settings/qr_view.dart';
 export 'package:socialverse/core/configs/tween/custom_tween_animation_builder.dart';
 export 'package:socialverse/features/profile/widgets/settings/custom_alert_dialog.dart';
-export 'package:socialverse/core/configs/dynamic_link/dynamic_link_repository.dart';
 export 'package:socialverse/features/home/widgets/home_video/exit_view_indicator.dart';
 export 'package:socialverse/features/home/widgets/home_video/post_upload_indicator.dart';
 export 'package:socialverse/features/create/widgets/post_tag_tile.dart';

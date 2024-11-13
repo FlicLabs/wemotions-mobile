@@ -1,12 +1,6 @@
-import 'dart:math';
 
-import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/home/helper/custom_page_view_physics.dart';
-import 'package:socialverse/features/home/utils/video_sheet.dart';
-import 'package:socialverse/features/home/widgets/home_video/last_page_gradient.dart';
-import 'package:socialverse/features/home/widgets/reply_video/reply_video_widget.dart';
 
 class HomeVideoWidget extends StatefulWidget {
   const HomeVideoWidget({

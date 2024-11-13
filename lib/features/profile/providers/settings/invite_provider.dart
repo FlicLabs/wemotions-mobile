@@ -8,7 +8,6 @@ import 'package:socialverse/features/profile/domain/services/invite_service.dart
 
 
 class InviteProvider extends ChangeNotifier {
-  final dynamicLink = DynamicLinkRepository();
   final _service = InviteService();
 
   List<Users> _active_users = <Users>[];
@@ -58,10 +57,6 @@ class InviteProvider extends ChangeNotifier {
         sms.toString().replaceAll('+', '%20'),
       ),
     );
-  }
-
-  Future<void> getInviteLink() async {
-    _link = await dynamicLink.createInviteLink();
   }
 
   Future<void> fetchActiveUsers() async {

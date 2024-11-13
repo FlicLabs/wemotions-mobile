@@ -28,14 +28,9 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
     Provider.of<InviteProvider>(context, listen: false).getContacts();
   }
 
-  fetchLink() {
-    Provider.of<InviteProvider>(context, listen: false).getInviteLink();
-  }
-
   initState() {
     fetchData();
     fetchContacts();
-    fetchLink();
     super.initState();
   }
 
