@@ -47,5 +47,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-.fvm/fvm_config.json
-.fvm/flutter_sdk
+
+# FVM Version Cache
+.fvm/
+.fvmrc
