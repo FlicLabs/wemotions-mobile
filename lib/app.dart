@@ -15,6 +15,14 @@ class _WeMotionsState extends State<WeMotions> {
     fetchProfile();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Move the theme provider dependency here
+    print(
+        'the theme provider data is: ${Provider.of<ThemeProvider>(context).getTheme()}');
+  }
+
   fetchFeed() async {
     final home = Provider.of<HomeProvider>(context, listen: false);
     final reply = Provider.of<ReplyProvider>(context, listen: false);
@@ -62,11 +70,7 @@ class _WeMotionsState extends State<WeMotions> {
           // onboard == false
           //     ? WelcomeScreen.routeName
           //     : BottomNavBar.routeName,
-          routes: {
-            BottomNavBar.routeName: (context) {
-              return BottomNavBar();
-            }
-          },
+          routes: {BottomNavBar.routeName: (context) => BottomNavBar()},
         );
       },
     );

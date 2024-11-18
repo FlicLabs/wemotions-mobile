@@ -1,6 +1,5 @@
 import 'package:socialverse/export.dart';
 
-
 class OnboardingScreen extends StatelessWidget {
   static const String routeName = '/onboarding';
   const OnboardingScreen({super.key});
@@ -43,57 +42,66 @@ class OnboardingScreen extends StatelessWidget {
                         // color: Theme.of(context).hintColor,
                       ),
                     ),
-                    height40,
+                    // height40,
                     Container(
                       child: Column(
                         children: [
-                          Text("Start the Dialogue with",style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).indicatorColor,
-                            fontFamily: 'sofia',
-                          ),),
-                          Text("Voice & Video",style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).indicatorColor,
-                            fontFamily: 'sofia',
-                          ),),
+                          Text(
+                            "Start the Dialogue with",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).indicatorColor,
+                              fontFamily: 'sofia',
+                            ),
+                          ),
+                          Text(
+                            "Voice & Video",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).indicatorColor,
+                              fontFamily: 'sofia',
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     height8,
-                    Text("Kick off conversations by sharing your thoughts with voice or video. Move beyond text and express yourself in a way that truly connects. ",style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.normal,
-                      color: Theme.of(context).indicatorColor,
-                      fontFamily: 'sofia',
-                    ),textAlign: TextAlign.center,),
+                    Text(
+                      "Kick off conversations by sharing your thoughts with voice or video. Move beyond text and express yourself in a way that truly connects. ",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                        color: Theme.of(context).indicatorColor,
+                        fontFamily: 'sofia',
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                     height30,
-                    if (__.loggedInAuthStatus !=
-                        AuthStatus.Authenticating) ...[
+                    if (__.loggedInAuthStatus != AuthStatus.Authenticating) ...[
                       AuthButtonWithColor(
                         onTap: () async {
-                          Navigator.of(context).pushNamed(SignUpScreen.routeName);
+                          Navigator.of(context)
+                              .pushNamed(SignUpScreen.routeName);
                         },
                         title: 'Sign up',
                         isGradient: true,
                       ),
                     ],
                     height16,
-                    if (__.loggedInAuthStatus ==
-                        AuthStatus.Authenticating) ...[
+                    if (__.loggedInAuthStatus == AuthStatus.Authenticating) ...[
                       SizedBox(
                         height: 45,
                         width: 45,
                         child: CustomProgressIndicator(),
                       )
                     ],
-                    if (__.loggedInAuthStatus !=
-                        AuthStatus.Authenticating) ...[
+                    if (__.loggedInAuthStatus != AuthStatus.Authenticating) ...[
                       AuthButtonWithBorder(
                         onTap: () async {
-                          Navigator.of(context).pushNamed(LoginScreen.routeName);
+                          Navigator.of(context)
+                              .pushNamed(LoginScreen.routeName);
                         },
                         title: 'Login',
                       ),
@@ -108,4 +116,3 @@ class OnboardingScreen extends StatelessWidget {
     });
   }
 }
-

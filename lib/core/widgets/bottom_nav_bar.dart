@@ -18,8 +18,17 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar>
     with WidgetsBindingObserver {
   final List<Widget> _screens = [
-    HomeScreen(),
+    //HomeScreen(),
     Container(),
+    Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(child: Text('this is the discovery page')),
+    ),
+    Container(),
+    Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(child: Text('this is the Notification page')),
+    ),
     ProfileScreen(),
   ];
 
@@ -313,18 +322,21 @@ class _BottomNavBarState extends State<BottomNavBar>
                             ),
                       label: '',
                     ),
-                    // BottomNavigationBarItem(
-                    //   icon:nav.currentPage == 1 ? SvgPicture.asset(
-                    //     AppAsset.icdiscover_active,
-                    //     height: 24,
-                    //     width: 24,
-                    //   ) : SvgPicture.asset(
-                    //     AppAsset.icdiscover,
-                    //     height: 24,
-                    //     width: 24,
-                    //   ),
-                    //   label: '',
-                    // ),
+                    BottomNavigationBarItem(
+                      icon: nav.currentPage == 1
+                          ? SvgPicture.asset(
+                              AppAsset.icdiscover_active,
+                              height: 24,
+                              width: 24,
+                            )
+                          : SvgPicture.asset(
+                              AppAsset.icdiscover,
+                              color: Theme.of(context).focusColor,
+                              height: 24,
+                              width: 24,
+                            ),
+                      label: '',
+                    ),
                     BottomNavigationBarItem(
                       icon: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -350,7 +362,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                                             ? Theme.of(context).focusColor
                                             : Color(0xFF7C7C7C)),
                                   )),
-                              width15,
+                              //width15,
                               GestureDetector(
                                   onTap: () {
                                     nav.selectedVideoUploadType = "Reply";
@@ -367,20 +379,23 @@ class _BottomNavBarState extends State<BottomNavBar>
                       ),
                       label: '',
                     ),
-                    // BottomNavigationBarItem(
-                    //   icon:nav.currentPage == 1 ? SvgPicture.asset(
-                    //     AppAsset.icnotification_active,
-                    //     height: 24,
-                    //     width: 24,
-                    //   ) : SvgPicture.asset(
-                    //     AppAsset.icnotification,
-                    //     height: 24,
-                    //     width: 24,
-                    //   ),
-                    //   label: '',
-                    // ),
                     BottomNavigationBarItem(
-                      icon: nav.currentPage == 2
+                      icon: nav.currentPage == 3
+                          ? SvgPicture.asset(
+                              AppAsset.icnotification_active,
+                              height: 24,
+                              width: 24,
+                            )
+                          : SvgPicture.asset(
+                              AppAsset.icnotification,
+                              color: Theme.of(context).focusColor,
+                              height: 24,
+                              width: 24,
+                            ),
+                      label: '',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: nav.currentPage == 4
                           ? SvgPicture.asset(
                               AppAsset.icuser_active,
                               height: 24,
