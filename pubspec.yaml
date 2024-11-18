@@ -94,7 +94,7 @@ dependency_overrides:
   extended_image: ^8.2.0
   http_client_helper: ^3.0.0
   http: ^0.13.4
-  win32: ^5.8.0
+  win32: ^4.0.0
 
 flutter:
   uses-material-design: true
