@@ -19,7 +19,13 @@ class _BottomNavBarState extends State<BottomNavBar>
     with WidgetsBindingObserver {
   final List<Widget> _screens = [
     HomeScreen(),
+    SubverseScreen(),
     Container(),
+    Scaffold(
+      body: Center(
+        child: Text("Notifications"),
+      ),
+    ),
     ProfileScreen(),
   ];
 
@@ -51,7 +57,7 @@ class _BottomNavBarState extends State<BottomNavBar>
           children: _screens,
         ),
         floatingActionButton: CircularPercentIndicator(
-          radius: 33,
+          radius: 35,
           lineWidth: 4.0,
           backgroundColor: Colors.white,
           percent: 1,
@@ -254,15 +260,18 @@ class _BottomNavBarState extends State<BottomNavBar>
                   showUnselectedLabels: false,
                   selectedFontSize: 0,
                   onTap: (index) {
-                    if (index == 2 && logged_in == false) {
+                    if (index == 3 && logged_in == false) {
                       auth.showAuthBottomSheet(context);
-                    } else if (index == 2 && logged_in == false) {
+                    } else if (index == 4 && logged_in == false) {
                       auth.showAuthBottomSheet(context);
                     } else {
                       nav.currentPage = index;
                       if (home.posts.isNotEmpty) {
                         if (reply.posts.isNotEmpty) {
-                          if (index == 2) {
+                          if (index == 1 ||
+                              index == 2 ||
+                              index == 3 ||
+                              index == 4) {
                             if (home.horizontalIndex > 0) {
                               reply.isPlaying = false;
                               reply.videoController(reply.index)?.pause();
@@ -313,18 +322,21 @@ class _BottomNavBarState extends State<BottomNavBar>
                             ),
                       label: '',
                     ),
-                    // BottomNavigationBarItem(
-                    //   icon:nav.currentPage == 1 ? SvgPicture.asset(
-                    //     AppAsset.icdiscover_active,
-                    //     height: 24,
-                    //     width: 24,
-                    //   ) : SvgPicture.asset(
-                    //     AppAsset.icdiscover,
-                    //     height: 24,
-                    //     width: 24,
-                    //   ),
-                    //   label: '',
-                    // ),
+                    BottomNavigationBarItem(
+                      icon: nav.currentPage == 1
+                          ? SvgPicture.asset(
+                              AppAsset.icdiscover_active,
+                              height: 24,
+                              width: 24,
+                            )
+                          : SvgPicture.asset(
+                              AppAsset.icdiscover,
+                              color: Theme.of(context).focusColor,
+                              height: 24,
+                              width: 24,
+                            ),
+                      label: '',
+                    ),
                     BottomNavigationBarItem(
                       icon: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -332,55 +344,62 @@ class _BottomNavBarState extends State<BottomNavBar>
                         children: [
                           SizedBox(
                             width: 24,
-                            height: 38,
+                            height: 42,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               GestureDetector(
-                                  onTap: () {
-                                    nav.selectedVideoUploadType = "Video";
-                                  },
-                                  child: Text(
-                                    "Video",
-                                    style: TextStyle(
-                                        color: nav.selectedVideoUploadType ==
-                                                "Video"
-                                            ? Theme.of(context).focusColor
-                                            : Color(0xFF7C7C7C)),
-                                  )),
-                              width15,
-                              GestureDetector(
-                                  onTap: () {
-                                    nav.selectedVideoUploadType = "Reply";
-                                  },
-                                  child: Text("Reply",
-                                      style: TextStyle(
-                                          color: nav.selectedVideoUploadType ==
-                                                  "Reply"
+                                onTap: () {
+                                  nav.selectedVideoUploadType = "Video";
+                                },
+                                child: Text(
+                                  "Video",
+                                  style: TextStyle(
+                                      color:
+                                          nav.selectedVideoUploadType == "Video"
                                               ? Theme.of(context).focusColor
-                                              : Color(0xFF7C7C7C)))),
+                                              : Color(0xFF7C7C7C)),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  nav.selectedVideoUploadType = "Reply";
+                                },
+                                child: Text(
+                                  "Reply",
+                                  style: TextStyle(
+                                    color:
+                                        nav.selectedVideoUploadType == "Reply"
+                                            ? Theme.of(context).focusColor
+                                            : Color(0xFF7C7C7C),
+                                  ),
+                                ),
+                              ),
                             ],
                           )
                         ],
                       ),
                       label: '',
                     ),
-                    // BottomNavigationBarItem(
-                    //   icon:nav.currentPage == 1 ? SvgPicture.asset(
-                    //     AppAsset.icnotification_active,
-                    //     height: 24,
-                    //     width: 24,
-                    //   ) : SvgPicture.asset(
-                    //     AppAsset.icnotification,
-                    //     height: 24,
-                    //     width: 24,
-                    //   ),
-                    //   label: '',
-                    // ),
                     BottomNavigationBarItem(
-                      icon: nav.currentPage == 2
+                      icon: nav.currentPage == 3
+                          ? SvgPicture.asset(
+                              AppAsset.icnotification_active,
+                              height: 24,
+                              width: 24,
+                            )
+                          : SvgPicture.asset(
+                              AppAsset.icnotification,
+                              color: Theme.of(context).focusColor,
+                              height: 24,
+                              width: 24,
+                            ),
+                      label: '',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: nav.currentPage == 4
                           ? SvgPicture.asset(
                               AppAsset.icuser_active,
                               height: 24,

@@ -23,7 +23,7 @@ class SearchBar extends StatelessWidget {
       onTap: onTap,
       autofocus: true,
       decoration: textFormFieldDecoration.copyWith(
-        hintText: 'Search Socialverse',
+        hintText: 'Search',
         fillColor: Theme.of(context).hoverColor,
         suffixIcon: Padding(
           padding: const EdgeInsets.all(14),

@@ -260,7 +260,7 @@ class ReplyProvider extends ChangeNotifier {
   Future<void> getSubversePosts({required int id, required int page}) async {
     _temp.clear();
     await _subverseService
-        .getSubversePosts(id: id, page: page)
+        .getSubversePosts(page: page)
         .then((response) {
       addSubversePostsToList(SubverseModel.fromJson(response).posts);
       _subversePosts.addAll(_temp.toList());

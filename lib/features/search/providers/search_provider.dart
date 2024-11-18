@@ -1,10 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 
-enum Sort { posts, exits, views /* likes, top_posts */ }
+enum Sort {
+  reply_count,
+  online,
+}
 
 class SearchProvider extends ChangeNotifier {
-  // final controller = ScrollController();
+  final notification = getIt<NotificationProvider>();
+  final search = TextEditingController();
   late TabController tabController;
   final _service = SubverseService();
 
@@ -24,7 +28,7 @@ class SearchProvider extends ChangeNotifier {
     });
   }
 
-  Sort _sort = Sort.posts;
+  Sort _sort = Sort.reply_count;
   Sort get sort => _sort;
 
   set sort(Sort value) {
@@ -83,21 +87,18 @@ class SearchProvider extends ChangeNotifier {
   }
 
   final Map<Sort, String> sortName = {
-    Sort.posts: 'Vible',
-    Sort.exits: 'Top Exited',
-    Sort.views: 'Top Viewed',
+    Sort.reply_count: 'Reply Count',
+    Sort.online: 'Online',
   };
 
   String get sortDisplayName {
     switch (_sort) {
-      case Sort.posts:
-        return 'Vible';
-      case Sort.exits:
-        return 'Top Exited';
-      case Sort.views:
-        return 'Top Viewed';
+      case Sort.reply_count:
+        return 'Reply Count';
+      case Sort.online:
+        return 'Online';
       default:
-        return 'Vible';
+        return '';
     }
   }
 
@@ -107,17 +108,14 @@ class SearchProvider extends ChangeNotifier {
     // log('page: $_posts_page');
     try {
       switch (_sort) {
-        case Sort.posts:
-          await getSubversePosts(id: subverse_id);
+        case Sort.reply_count:
+          await getSubversePosts();
           break;
-        case Sort.exits:
+        case Sort.online:
           await getPostsByExitCount(id: subverse_id);
           break;
-        case Sort.views:
-          await getPostsByViewCount(id: subverse_id);
-          break;
         default:
-          await getSubversePosts(id: subverse_id);
+          await getSubversePosts();
       }
     } catch (error) {
       // log('Error: $error');
@@ -129,28 +127,23 @@ class SearchProvider extends ChangeNotifier {
 
   get fetchCurrentSortedPosts {
     switch (_sort) {
-      case Sort.posts:
-        getSubversePosts(id: subverse_id, isRefresh: true);
+      case Sort.reply_count:
+        getSubversePosts(isRefresh: true);
         break;
-      case Sort.exits:
+      case Sort.online:
         getPostsByExitCount(id: subverse_id, isRefresh: true);
         break;
-      case Sort.views:
-        getPostsByViewCount(id: subverse_id, isRefresh: true);
-        break;
       default:
-        getSubversePosts(id: subverse_id, isRefresh: true);
+        getSubversePosts(isRefresh: true);
     }
   }
 
   List<Posts> get currentSortedPosts {
     switch (_sort) {
-      case Sort.posts:
+      case Sort.reply_count:
         return _posts;
-      case Sort.exits:
+      case Sort.online:
         return _exits;
-      case Sort.views:
-        return _views;
       default:
         return _posts;
     }
@@ -158,14 +151,11 @@ class SearchProvider extends ChangeNotifier {
 
   set currentSortedPosts(List<Posts> value) {
     switch (_sort) {
-      case Sort.posts:
+      case Sort.reply_count:
         _posts = value;
         break;
-      case Sort.exits:
+      case Sort.online:
         _exits = value;
-        break;
-      case Sort.views:
-        _views = value;
         break;
       default:
         _posts = value;
@@ -194,6 +184,65 @@ class SearchProvider extends ChangeNotifier {
   List<SubverseSearchModel> _subverse_search = <SubverseSearchModel>[];
   List<SubverseSearchModel> get subverse_search => _subverse_search;
 
+  onChanged(context, {required String query}) async {
+    if (tabController.index == 0 ||
+        tabController.index == 1 ||
+        tabController.index == 2) {
+      await searchUser(context, query: query);
+      await searchSubverse(context, query: query);
+      await searchPost(context, query: query);
+    }
+    notifyListeners();
+  }
+
+  Future<void> searchUser(context, {required String query}) async {
+    Response response = await _service.search(query: query, type: 'user');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      String jsonString = json.encode(response.data);
+      _user_search = (json.decode(jsonString) as List)
+          .map((data) => UserSearchModel.fromJson(data))
+          .toList();
+      notifyListeners();
+    } else {
+      notification.show(
+        title: 'Something went wrong',
+        type: NotificationType.local,
+      );
+    }
+  }
+
+  Future<void> searchSubverse(context, {required String query}) async {
+    Response response = await _service.search(query: query, type: 'category');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      String jsonString = json.encode(response.data);
+      _subverse_search = (json.decode(jsonString) as List)
+          .map((data) => SubverseSearchModel.fromJson(data))
+          .toList();
+      notifyListeners();
+    } else {
+      notification.show(
+        title: 'Something went wrong',
+        type: NotificationType.local,
+      );
+    }
+  }
+
+  Future<void> searchPost(context, {required String query}) async {
+    Response response = await _service.search(query: query, type: 'post');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      String jsonString = json.encode(response.data);
+      _post_search = (json.decode(jsonString) as List)
+          .map((data) => PostSearchModel.fromJson(data))
+          .toList();
+      notifyListeners();
+    } else {
+      notification.show(
+        title: 'Something went wrong',
+        type: NotificationType.local,
+      );
+    }
+  }
+
   Future<void> getSubverseInfo({required int id}) async {
     Response response = await _service.getSubverseInfo(id: id);
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -205,12 +254,9 @@ class SearchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getSubversePosts({required int id, bool? isRefresh}) async {
+  Future<void> getSubversePosts({bool? isRefresh}) async {
     isRefresh == true ? _posts.clear() : null;
-    Response response = await _service.getSubversePosts(
-      id: id,
-      page: _posts_page,
-    );
+    Response response = await _service.getSubversePosts(page: _posts_page);
     if (response.statusCode == 200 || response.statusCode == 201) {
       final posts = SubverseModel.fromJson(response.data).posts;
       _posts.addAll(posts.toList());

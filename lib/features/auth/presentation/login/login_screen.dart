@@ -7,7 +7,7 @@ class LoginScreen extends StatelessWidget {
   static Route route() {
     return CupertinoPageRoute(
       settings: const RouteSettings(name: routeName),
-      builder: (_) =>  LoginScreen(),
+      builder: (_) => LoginScreen(),
     );
   }
 
@@ -20,7 +20,7 @@ class LoginScreen extends StatelessWidget {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(80),
           child: Padding(
-            padding: const EdgeInsets.only(right: 20,left: 5),
+            padding: const EdgeInsets.only(right: 20, left: 5),
             child: AppBar(
               toolbarHeight: 80,
               centerTitle: true,
@@ -31,23 +31,26 @@ class LoginScreen extends StatelessWidget {
                   __.passwordError = null;
                   Navigator.pop(context);
                 },
-                child: Icon(Icons.arrow_back,size: 24,),
+                child: Icon(
+                  Icons.arrow_back,
+                  size: 24,
+                ),
               ),
               actions: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         __.emailError = null;
                         __.passwordError = null;
                         Navigator.pop(context);
-                        Navigator.pushNamed(
-                            context, SignUpScreen.routeName);
+                        Navigator.pushNamed(context, SignUpScreen.routeName);
                       },
                       child: Text(
                         'Sign up',
-                        style: AppTextStyle.normalRegular14.copyWith(color: Theme.of(context).primaryColorDark),
+                        style: AppTextStyle.normalRegular14.copyWith(
+                            color: Theme.of(context).primaryColorDark),
                       ),
                     ),
                   ],
@@ -73,11 +76,24 @@ class LoginScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Login", style: AppTextStyle.normalSemiBold28Black.copyWith(color: Theme.of(context).focusColor),),
+                              Text(
+                                "Login",
+                                style: AppTextStyle.normalSemiBold28Black
+                                    .copyWith(
+                                        color: Theme.of(context).focusColor),
+                              ),
                               height8,
-                              Text("Login to join the conversation and connect with your community", style: AppTextStyle.subheadlineMedium.copyWith(color: Theme.of(context).primaryColorDark),),
+                              Text(
+                                "Login to join the conversation and connect with your community",
+                                style: AppTextStyle.subheadlineMedium.copyWith(
+                                    color: Theme.of(context).primaryColorDark),
+                              ),
                               height24,
-                              Text("Email or username",style: AppTextStyle.labelMedium.copyWith(color:  Theme.of(context).indicatorColor),),
+                              Text(
+                                "Email or username",
+                                style: AppTextStyle.labelMedium.copyWith(
+                                    color: Theme.of(context).indicatorColor),
+                              ),
                               height8,
                               AuthTextFormField(
                                 keyboardType: TextInputType.emailAddress,
@@ -85,7 +101,8 @@ class LoginScreen extends StatelessWidget {
                                 controller: __.email,
                                 validator: (String? value) {
                                   if (value == null || value.isEmpty) {
-                                    __.emailError = 'Please enter your email or username';
+                                    __.emailError =
+                                        'Please enter your email or username';
                                     return ''; // Return empty to suppress default error message
                                   }
                                   __.emailError = null;
@@ -97,14 +114,19 @@ class LoginScreen extends StatelessWidget {
                                 height8,
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start  ,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Icon(Icons.error_outline_rounded, color: Colors.red.shade600,size: 20,),
+                                    Icon(
+                                      Icons.error_outline_rounded,
+                                      color: Colors.red.shade600,
+                                      size: 20,
+                                    ),
                                     width5,
                                     Center(
                                       child: Text(
                                         __.emailError!,
-                                        style: TextStyle(color: Colors.red.shade600),
+                                        style: TextStyle(
+                                            color: Colors.red.shade600),
                                       ),
                                     ),
                                   ],
@@ -130,11 +152,13 @@ class LoginScreen extends StatelessWidget {
                                 ),
                                 validator: (String? value) {
                                   if (value == null || value.isEmpty) {
-                                    __.passwordError = 'Please enter your password';
+                                    __.passwordError =
+                                        'Please enter your password';
                                     return ''; // Return empty to suppress default error message
-                                  }else{
+                                  } else {
                                     if (__.incorrectPassword == true) {
-                                      __.passwordError = 'Credentials don\'t match';
+                                      __.passwordError =
+                                          'Credentials don\'t match';
                                       return '';
                                     }
                                     __.passwordError = null;
@@ -146,14 +170,19 @@ class LoginScreen extends StatelessWidget {
                                 height8,
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start  ,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Icon(Icons.error_outline_rounded, color: Colors.red.shade600,size: 20,),
+                                    Icon(
+                                      Icons.error_outline_rounded,
+                                      color: Colors.red.shade600,
+                                      size: 20,
+                                    ),
                                     width5,
                                     Center(
                                       child: Text(
                                         __.passwordError!,
-                                        style: TextStyle(color: Colors.red.shade600),
+                                        style: TextStyle(
+                                            color: Colors.red.shade600),
                                       ),
                                     ),
                                   ],
@@ -169,7 +198,9 @@ class LoginScreen extends StatelessWidget {
                                   alignment: Alignment.centerRight,
                                   child: Text(
                                     'Forgot Password?',
-                                    style: TextStyle(color: Theme.of(context).primaryColorDark),
+                                    style: TextStyle(
+                                        color:
+                                            Theme.of(context).primaryColorDark),
                                   ),
                                 ),
                               ),
@@ -231,38 +262,40 @@ class LoginScreen extends StatelessWidget {
                   ),
                   // isKeyboardShowing ? shrink : LoginNav()
                   Padding(
-                      padding: EdgeInsets.only(left: 24,right: 24,top: 32,bottom: 32),
-                    child: Column(children: [
-                      if (__.loggedInAuthStatus ==
-                          AuthStatus.Authenticating) ...[
-                        SizedBox(
-                          height: 45,
-                          width: 45,
-                          child: CustomProgressIndicator(),
-                        )
+                    padding: EdgeInsets.only(
+                        left: 24, right: 24, top: 32, bottom: 32),
+                    child: Column(
+                      children: [
+                        if (__.loggedInAuthStatus ==
+                            AuthStatus.Authenticating) ...[
+                          SizedBox(
+                            height: 45,
+                            width: 45,
+                            child: CustomProgressIndicator(),
+                          )
+                        ],
+                        if (__.loggedInAuthStatus !=
+                            AuthStatus.Authenticating) ...[
+                          AuthButtonWithColor(
+                            onTap: () async {
+                              if (__.loginFormKey.currentState!.validate()) {
+                                await __.login(
+                                  email: __.email.text,
+                                  password: __.password.text,
+                                );
+                                profile.fetchProfile(
+                                  username: prefs_username!,
+                                );
+                              }
+                            },
+                            isGradient: __.email.text.isNotEmpty &&
+                                __.password.text.isNotEmpty,
+                            title: 'Continue',
+                          ),
+                        ],
                       ],
-                      if (__.loggedInAuthStatus !=
-                          AuthStatus.Authenticating) ...[
-                        AuthButtonWithColor(
-                          onTap: () async {
-                            if (__.loginFormKey.currentState!
-                                .validate()) {
-                              await __.login(
-                                email: __.email.text,
-                                password: __.password.text,
-                              );
-                              profile.fetchProfile(
-                                username: prefs_username!,
-                              );
-                            }
-                          },
-                          isGradient: __.email.text.isNotEmpty && __.password.text.isNotEmpty,
-                          title: 'Continue',
-                        ),
-                      ],
-                    ],),
+                    ),
                   ),
-
                 ],
               ),
             ),

@@ -55,9 +55,9 @@ class _SearchScreenState extends State<SearchScreen>
                     padding: EdgeInsets.only(right: 10),
                     child: SearchBar(
                       readOnly: false,
-                      // controller: __.searchController,
+                      controller: __.search,
                       onChanged: (query) {
-                        // __.onChanged(context, query: query);
+                        __.onChanged(context, query: query);
                       },
                     ),
                   ),
