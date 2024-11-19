@@ -137,6 +137,8 @@ class _SubverseDetailScreenState extends State<SubverseDetailScreen> {
                         imageUrl: home.subversePosts[index].thumbnailUrl,
                         createdAt: home.subversePosts[index].createdAt,
                         viewCount: home.subversePosts[index].viewCount,
+                        username: home.subversePosts[index].username,
+                        pictureUrl: home.subversePosts[index].pictureUrl,
                       );
                     },
                   ),

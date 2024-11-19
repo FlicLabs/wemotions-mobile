@@ -54,6 +54,9 @@ class SubverseScreen extends StatelessWidget {
                         imageUrl: __.currentSortedPosts[index].thumbnailUrl,
                         createdAt: __.currentSortedPosts[index].createdAt,
                         viewCount: __.currentSortedPosts[index].viewCount,
+                        username: __.currentSortedPosts[index].username,
+                        pictureUrl: __.currentSortedPosts[index].pictureUrl,
+
                       );
                     },
                   ),

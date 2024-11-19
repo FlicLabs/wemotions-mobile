@@ -38,6 +38,9 @@ class PostSearchList extends StatelessWidget {
                     imageUrl: __.post_search[index].thumbnailUrl,
                     createdAt: __.post_search[index].createdAt,
                     viewCount: __.post_search[index].viewCount,
+                    username: __.post_search[index].username,
+                    pictureUrl: __.post_search[index].pictureUrl,
+
                   ),
                 ),
                 height10,
