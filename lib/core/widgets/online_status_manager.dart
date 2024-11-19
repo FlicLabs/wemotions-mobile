@@ -1,7 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:socialverse/export.dart';
 
 class OnlineStatusManager extends StatefulWidget {

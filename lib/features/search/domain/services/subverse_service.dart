@@ -23,11 +23,11 @@ class SubverseService {
     }
   }
 
-  getSubversePosts({required int id, required int page}) async {
-    print('${API.endpoint}${API.categories}/$id/posts?page=$page');
+  getSubversePosts({required int page}) async {
+    print('${API.endpoint}${API.all_posts}?sort=REPLY_COUNT&page=$page');
     try {
       Response response = await dio.get(
-        '${API.endpoint}${API.categories}/$id/posts?page=$page',
+        '${API.endpoint}${API.all_posts}?sort=REPLY_COUNT&page=$page',
         options: Options(headers: {'Flic-Token': token ?? ''}),
       );
       // print(response.data);
@@ -41,10 +41,10 @@ class SubverseService {
   }
 
   getPostsByExitCount({required int id, required int page}) async {
-    print('${API.endpoint}${API.subverse}/$id/posts/exitCount?page=$page');
+    print('${API.endpoint}${API.all_posts}?sort=ONLINE_USER&page=$page');
     try {
       Response response = await dio.get(
-        '${API.endpoint}${API.subverse}/$id/posts/exitCount?page=$page',
+        '${API.endpoint}${API.all_posts}?sort=ONLINE_USER&page=$page',
         options: Options(headers: {'Flic-Token': token ?? ''}),
       );
       // print(response.data);

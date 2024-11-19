@@ -1,5 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/search/widgets/subverse/subverse_header.dart';
 import 'package:socialverse/features/search/widgets/subverse_detail/subverse_post_grid_placeholder.dart';
 
 class SubverseScreen extends StatelessWidget {
@@ -10,41 +9,9 @@ class SubverseScreen extends StatelessWidget {
     return Consumer<SearchProvider>(
       builder: (_, __, ___) {
         return Scaffold(
-          appBar: AppBar(
-            leading: shrink,
-            leadingWidth: 10,
-            centerTitle: false,
-            title: PopupMenuButton<Sort>(
-              color: Theme.of(context).primaryColor,
-              elevation: 0,
-              onSelected: (Sort selectedSort) {
-                HapticFeedback.mediumImpact();
-                __.sort = selectedSort;
-              },
-              itemBuilder: (BuildContext context) => Sort.values.map((sort) {
-                return PopupMenuItem<Sort>(
-                  value: sort,
-                  child: Text(
-                    __.sortName[sort] ?? 'Vible',
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                );
-              }).toList(),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.list,
-                    color: Theme.of(context).indicatorColor,
-                  ),
-                  Icon(
-                    Icons.arrow_drop_down,
-                    color: Theme.of(context).indicatorColor,
-                  ),
-                ],
-              ),
-            ),
-            actions: [SubverseHeader()],
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(56),
+            child: CustomAppBar(),
           ),
           body: RefreshIndicator(
             color: Theme.of(context).indicatorColor,
@@ -60,6 +27,7 @@ class SubverseScreen extends StatelessWidget {
                   GridView.builder(
                     controller: __.controller,
                     shrinkWrap: true,
+                    padding: const EdgeInsets.only(top: 20),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
@@ -94,6 +62,7 @@ class SubverseScreen extends StatelessWidget {
                   GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(top: 20),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,

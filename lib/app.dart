@@ -13,6 +13,8 @@ class _WeMotionsState extends State<WeMotions> {
     super.initState();
     fetchFeed();
     fetchProfile();
+
+    fetchSubverse();
   }
 
   @override
@@ -46,6 +48,13 @@ class _WeMotionsState extends State<WeMotions> {
     if (prefs_username == null || prefs_username != '') {
       final profile = Provider.of<ProfileProvider>(context, listen: false);
       await profile.fetchProfile(username: prefs_username!);
+    }
+  }
+
+  fetchSubverse() async {
+    final subverse = Provider.of<SearchProvider>(context, listen: false);
+    if (logged_in!) {
+      await subverse.getSubversePosts();
     }
   }
 

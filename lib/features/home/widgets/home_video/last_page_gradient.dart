@@ -59,7 +59,6 @@ class LastPageGradient extends StatelessWidget {
               height20,
               TransparentButton(
                 onTap: () async {
-                  
                   Share.share('link');
                 },
                 title: 'Share',

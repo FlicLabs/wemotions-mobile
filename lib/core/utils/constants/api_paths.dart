@@ -37,6 +37,7 @@ class API {
 
   //Posts
   static String posts = 'posts';
+  static String all_posts = 'posts/fetch/all';
   static String createPost = 'posts/add';
   static String uploadToken = 'posts/generate-upload-url';
   static String view = 'post/view';

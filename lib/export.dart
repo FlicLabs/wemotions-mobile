@@ -177,7 +177,7 @@ export 'package:socialverse/features/search/domain/models/search/user_search_mod
 export 'package:socialverse/features/search/domain/services/subscription_service.dart';
 export 'package:socialverse/features/profile/domain/services/edit_profile_service.dart';
 export 'package:socialverse/features/profile/domain/services/settings_services.dart';
-export 'package:socialverse/core/domain/services/messagin_service.dart';
+export 'package:socialverse/core/domain/services/messaging_service.dart';
 export 'package:socialverse/features/profile/domain/services/account_service.dart';
 export 'package:socialverse/features/home/domain/models/single_post_model.dart';
 

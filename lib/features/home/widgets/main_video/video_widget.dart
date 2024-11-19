@@ -318,7 +318,9 @@ class _VideoWidgetState extends State<VideoWidget> {
             //     ? BottomSideBar()
             //     : BottomCommentBar(isKeyboardShowing: isKeyboardShowing),
 
-            BottomSideBar(),
+            BottomCommentBar(
+              isKeyboardShowing: false,
+            ),
             Positioned(
               left: 0,
               right: 0,
