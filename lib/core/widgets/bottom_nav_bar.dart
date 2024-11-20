@@ -1,3 +1,4 @@
+import 'package:socialverse/core/presentation/notifications.dart';
 import 'package:socialverse/export.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -21,11 +22,7 @@ class _BottomNavBarState extends State<BottomNavBar>
     HomeScreen(),
     SubverseScreen(),
     Container(),
-    Scaffold(
-      body: Center(
-        child: Text("Notifications"),
-      ),
-    ),
+    ActivityScreen(),
     ProfileScreen(),
   ];
 

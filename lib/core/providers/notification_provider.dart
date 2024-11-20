@@ -1,6 +1,9 @@
+import 'package:socialverse/core/domain/models/notification_model.dart';
+import 'package:socialverse/core/domain/models/notifications_model.dart';
 import 'package:socialverse/core/domain/models/payload_model.dart';
 import 'package:socialverse/core/widgets/overlay_notification.dart';
 import 'package:socialverse/export.dart';
+import 'package:dio/dio.dart';
 
 enum NotificationType { push, local }
 
@@ -12,6 +15,9 @@ class NotificationProvider extends ChangeNotifier {
 
   String? _deviceToken;
   String? get deviceToken => _deviceToken;
+
+  List<Notifications> _notifications = <Notifications>[];
+  List<Notifications> get notifications => _notifications;
 
   PayloadModel? _payload;
   PayloadModel? get payload => _payload;
@@ -60,6 +66,17 @@ class NotificationProvider extends ChangeNotifier {
     _dismissTimer = Timer(Duration(seconds: 6), dismiss);
   }
 
+  toggleFollowing(int index) {
+    HapticFeedback.mediumImpact();
+    if (_notifications[index].actor != null) {
+      if (_notifications[index].actor.isFollowing != null) {
+        _notifications[index].actor.isFollowing =
+            !_notifications[index].actor.isFollowing!;
+        notifyListeners();
+      }
+    }
+  }
+
   Future<void> initialize() async {
     final settings = await _service.setupPushNotifications();
 
@@ -103,41 +120,24 @@ class NotificationProvider extends ChangeNotifier {
         // }
       });
     }
-
-    // if (logged_in!) {
-    //   await getToken();
-
-    //   Map data = {
-    //     'device-type': Platform.isIOS ? 'ios' : 'android',
-    //     'device-token': _deviceToken,
-    //   };
-
-    //   _service.sendDeviceToken(data: data);
-
-    //   FirebaseMessaging.instance.onTokenRefresh.listen((String token) {
-    //     log('Token refreshed: $token');
-    //     _deviceToken = token;
-    //     _service.sendDeviceToken(data: data);
-    //     notifyListeners();
-    //   });
-    // }
   }
 
   Future<void> getToken() async {
     final deviceToken = await _service.getToken();
     _deviceToken = deviceToken;
     print('${_deviceToken}');
-    // if (Platform.isIOS) {
-    //   final apnsToken = await _service.getAPNSToken();
-    //   _deviceToken = apnsToken;
-    //   print('${apnsToken}');
-    // } else {
-    //   final deviceToken = await _service.getToken();
-    //   _deviceToken = deviceToken;
-    //   print('${_deviceToken}');
-    // }
     notifyListeners();
   }
 
   void handleNotification(RemoteMessage message) {}
+
+  Future<void> fetchActivity() async {
+    Response response = await _service.fetchActivity();
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final notifications =
+          NotificationModel.fromJson(response.data).notifications;
+      _notifications.addAll(notifications.toList());
+      notifyListeners();
+    } else {}
+  }
 }

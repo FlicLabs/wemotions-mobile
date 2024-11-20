@@ -48,4 +48,23 @@ class FirebaseMessagingService {
       return (e.response);
     }
   }
+
+  fetchActivity() async {
+    print('${API.endpoint}${API.notification}');
+    try {
+      Response response = await dio.get(
+        '${API.endpoint}${API.notification}',
+        options: Options(
+          headers: {'Flic-Token': token ?? ''},
+        ),
+      );
+      //print(response.statusCode);
+      // print(response.data);
+      return response;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.data);
+      return (e.response);
+    }
+  }
 }

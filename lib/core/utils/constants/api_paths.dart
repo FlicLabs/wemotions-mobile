@@ -18,6 +18,7 @@ class API {
   static String logoutEverywhere = 'user/logout-everywhere';
   static String oauth = 'auth/firebase';
   static String reset = 'auth/credentials/reset/start';
+  static String notification = 'user/notification';
 
   //Profile
   static String profile = 'profile';
