@@ -5,8 +5,27 @@ class UserSearchList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userProfileProvider =
+        Provider.of<UserProfileProvider>(context, listen: false);
     return Consumer<SearchProvider>(
       builder: (_, __, ___) {
+        if (__.search.text.isNotEmpty && __.user_search.isEmpty) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.search,
+                size: 200,
+                color: Theme.of(context).indicatorColor,
+              ),
+              Text(
+                "It seems we can't find the user\n you're looking for. Try another\n search.",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+          );
+        }
         return ListView.builder(
           scrollDirection: Axis.vertical,
           padding: const EdgeInsets.only(
@@ -48,14 +67,14 @@ class UserSearchList extends StatelessWidget {
                           style: Theme.of(context).textTheme.labelLarge,
                         ),
                         height5,
-                        Text(
-                          __.user_search[index].firstName +
-                              ' ' +
-                              __.user_search[index].lastName,
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
+                        // Text(
+                        //   __.user_search[index].firstName +
+                        //       ' ' +
+                        //       __.user_search[index].lastName,
+                        //   style: Theme.of(context).textTheme.labelMedium,
+                        // ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),

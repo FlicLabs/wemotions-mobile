@@ -7,6 +7,23 @@ class PostSearchList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<SearchProvider>(
       builder: (_, __, ___) {
+        if (__.search.text.isNotEmpty && __.post_search.isEmpty) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.search,
+                size: 200,
+                color: Theme.of(context).indicatorColor,
+              ),
+              Text(
+                "It seems we can't find the user\n you're looking for. Try another\n search.",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge,
+              )
+            ],
+          );
+        }
         return GridView.builder(
           padding: EdgeInsets.all(10),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -38,6 +55,9 @@ class PostSearchList extends StatelessWidget {
                     imageUrl: __.post_search[index].thumbnailUrl,
                     createdAt: __.post_search[index].createdAt,
                     viewCount: __.post_search[index].viewCount,
+                    username: __.post_search[index].username,
+                    pictureUrl: __.post_search[index].pictureUrl,
+
                   ),
                 ),
                 height10,

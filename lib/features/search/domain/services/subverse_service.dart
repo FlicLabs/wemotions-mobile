@@ -57,7 +57,7 @@ class SubverseService {
     }
   }
 
-   getPostsByViewCount({required int id, required int page}) async {
+  getPostsByViewCount({required int id, required int page}) async {
     print('${API.endpoint}${API.subverse}/$id/posts/viewCount?page=$page');
     try {
       Response response = await dio.get(
@@ -95,7 +95,7 @@ class SubverseService {
   search({required String query, required String type}) async {
     try {
       Response response = await dio.get(
-        '${API.endpoint}${API.search}?query=$query&type=$type',
+        '${API.endpoint}${API.search}?type=$type&query=$query',
         options: Options(headers: {'Flic-Token': token ?? ''}),
       );
       // print(response.data);

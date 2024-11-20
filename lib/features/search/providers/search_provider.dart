@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 
@@ -26,6 +28,11 @@ class SearchProvider extends ChangeNotifier {
         _fetchMoreContent();
       }
     });
+  }
+
+  void changeTabControllerIndex(final int index) {
+    tabController.index = index;
+    notifyListeners();
   }
 
   Sort _sort = Sort.reply_count;
@@ -186,10 +193,10 @@ class SearchProvider extends ChangeNotifier {
 
   onChanged(context, {required String query}) async {
     if (tabController.index == 0 ||
-        tabController.index == 1 ||
-        tabController.index == 2) {
+        //tabController.index == 1 ||
+        tabController.index == 1) {
       await searchUser(context, query: query);
-      await searchSubverse(context, query: query);
+      //await searchSubverse(context, query: query);
       await searchPost(context, query: query);
     }
     notifyListeners();
@@ -199,9 +206,12 @@ class SearchProvider extends ChangeNotifier {
     Response response = await _service.search(query: query, type: 'user');
     if (response.statusCode == 200 || response.statusCode == 201) {
       String jsonString = json.encode(response.data);
+      log('the _usersearch data before: ${_user_search.length}');
       _user_search = (json.decode(jsonString) as List)
           .map((data) => UserSearchModel.fromJson(data))
           .toList();
+      log('the _usersearch data after: ${_user_search.length}');
+
       notifyListeners();
     } else {
       notification.show(
@@ -229,6 +239,7 @@ class SearchProvider extends ChangeNotifier {
 
   Future<void> searchPost(context, {required String query}) async {
     Response response = await _service.search(query: query, type: 'post');
+    log('the searchpost response is: ${response.data.length}');
     if (response.statusCode == 200 || response.statusCode == 201) {
       String jsonString = json.encode(response.data);
       _post_search = (json.decode(jsonString) as List)

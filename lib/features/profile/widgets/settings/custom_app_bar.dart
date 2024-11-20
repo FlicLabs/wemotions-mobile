@@ -1,6 +1,5 @@
 import 'package:socialverse/export.dart';
 
-
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({super.key});
 
@@ -14,15 +13,14 @@ class CustomAppBar extends StatelessWidget {
         children: [
           Expanded(
             child: SearchBar(
-              onTap: () {
-                Navigator.of(context).pushNamed(SearchScreen.routeName);
-              },
-              readOnly: true,
-            ),
+                prefixIcon: true,
+                onTap: () {
+                  Navigator.of(context).pushNamed(SearchScreen.routeName);
+                },
+                readOnly: true),
           ),
         ],
       ),
     );
   }
 }
-
