@@ -53,15 +53,26 @@ class PostSearchModel {
   PostSearchModel.fromJson(Map<String, dynamic> json) {
     // TODO: Fix null is not a subtype of type Map
     id = json['id'] ?? 0;
-    category = Category.fromJson(
-      json['category'] ??
-          Category(
-            id: 0,
-            name: '',
-            count: 0,
-            imageUrl: '',
-          ).toJson(),
-    );
+    // category = Category.fromJson(
+    //   json['category'] ??
+    //       Category(
+    //         id: 0,
+    //         name: '',
+    //         count: 0,
+    //         imageUrl: '',
+    //       ).toJson(),
+    // );
+    // Handle category being either a list or a map
+    if (json['category'] is Map<String, dynamic>) {
+      category = Category.fromJson(json['category']);
+    } else {
+      category = Category(
+        id: 0,
+        name: '',
+        count: 0,
+        imageUrl: '',
+      );
+    }
     slug = json['slug'] ?? '';
     title = json['title'] ?? '';
     identifier = json['identifier'] ?? '';
