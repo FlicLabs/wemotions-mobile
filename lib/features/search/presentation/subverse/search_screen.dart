@@ -57,8 +57,8 @@ class _SearchScreenState extends State<SearchScreen>
                   child: Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: SearchBar(
+                      isFocus: true,
                       focusNode: myFocusNode,
-                      prefixIcon: true,
                       readOnly: false,
                       controller: __.search,
                       onChanged: (query) {
