@@ -16,6 +16,8 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen>
     with SingleTickerProviderStateMixin {
+  final FocusNode myFocusNode = FocusNode();
+
   @override
   void initState() {
     final SearchProvider search =
@@ -55,7 +57,8 @@ class _SearchScreenState extends State<SearchScreen>
                   child: Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: SearchBar(
-                      prefixIcon: true,
+                      isFocus: true,
+                      focusNode: myFocusNode,
                       readOnly: false,
                       controller: __.search,
                       onChanged: (query) {
@@ -190,13 +193,18 @@ class _SearchScreenState extends State<SearchScreen>
                 ),
               ),
               Expanded(
-                child: TabBarView(
-                  controller: __.tabController,
-                  children: [
-                    UserSearchList(),
-                    //SubverseSearchList(),
-                    PostSearchList(),
-                  ],
+                child: GestureDetector(
+                  onTap: () {
+                    myFocusNode.unfocus();
+                  },
+                  child: TabBarView(
+                    controller: __.tabController,
+                    children: [
+                      UserSearchList(),
+                      //SubverseSearchList(),
+                      PostSearchList(),
+                    ],
+                  ),
                 ),
               ),
             ],

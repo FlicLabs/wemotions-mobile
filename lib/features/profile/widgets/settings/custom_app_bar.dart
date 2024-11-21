@@ -1,7 +1,7 @@
 import 'package:socialverse/export.dart';
 
 class CustomAppBar extends StatelessWidget {
-  const CustomAppBar({super.key});
+  CustomAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,6 @@ class CustomAppBar extends StatelessWidget {
         children: [
           Expanded(
             child: SearchBar(
-                prefixIcon: true,
                 onTap: () {
                   Navigator.of(context).pushNamed(SearchScreen.routeName);
                 },
