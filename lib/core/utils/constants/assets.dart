@@ -45,6 +45,7 @@ class AppAsset {
   static const icfliccode = "assets/svg/fliccode.svg";
   static const icnotification = "assets/svg/icnotification.svg";
   static const icnotification_active = "assets/svg/icnotificationactive.svg";
+  static const icnonotification = "assets/svg/notification_bell.svg";
   static const iclanguage = "assets/svg/language.svg";
   static const icdigital = "assets/svg/digital.svg";
   static const icaccessbility = "assets/svg/accessbility.svg";
