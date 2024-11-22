@@ -1,144 +1,115 @@
+import 'dart:developer';
 import 'package:socialverse/export.dart';
 
 class CameraProvider extends ChangeNotifier {
   late CameraController cameraController;
   VideoPlayerController? videoController;
+
   XFile? selectedVideo;
+
   late bool _isCameraReady;
-  late Timer timer;
+
+  bool _isTimerRunning = false;
+
   String _recordingDuration = "00:00";
   String get recordingDuration => _recordingDuration;
 
   Timer? _recordingTimer;
+
   int _recordingSeconds = 0;
   bool _isDisposed = false;
 
   List<AssetEntity> _assets = <AssetEntity>[];
   List<AssetEntity> get assets => _assets;
 
-  int _timer_value = 0;
-  int get timer_value => _timer_value;
+  double _recordPercentage = 0.0;
+  double get recordPercentage => _recordPercentage;
 
-  int _selectedTimerDuration = 0;
-  int get selectedTimerDuration => _selectedTimerDuration;
-
-  set selectedTimerDuration(int value) {
-    _selectedTimerDuration = value;
+  set recordPercentage(double value) {
+    _recordPercentage = value;
     notifyListeners();
   }
 
-  double _video_speed = 1.0;
-  double get video_speed => _video_speed;
+  bool _isCameraFlashOn = false;
+  bool get isCameraFlashOn => _isCameraFlashOn;
 
-  set video_speed(double value) {
-    _video_speed = value;
+  set isCameraFlashOn(bool value) {
+    _isCameraFlashOn = value;
     notifyListeners();
   }
 
-  double _record_percentage = 0.0;
-  double get record_percentage => _record_percentage;
+  bool _isVideoRecord = false;
+  bool get isVideoRecord => _isVideoRecord;
 
-  bool _is_timer_selected = true;
-  bool get is_timer_selected => _is_timer_selected;
-
-  set is_timer_selected(bool value) {
-    _is_timer_selected = value;
+  set isVideoRecord(bool value) {
+    _isVideoRecord = value;
     notifyListeners();
   }
 
-  bool _is_camera_flash_on = false;
-  bool get is_camera_flash_on => _is_camera_flash_on;
+  bool _isRecordStart = true;
+  bool get isRecordStart => _isRecordStart;
 
-  set is_camera_flash_on(bool value) {
-    _is_camera_flash_on = value;
+  set isRecordStart(bool value) {
+    _isRecordStart = value;
     notifyListeners();
   }
 
-  bool _is_timer_on = false;
-  bool get is_timer_on => _is_timer_on;
+  double _percentIndicatorRadius = 70.0;
+  double get percentIndicatorRadius => _percentIndicatorRadius;
 
-  set is_timer_on(bool value) {
-    _is_timer_on = value;
+  set percentIndicatorRadius(double value) {
+    _percentIndicatorRadius = value;
     notifyListeners();
   }
 
-  bool _is_first_click = false;
-  bool get is_first_click => _is_first_click;
+  double _buttonPressSize = 50.0;
+  double get buttonPressSize => _buttonPressSize;
 
-  set is_first_click(bool value) {
-    _is_first_click = value;
+  set buttonPressSize(double value) {
+    _buttonPressSize = value;
     notifyListeners();
   }
 
-  bool _is_record_start = true;
-  bool get is_record_start => _is_record_start;
+  bool shouldStartRecording = false;
 
-  set is_record_start(bool value) {
-    _is_record_start = value;
+  bool _isCameraFlip = false;
+  bool get isCameraFlip => _isCameraFlip;
+
+  set isCameraFlip(bool value) {
+    _isCameraFlip = value;
     notifyListeners();
   }
 
-  bool _is_video_pause = false;
-  bool get is_video_pause => _is_video_pause;
+  bool _isVideoPause = false;
+  bool get isVideoPause => _isVideoPause;
 
-  set is_video_pause(bool value) {
-    _is_video_pause = value;
+  set isVideoPause(bool value) {
+    _isVideoPause = value;
     notifyListeners();
   }
 
-  bool _is_video_record = false;
-  bool get is_video_record => _is_video_record;
+  bool _showCameraScreen = false;
+  bool get showCameraScreen => _showCameraScreen;
 
-  set is_video_record(bool value) {
-    _is_video_record = value;
+  set showCameraScreen(bool value) {
+    _showCameraScreen = value;
     notifyListeners();
   }
 
-  bool _is_camera_flip = false;
-  bool get is_camera_flip => _is_camera_flip;
+  double _videoSpeed = 1.0;
+  double get videoSpeed => _videoSpeed;
 
-  set is_camera_flip(bool value) {
-    _is_camera_flip = value;
+  set videoSpeed(double value) {
+    _videoSpeed = value;
     notifyListeners();
   }
 
-  bool _is_timer_count = false;
-  bool get is_timer_count => _is_timer_count;
-
-  set is_timer_count(bool value) {
-    _is_timer_count = value;
-    notifyListeners();
-  }
-
-  double _percent_indicator_radius = 70.0;
-  double get percent_indicator_radius => _percent_indicator_radius;
-
-  set percent_indicator_radius(double value) {
-    _percent_indicator_radius = value;
-    notifyListeners();
-  }
-
-  double _record_percentage_value = 0.0;
-  double get record_percentage_value => _record_percentage_value;
-
-  set record_percentage_value(double value) {
-    _record_percentage_value = value;
-    notifyListeners();
-  }
-
-  double _button_press_size = 50.0;
-  double get button_press_size => _button_press_size;
-
-  set button_press_size(double value) {
-    _button_press_size = value;
-    notifyListeners();
-  }
-
-  Future<void> initCamera({required value, required mounted}) async {
+  Future<void> initCamera(
+      {required CameraDescription value, required bool mounted}) async {
     cameraController = CameraController(
       value,
       ResolutionPreset.max,
-      enableAudio: true,  // Make sure audio is enabled if needed
+      enableAudio: true, // Make sure audio is enabled if needed
     );
 
     try {
@@ -150,12 +121,93 @@ class CameraProvider extends ChangeNotifier {
 
       // Make sure flash is initially off
       await cameraController.setFlashMode(FlashMode.off);
-      _is_camera_flash_on = false;
+      _isCameraFlashOn = false;
 
+      // Start recording if flag is set
+      if (shouldStartRecording) {
+        await startRecording();
+        shouldStartRecording = false;
+      }
     } on CameraException catch (e) {
       debugPrint("camera error $e");
       _isCameraReady = false;
+      notifyListeners();
     }
+  }
+
+  Future<void> startRecording() async {
+    buttonPressSize = 70;
+    percentIndicatorRadius = 50;
+    isRecordStart = true;
+    isVideoRecord = true;
+
+    if (isCameraFlashOn) {
+      await cameraController.setFlashMode(FlashMode.torch);
+    }
+
+    await cameraController.startVideoRecording();
+    log('DEBUG: Recording started');
+    startRecordingTimer();
+    startProgress();
+  }
+
+  Future<void> stopRecording() async {
+    progressReset();
+
+    if (isCameraFlashOn) {
+      await cameraController.setFlashMode(FlashMode.off);
+    }
+
+    stopRecordingTimer();
+    selectedVideo = await cameraController.stopVideoRecording();
+    initVideo();
+    cameraController.buildPreview();
+    log('DEBUG: Recording stopped');
+  }
+
+  void startProgress() {
+    recordPercentage = 0.0;
+    _isTimerRunning = true;
+
+    Timer.periodic(const Duration(milliseconds: 100), (timer) async {
+      recordPercentage += 0.001667;
+      if (recordPercentage >= 1.0) {
+        recordPercentage = 1.0;
+        _isTimerRunning = false;
+        timer.cancel();
+        if (isVideoRecord) {
+          await stopRecording();
+        }
+      }
+      notifyListeners();
+    });
+  }
+
+  void stopProgress() {
+    if (_isTimerRunning) {
+      _isTimerRunning = false;
+    }
+    recordPercentage = 0.0;
+    notifyListeners();
+  }
+
+  void progressReset() {
+    recordPercentage = 0.0;
+    percentIndicatorRadius = 40;
+    buttonPressSize = 50;
+    isRecordStart = false;
+    isVideoRecord = false;
+    notifyListeners();
+  }
+
+  Future<void> handleFirstClick() async {
+    // Simplified to only start recording
+    percentIndicatorRadius = 50;
+    isRecordStart = true;
+    isVideoRecord = true;
+
+    await startRecording();
+    log('DEBUG: Recording started');
   }
 
   void initVideo() {
@@ -166,85 +218,11 @@ class CameraProvider extends ChangeNotifier {
       });
       videoController?.setLooping(true);
       videoController?.initialize().then((_) {
-        videoController?.setPlaybackSpeed(_video_speed);
+        videoController?.setPlaybackSpeed(videoSpeed);
         videoController?.play();
+        notifyListeners();
       });
     }
-  }
-
-  Future<void> showTimerSelectionDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-
-          backgroundColor: Colors.transparent,
-          child: Container(
-            width: 304, // Set your custom width here
-            constraints: BoxConstraints(maxHeight: 400,minHeight: 80),
-            decoration: BoxDecoration(
-              color: Colors.grey[850],
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(onTap:(){
-                    selectedTimerDuration = 0;
-                    Navigator.pop(context);},child: Icon(Icons.block, color: Colors.white,size: 30,)),
-                  SizedBox(width: 16),
-                  TextButton(
-                    onPressed: () {
-                      selectedTimerDuration = 3;
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      "3SC",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
-                    ),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  TextButton(
-                    onPressed: () {
-                      selectedTimerDuration = 5;
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      "5SC",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
-                    ),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  TextButton(
-                    onPressed: () {
-                      selectedTimerDuration = 10;
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      "10SC",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
-                    ),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-    notifyListeners();
   }
 
   void startRecordingTimer() {
@@ -256,21 +234,20 @@ class CameraProvider extends ChangeNotifier {
     if (!_isDisposed) {
       _recordingTimer = Timer.periodic(
         const Duration(seconds: 1),
-            (Timer timer) {
-          if (!_isDisposed) {
-            _recordingSeconds++;
-
-            // Format minutes and seconds
-            final minutes = (_recordingSeconds ~/ 60).toString().padLeft(2, '0');
-            final seconds = (_recordingSeconds % 60).toString().padLeft(2, '0');
-
-            _recordingDuration = "$minutes:$seconds";
-            print("crop");
-            print(_recordingDuration);
-            notifyListeners();
-          } else {
+        (Timer timer) {
+          if (_isDisposed) {
             timer.cancel();
+            return;
           }
+
+          _recordingSeconds++;
+
+          // Format minutes and seconds
+          final minutes = (_recordingSeconds ~/ 60).toString().padLeft(2, '0');
+          final seconds = (_recordingSeconds % 60).toString().padLeft(2, '0');
+
+          _recordingDuration = "$minutes:$seconds";
+          notifyListeners();
         },
       );
     }
@@ -282,14 +259,11 @@ class CameraProvider extends ChangeNotifier {
       _recordingTimer = null;
       _recordingSeconds = 0;
       _recordingDuration = "00:00";
-      // Only notify if not disposed
-      if (!_isDisposed) {
-        notifyListeners();
-      }
+      notifyListeners();
     }
   }
 
-  void flipCamera({required cameras}) {
+  void flipCamera({required List<CameraDescription> cameras}) {
     if (_isCameraReady) {
       final lensDirection = cameraController.description.lensDirection;
       final newCamera = cameras.firstWhere(
@@ -305,111 +279,33 @@ class CameraProvider extends ChangeNotifier {
     }
   }
 
-  void startTimerButton() {
-    const oneSec = Duration(seconds: 1);
-    _timer_value = 0; // Reset timer value
-
-    timer = Timer.periodic(
-      oneSec,
-          (Timer timerButton) async {
-        if (_isDisposed) {
-          timerButton.cancel();
-          return;
-        }
-
-        if (_timer_value == _selectedTimerDuration) {
-          is_timer_count = !is_timer_count;
-
-          timerButton.cancel();
-          is_timer_selected = false;
-          if (_is_camera_flash_on == true) {
-            cameraController.setFlashMode(
-              FlashMode.torch,
-            );
-          }
-          await cameraController.startVideoRecording();
-          if (!_isDisposed) {
-            startRecordingTimer();
-            notifyListeners();
-          }
-
-          Timer(const Duration(seconds: 30), () async {
-            if (_isDisposed) return;
-
-            if (_is_video_pause == false) {
-              _is_timer_selected = true;
-              is_video_record = !_is_video_record;
-              if (is_camera_flash_on == true) {
-                cameraController.setFlashMode(
-                  FlashMode.off,
-                );
-              }
-              stopRecordingTimer();
-              selectedVideo = await cameraController.stopVideoRecording();
-              if (!_isDisposed) {
-                initVideo();
-                cameraController.buildPreview();
-                notifyListeners();
-              }
-            }
-          });
-        } else {
-          _timer_value++;
-          if (!_isDisposed) {
-            notifyListeners();
-          }
-        }
-      },
-    );
-  }
-
-
   void resetValues() {
     if (_isDisposed) return;
-    if(videoController != null){
+    if (videoController != null) {
       videoController!.pause();
       videoController!.dispose();
     }
     selectedVideo = null;
     videoController = null;
-    _record_percentage_value = 0.0;
-    _timer_value = 0;
-    _video_speed = 1.0;
-    _is_camera_flip = false;
-    _is_video_pause = false;
-    _is_timer_on = true;
-    _is_record_start = true;
-    _is_first_click = false;
-    _selectedTimerDuration = 3; // Reset to default timer duration
-    _recordingTimer?.cancel();
-    _recordingTimer = null;
     _recordingSeconds = 0;
     _recordingDuration = "00:00";
+    _videoSpeed = 1.0;
+    _isCameraFlip = false;
+    _isVideoPause = false;
+    _isRecordStart = true;
+    _isVideoRecord = false;
+    _buttonPressSize = 50.0;
+    _percentIndicatorRadius = 70.0;
+    _showCameraScreen = false;
+    notifyListeners();
   }
-
-  // void startTimer() {
-  //   const duration = Duration(seconds: 1);
-  //   clickTimer = Timer.periodic(
-  //     duration,
-  //     (Timer timer) {
-  //       if (_record_percentage == 30.0 || _is_timer_selected) {
-  //         timer.cancel();
-  //         notifyListeners();
-  //       } else {
-  //         _record_percentage++;
-  //         notifyListeners();
-  //       }
-  //     },
-  //   );
-  // }
 
   Future<void> toggleFlash() async {
     if (_isCameraReady) {
       try {
-        _is_camera_flash_on = !_is_camera_flash_on;
-        notifyListeners(); // Notify first for immediate UI update
+        isCameraFlashOn = !isCameraFlashOn;
 
-        if (_is_camera_flash_on) {
+        if (isCameraFlashOn) {
           await cameraController.setFlashMode(FlashMode.torch);
           print("Flash ON"); // Debug print
         } else {
@@ -419,22 +315,23 @@ class CameraProvider extends ChangeNotifier {
       } catch (e) {
         print('Flash error: $e');
         // Reset flash state if there's an error
-        _is_camera_flash_on = false;
-        notifyListeners();
+        isCameraFlashOn = false;
       }
     } else {
       print('Camera not ready'); // Debug print
     }
   }
 
-
   @override
   void dispose() {
     _recordingTimer?.cancel();
+    _isDisposed = true;
+    videoController?.dispose();
+    cameraController.dispose();
     super.dispose();
   }
 
-  Future<void> imagePicker(context) async {
+  Future<void> imagePicker(BuildContext context) async {
     await AssetPicker.pickAssets(
       context,
       pickerConfig: AssetPickerConfig(
@@ -443,14 +340,16 @@ class CameraProvider extends ChangeNotifier {
         selectedAssets: _assets,
       ),
     ).then((value) async {
-      await value![0].originFile.then((value) {
-        selectedVideo = XFile(value!.path);
-        initVideo();
-        // startTimer();
-        cameraController.buildPreview();
-        notifyListeners();
-      });
-      return null;
+      if (value != null && value.isNotEmpty) {
+        await value[0].originFile.then((file) {
+          if (file != null) {
+            selectedVideo = XFile(file.path);
+            initVideo();
+            cameraController.buildPreview();
+            notifyListeners();
+          }
+        });
+      }
     });
   }
 }
