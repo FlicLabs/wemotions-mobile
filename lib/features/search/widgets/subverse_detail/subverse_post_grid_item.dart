@@ -36,8 +36,8 @@ class SubversePostGridItem extends StatelessWidget {
               width: 500,
             ),
           ),
-            Positioned(
-            bottom: 10, 
+          Positioned(
+            bottom: 10,
             left: 0,
             right: 0,
             child: Column(
@@ -48,20 +48,20 @@ class SubversePostGridItem extends StatelessWidget {
                   padding: const EdgeInsets.all(3.0),
                   child: CustomCircularAvatar(
                     borderColor: Theme.of(context).hintColor,
-                    height: 24, 
-                    width: 24, 
+                    height: 24,
+                    width: 24,
                     imageUrl: pictureUrl,
                   ),
                 ),
                 Text(
                   username,
-                  textAlign: TextAlign.center, 
+                  textAlign: TextAlign.center,
                   style: AppTextStyle.bodySmall.copyWith(
-                    fontSize: 10, 
-                    fontWeight: FontWeight.w400, 
-                    color:Colors.black
-                    // Colors.white, 
-                  ),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white
+                      // Colors.white,
+                      ),
                 ),
               ],
             ),
