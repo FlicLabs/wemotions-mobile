@@ -30,8 +30,9 @@ class _BottomNavBarState extends State<BottomNavBar>
   ];
 
   List<CameraDescription> local_value = [];
-  String? parent_video_id;
   bool? isReply;
+  bool wasPlayingBeforeCamera = false;
+
 
   @override
   void initState() {
@@ -48,6 +49,20 @@ class _BottomNavBarState extends State<BottomNavBar>
     final reply = Provider.of<ReplyProvider>(context);
     final camera = Provider.of<CameraProvider>(context);
     final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+
+  if (camera.showCameraScreen && home.isPlaying) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    wasPlayingBeforeCamera = true; 
+    home.isPlaying = false;
+    home.videoController(home.index)?.pause();
+  });
+} else if (!camera.showCameraScreen && wasPlayingBeforeCamera) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    wasPlayingBeforeCamera = false; 
+    home.isPlaying = true;
+    home.videoController(home.index)?.play();
+  });
+}
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -187,7 +202,7 @@ class _BottomNavBarState extends State<BottomNavBar>
             CameraScreen(
               cameras: local_value,
               isReply: isReply!,
-              parent_video_id: parent_video_id,
+              parent_video_id: nav.parentVideoId,
             ),
           ],
           Positioned(
