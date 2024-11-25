@@ -14,7 +14,7 @@ class ReplySideBar extends StatelessWidget {
         return __.posts.isEmpty
             ? shrink
             : Positioned(
-                bottom: 50,
+                bottom: 140,
                 right: 10,
                 child: Container(
                   height: cs().height(context),
@@ -23,7 +23,7 @@ class ReplySideBar extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(right: 0),
+                        padding: EdgeInsets.only(right: 16),
                         child: Column(
                           children: [
                             GestureDetector(
@@ -46,31 +46,12 @@ class ReplySideBar extends StatelessWidget {
                                       }
                                     },
                                     value: 14,
-                                    icon: ShaderMask(
-                                      shaderCallback: (Rect bounds) {
-                                        return __.posts[__.index].upvoted
-                                            ? LinearGradient(
-                                                begin: Alignment.centerLeft,
-                                                end: Alignment.centerRight,
-                                                colors: <Color>[
-                                                  Theme.of(context).hintColor,
-                                                  Colors.red,
-                                                  Theme.of(context).hintColor,
-                                                ],
-                                                tileMode: TileMode.repeated,
-                                              ).createShader(bounds)
-                                            : const LinearGradient(
-                                                colors: <Color>[
-                                                  Colors.white,
-                                                  Colors.white
-                                                ],
-                                              ).createShader(bounds);
-                                      },
-                                      child: SvgPicture.asset(
-                                        AppAsset.iclike,
-                                        color: Colors.white,
-                                        fit: BoxFit.scaleDown,
-                                      ),
+                                    icon: SvgPicture.asset(
+                                      AppAsset.icwemotionslogo,
+                                      color: __.posts[__.index].upvoted
+                                          ? Color(0xFFA858F4)
+                                          : Colors.white,
+                                      fit: BoxFit.scaleDown,
                                     ),
                                     text: Text(
                                       __.posts[__.index].upvoteCount.toString(),
@@ -82,60 +63,53 @@ class ReplySideBar extends StatelessWidget {
                                       ),
                                     ),
                                   ), //Upvote
-                                  height10,
-                                  // SideBarItem(
-                                  //   onTap: () async {
-                                  //     HapticFeedback.mediumImpact();
-                                  //     bool isUser =
-                                  //         __.posts[__.index].username !=
-                                  //             prefs_username;
-                                  //     final link =
-                                  //         await __.dynamicLink.createPostLink(
-                                  //       imageUrl:
-                                  //           __.posts[__.index].thumbnailUrl,
-                                  //       postID: '${__.posts[__.index].id}',
-                                  //       username: __.posts[__.index].username,
-                                  //       description: __.posts[__.index].title,
-                                  //       isPost: true,
-                                  //     );
-                                  //     showModalBottomSheet(
-                                  //       context: context,
-                                  //       backgroundColor: Colors.black,
-                                  //       shape: const RoundedRectangleBorder(
-                                  //         borderRadius: BorderRadius.only(
-                                  //           topLeft: Radius.circular(30.0),
-                                  //           topRight: Radius.circular(30.0),
-                                  //         ),
-                                  //       ),
-                                  //       builder: (context) {
-                                  //         return ShareSheet(
-                                  //           isUser: isUser,
-                                  //           dynamicLink: link,
-                                  //         );
-                                  //       },
-                                  //     );
-                                  //   },
-                                  //   value: 0,
-                                  //   icon: Padding(
-                                  //     padding: EdgeInsets.only(bottom: 3),
-                                  //     child: SvgPicture.asset(
-                                  //       AppAsset.icShare,
-                                  //       color: Colors.white,
-                                  //       fit: BoxFit.scaleDown,
-                                  //     ),
-                                  //   ),
-                                  //   text: Text(
-                                  //     (__.posts[__.index].shareCount)
-                                  //         .toString(),
-                                  //     style: TextStyle(
-                                  //       fontSize: 13,
-                                  //       fontWeight: FontWeight.w400,
-                                  //       color: Colors.white,
-                                  //       fontFamily: 'sofia',
-                                  //     ),
-                                  //   ),
-                                  // ), //Share
-                                  // height10,
+
+                                  height16,
+                                  SideBarItem(
+                                    onTap: () async {
+                                      HapticFeedback.mediumImpact();
+                                      bool isUser =
+                                          __.posts[__.index].username !=
+                                              prefs_username;
+
+                                      showModalBottomSheet(
+                                        context: context,
+                                        backgroundColor: Colors.black,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(30.0),
+                                            topRight: Radius.circular(30.0),
+                                          ),
+                                        ),
+                                        builder: (context) {
+                                          return ShareSheet(
+                                            isUser: isUser,
+                                          );
+                                        },
+                                      );
+                                    },
+                                    value: 0,
+                                    icon: Padding(
+                                      padding: EdgeInsets.only(bottom: 3),
+                                      child: SvgPicture.asset(
+                                        AppAsset.icShare,
+                                        color: Colors.white,
+                                        fit: BoxFit.scaleDown,
+                                      ),
+                                    ),
+                                    text: Text(
+                                      (__.posts[__.index].shareCount)
+                                          .toString(),
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.white,
+                                        fontFamily: 'sofia',
+                                      ),
+                                    ),
+                                  ), //Share
+                                  height16,
+
                                   SideBarItem(
                                     onTap: () {
                                       showModalBottomSheet(
@@ -199,30 +173,6 @@ class ReplySideBar extends StatelessWidget {
                                   // ),
                                   //   text: shrink,
                                   // ),
-                                  if (isAdmin) ...[
-                                    SideBarItem(
-                                      onTap: () {
-                                        HapticFeedback.lightImpact();
-                                        __.posts[__.index].exitCount += 1;
-                                        __.updateExitCount(
-                                          id: __.posts[__.index].id,
-                                        );
-                                      },
-                                      value: 5,
-                                      icon: Center(
-                                        child: Text(
-                                          '${__.posts[__.index].exitCount}',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.white,
-                                            fontFamily: 'sofia',
-                                          ),
-                                        ),
-                                      ),
-                                      text: shrink,
-                                    ),
-                                  ],
                                 ],
                               ),
                             ),

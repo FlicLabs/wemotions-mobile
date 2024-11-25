@@ -1,4 +1,3 @@
-
 import 'package:socialverse/export.dart';
 
 class HomeSideBar extends StatelessWidget {
@@ -8,6 +7,7 @@ class HomeSideBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final video = Provider.of<VideoProvider>(context);
     final auth = Provider.of<AuthProvider>(context);
+
     bool isAdmin = (prefs_username == 'afrobeezy' || prefs_username == 'jack');
 
     return Consumer<HomeProvider>(
@@ -143,7 +143,9 @@ class HomeSideBar extends StatelessWidget {
                                     value: 14,
                                     icon: SvgPicture.asset(
                                       AppAsset.icwemotionslogo,
-                                      color: __.posts[__.index][0].upvoted ? Color(0xFFA858F4) : Colors.white,
+                                      color: __.posts[__.index][0].upvoted
+                                          ? Color(0xFFA858F4)
+                                          : Colors.white,
                                       fit: BoxFit.scaleDown,
                                     ),
 
@@ -251,26 +253,20 @@ class HomeSideBar extends StatelessWidget {
                                   height10,
                                   SideBarItem(
                                     onTap: () async {
-                                      HapticFeedback.mediumImpact();
-                                      bool isUser =
-                                          __.posts[__.index][0].username !=
-                                              prefs_username;
-                                      showModalBottomSheet(
-                                        context: context,
-                                        backgroundColor: Colors.black,
-                                        shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(30.0),
-                                            topRight: Radius.circular(30.0),
-                                          ),
-                                        ),
-                                        builder: (context) {
-                                          return ShareSheet(
-                                            isUser: isUser,
-                                            dynamicLink: 'link',
-                                          );
-                                        },
-                                      );
+                                      final currentPage =
+                                          __.replies.page?.round() ?? 0;
+                                      final totalPages =
+                                          __.posts[__.index].length - 1;
+                                      if (currentPage < totalPages) {
+                                        await __.replies.animateToPage(
+                                          currentPage +
+                                              1,
+                                          duration: const Duration(
+                                              milliseconds:
+                                                  300), 
+                                          curve: Curves.easeInOut,
+                                        );
+                                      }
                                     },
                                     value: 0,
                                     icon: Padding(
@@ -282,9 +278,8 @@ class HomeSideBar extends StatelessWidget {
                                       ),
                                     ),
                                     text: Text(
-                                      // (__.posts[__.index][0].shareCount)
-                                      //     .toString(),
-                                      "0",
+                                      (__.posts[__.index][0].childVideoCount)
+                                          .toString(),
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w400,
@@ -350,7 +345,8 @@ class HomeSideBar extends StatelessWidget {
                                         ),
                                         builder: (context) {
                                           return VideoSheet(
-                                            isUser: __.posts[__.index][0].username !=
+                                            isUser: __.posts[__.index][0]
+                                                    .username !=
                                                 prefs_username,
                                             isFromFeed: true,
                                             video_id: __.posts[__.index][0].id,
@@ -360,7 +356,8 @@ class HomeSideBar extends StatelessWidget {
                                             category_photo: '',
                                             category_desc: '',
                                             title: __.posts[__.index][0].title,
-                                            video_link: __.posts[__.index][0].videoLink,
+                                            video_link:
+                                                __.posts[__.index][0].videoLink,
                                             current_index: __.index,
                                           );
                                         },
@@ -428,35 +425,11 @@ class HomeSideBar extends StatelessWidget {
                                   //     );
                                   //   },
                                   //   value: 10,
-                                    // icon: Image.asset(
-                                    //   AppAsset.icon,
-                                    // ),
+                                  // icon: Image.asset(
+                                  //   AppAsset.icon,
+                                  // ),
                                   //   text: shrink,
                                   // ),
-                                  if (isAdmin) ...[
-                                    SideBarItem(
-                                      onTap: () {
-                                        HapticFeedback.lightImpact();
-                                        __.posts[__.index][0].exitCount += 1;
-                                        __.updateExitCount(
-                                          id: __.posts[__.index][0].id,
-                                        );
-                                      },
-                                      value: 5,
-                                      icon: Center(
-                                        child: Text(
-                                          '${__.posts[__.index][0].exitCount}',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.white,
-                                            fontFamily: 'sofia',
-                                          ),
-                                        ),
-                                      ),
-                                      text: shrink,
-                                    ),
-                                  ],
                                 ],
                               ),
                             ),
