@@ -8,9 +8,6 @@ class Posts {
     required this.commentCount,
     required this.upvoteCount,
     required this.viewCount,
-    required this.exitCount,
-    required this.ratingCount,
-    required this.averageRating,
     required this.shareCount,
     required this.videoLink,
     required this.isLocked,
@@ -26,6 +23,7 @@ class Posts {
     required this.voting_count,
     required this.votings,
     required this.tags,
+    required this.childVideoCount,
   });
 
   late int id;
@@ -36,9 +34,6 @@ class Posts {
   late int commentCount;
   late int upvoteCount;
   late int viewCount;
-  late int exitCount;
-  late int ratingCount;
-  late int averageRating;
   late int shareCount;
   late final String videoLink;
   late final bool isLocked;
@@ -54,6 +49,7 @@ class Posts {
   late int voting_count;
   late List<Votings> votings;
   late List<Tags> tags;
+  late int childVideoCount;
 
   Posts.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -64,9 +60,6 @@ class Posts {
     commentCount = json['comment_count'];
     upvoteCount = json['upvote_count'];
     viewCount = json['view_count'];
-    exitCount = json['exit_count'];
-    ratingCount = json['rating_count'];
-    averageRating = json['average_rating'];
     shareCount = json['share_count'];
     videoLink = json['video_link'];
     isLocked = json['is_locked'];
@@ -82,8 +75,8 @@ class Posts {
     voting_count = json['voting_count'];
     votings =
         List.from(json['votings']).map((e) => Votings.fromJson(e)).toList();
-        tags =
-        List.from(json['tags']).map((e) => Tags.fromJson(e)).toList();
+    tags = List.from(json['tags']).map((e) => Tags.fromJson(e)).toList();
+    childVideoCount = json['child_video_count'];
   }
 
   Map<String, dynamic> toJson() {
@@ -96,9 +89,6 @@ class Posts {
     _data['comment_count'] = commentCount;
     _data['upvote_count'] = upvoteCount;
     _data['view_count'] = viewCount;
-    _data['exit_count'] = exitCount;
-    _data['rating_count'] = ratingCount;
-    _data['average_rating'] = averageRating;
     _data['share_count'] = shareCount;
     _data['video_link'] = videoLink;
     _data['is_locked'] = isLocked;
@@ -114,6 +104,7 @@ class Posts {
     _data['voting_count'] = voting_count;
     _data['votings'] = votings.map((e) => e.toJson()).toList();
     _data['tags'] = tags.map((e) => e.toJson()).toList();
+    _data['child_video_count'] = childVideoCount;
     return _data;
   }
 }
