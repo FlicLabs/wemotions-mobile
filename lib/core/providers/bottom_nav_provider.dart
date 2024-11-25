@@ -16,6 +16,14 @@ class BottomNavBarProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int? _parentVideoId;
+  int? get parentVideoId => _parentVideoId;
+  
+  set parentVideoId(id) {
+    _parentVideoId = id;
+    notifyListeners();
+  }
+
   String _selectedVideoUploadType = "Video";
 
   String get selectedVideoUploadType => _selectedVideoUploadType;
@@ -24,5 +32,4 @@ class BottomNavBarProvider extends ChangeNotifier {
     _selectedVideoUploadType = val;
     notifyListeners();
   }
-
 }
