@@ -1,4 +1,3 @@
-
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:socialverse/export.dart';
 
@@ -34,9 +33,12 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
   initializeVideo() async {
     final home = Provider.of<HomeProvider>(context, listen: false);
     final reply = Provider.of<ReplyProvider>(context, listen: false);
+    final navigation =
+        Provider.of<BottomNavBarProvider>(context, listen: false);
     await home.initializedVideoPlayer();
     home.index = widget.pageIndex;
     reply.posts = home.posts[0].sublist(1);
+    navigation.parentVideoId = home.posts[widget.pageIndex][0].id;
   }
 
   void _pageListener() {
@@ -61,6 +63,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     final home = Provider.of<HomeProvider>(context);
     final video = Provider.of<VideoProvider>(context);
     final reply = Provider.of<ReplyProvider>(context);
+    final navigation = Provider.of<BottomNavBarProvider>(context);
     reply.posts = home.posts[home.index].sublist(1);
     double nav = MediaQuery.of(context).size.height * 0.0595;
     double available = MediaQuery.of(context).size.height - nav;
@@ -93,6 +96,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
               home.onPageChanged(index);
               home.index = index;
               home.isFollowing = home.posts[index][0].following;
+              navigation.parentVideoId = home.posts[index][0].id;
             },
             scrollDirection: Axis.vertical,
             itemBuilder: (_, index) {
@@ -341,7 +345,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                     dotHeight: 7,
                     dotWidth: 7,
                     activeDotColor: Theme.of(context).hintColor,
-                    activeStrokeWidth:0,
+                    activeStrokeWidth: 0,
                     dotColor: Colors.grey),
               ),
             ),
@@ -366,7 +370,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                 dotHeight: 7,
                 dotWidth: 7,
                 activeDotColor: Theme.of(context).hintColor,
-                activeStrokeWidth:0,
+                activeStrokeWidth: 0,
                 dotColor: Colors.grey),
           ),
         ),

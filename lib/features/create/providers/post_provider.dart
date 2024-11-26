@@ -68,7 +68,7 @@ class PostProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> uploadVideo({required path, required isReply, String? parent_video_id}) async {
+  Future<void> uploadVideo({required path, required isReply, int? parent_video_id}) async {
     Dio dio = new Dio();
     _is_uploading_post = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -134,7 +134,7 @@ class PostProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> createReply({required String parent_video_id}) async {
+  Future<void> createReply({required int parent_video_id}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? hash = prefs.getString('hash');
     var response = await _service.createReply(
@@ -142,7 +142,7 @@ class PostProvider extends ChangeNotifier {
       title: description.text,
       is_private: '${_is_private}',
       category_id: '${_category_id}',
-      parent_video_id: parent_video_id
+      parent_video_id: '${parent_video_id}'
     );
 
     response.listen(

@@ -7,7 +7,7 @@ import 'package:socialverse/features/create/utils/discard_dialog.dart';
 
 class InstantCameraScreenArgs {
   bool isReply;
-  String? parent_video_id;
+  int? parent_video_id;
   final List<CameraDescription>? cameras;
   InstantCameraScreenArgs(
       {this.cameras, required this.isReply, this.parent_video_id});
@@ -25,7 +25,7 @@ class InstantCameraScreen extends StatefulWidget {
 
   final List<CameraDescription>? cameras;
   bool isReply;
-  String? parent_video_id;
+  int? parent_video_id;
 
   static Route route({required InstantCameraScreenArgs args}) {
     return SlideRoute(

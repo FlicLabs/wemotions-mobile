@@ -278,27 +278,52 @@ class CameraProvider extends ChangeNotifier {
       });
     }
   }
-
+  
   void resetValues() {
-    if (_isDisposed) return;
-    if (videoController != null) {
-      videoController!.pause();
-      videoController!.dispose();
-    }
-    selectedVideo = null;
-    videoController = null;
-    _recordingSeconds = 0;
-    _recordingDuration = "00:00";
-    _videoSpeed = 1.0;
-    _isCameraFlip = false;
-    _isVideoPause = false;
-    _isRecordStart = true;
-    _isVideoRecord = false;
-    _buttonPressSize = 50.0;
-    _percentIndicatorRadius = 70.0;
-    _showCameraScreen = false;
-    notifyListeners();
+  if (_isDisposed) return;
+  if (videoController != null) {
+    videoController!.pause();
+    videoController!.dispose();
+    videoController = null; 
   }
+  selectedVideo = null;
+  _recordingSeconds = 0;
+  _recordingDuration = "00:00";
+  _videoSpeed = 1.0;
+  _isCameraFlip = false;
+  _isVideoPause = false;
+  _isRecordStart = true;
+  _isVideoRecord = false;
+  _buttonPressSize = 50.0;
+  _percentIndicatorRadius = 70.0;
+  _showCameraScreen = false;
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (!_isDisposed) notifyListeners();
+  });
+}
+
+
+  // void resetValues() {
+  //   if (_isDisposed) return;
+  //   if (videoController != null) {
+  //     videoController!.pause();
+  //     videoController!.dispose();
+  //   }
+  //   selectedVideo = null;
+  //   videoController = null;
+  //   _recordingSeconds = 0;
+  //   _recordingDuration = "00:00";
+  //   _videoSpeed = 1.0;
+  //   _isCameraFlip = false;
+  //   _isVideoPause = false;
+  //   _isRecordStart = true;
+  //   _isVideoRecord = false;
+  //   _buttonPressSize = 50.0;
+  //   _percentIndicatorRadius = 70.0;
+  //   _showCameraScreen = false;
+  //   notifyListeners();
+  // }
 
   Future<void> toggleFlash() async {
     if (_isCameraReady) {
