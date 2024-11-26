@@ -352,9 +352,8 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
           ]
         ],
         Positioned(
-          right: 44,
-          // left: cs().width(context) * 0.5,
-          bottom: home.posts.length == 1 ? 68 : 50,
+          right: 16,
+          bottom: home.posts.length == 1 ? 64 : 50,
           // top: home.posts.length == 3
           //     ? 202
           //     : home.posts.length == 1
@@ -365,13 +364,14 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             axisDirection: Axis.vertical,
             count: home.posts.length,
             effect: ScrollingDotsEffect(
-                maxVisibleDots: 3,
-                fixedCenter: true,
-                dotHeight: 7,
-                dotWidth: 7,
-                activeDotColor: Theme.of(context).hintColor,
-                activeStrokeWidth: 0,
-                dotColor: Colors.grey),
+              maxVisibleDots: 5,
+              fixedCenter: true,
+              dotHeight: 7,
+              dotWidth: 7,
+              activeDotColor: Theme.of(context).hintColor,
+              activeStrokeWidth: 0,
+              dotColor: Colors.grey,
+            ),
           ),
         ),
       ],

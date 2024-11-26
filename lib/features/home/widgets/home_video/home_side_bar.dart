@@ -17,7 +17,7 @@ class HomeSideBar extends StatelessWidget {
             ? shrink
             : Positioned(
                 bottom: 120,
-                right: 10,
+                right: 0,
                 child: Container(
                   height: cs().height(context),
                   alignment: Alignment.bottomRight,
@@ -259,11 +259,9 @@ class HomeSideBar extends StatelessWidget {
                                           __.posts[__.index].length - 1;
                                       if (currentPage < totalPages) {
                                         await __.replies.animateToPage(
-                                          currentPage +
-                                              1,
-                                          duration: const Duration(
-                                              milliseconds:
-                                                  300), 
+                                          currentPage + 1,
+                                          duration:
+                                              const Duration(milliseconds: 300),
                                           curve: Curves.easeInOut,
                                         );
                                       }

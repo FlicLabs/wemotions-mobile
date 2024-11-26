@@ -13,7 +13,8 @@ class DiscardDialog extends StatelessWidget {
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: Container(
-        padding: const EdgeInsets.only(top: 16,bottom: 16,left: 31,right: 31),
+        padding:
+            const EdgeInsets.only(top: 16, bottom: 16, left: 31, right: 31),
         decoration: BoxDecoration(
           color: Theme.of(context).canvasColor,
           shape: BoxShape.rectangle,
@@ -39,7 +40,9 @@ class DiscardDialog extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
                       'Cancel',
-                      style: TextStyle(color: Theme.of(context).focusColor,),
+                      style: TextStyle(
+                        color: Theme.of(context).focusColor,
+                      ),
                     ),
                   ),
                 ),
