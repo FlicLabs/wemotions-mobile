@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:socialverse/export.dart';
 
 class CameraProvider extends ChangeNotifier {
@@ -7,9 +9,8 @@ class CameraProvider extends ChangeNotifier {
 
   XFile? selectedVideo;
 
-  late bool _isCameraReady;
-
-  bool _isTimerRunning = false;
+  bool _isCameraReady = false;
+  bool get isCameraReady => _isCameraReady;
 
   String _recordingDuration = "00:00";
   String get recordingDuration => _recordingDuration;
@@ -104,78 +105,187 @@ class CameraProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> initCamera(
-      {required CameraDescription value, required bool mounted}) async {
-    cameraController = CameraController(
-      value,
-      ResolutionPreset.max,
-      enableAudio: true, // Make sure audio is enabled if needed
-    );
+  bool _isTimerOn = false;
+  bool get isTimerOn => _isTimerOn;
 
+  set isTimerOn(bool value) {
+    _isTimerOn = value;
+    notifyListeners();
+  }
+
+  int _timerValue = 0;
+  int get timerValue => _timerValue;
+
+  int _selectedTimerDuration = 0;
+  int get selectedTimerDuration => _selectedTimerDuration;
+
+  set selectedTimerDuration(int value) {
+    _selectedTimerDuration = value;
+    notifyListeners();
+  }
+
+  // ======================== Zoom Variables =========================
+  double _currentZoomLevel = 1.0;
+  double get currentZoomLevel => _currentZoomLevel;
+
+  double _minZoomLevel = 1.0;
+  double get minZoomLevel => _minZoomLevel;
+
+  double _maxZoomLevel = 1.0;
+  double get maxZoomLevel => _maxZoomLevel;
+
+  Timer? _zoomDebounceTimer; // Debounce Timer for Zoom
+  // ======================================================================
+
+  // ======================== Video Segments ==========================
+  List<XFile> _videoSegments = [];
+  List<XFile> get videoSegments => _videoSegments;
+  // ======================================================================
+
+  // ======================== Permissions ==============================
+  Future<void> requestPermissions() async {
+    // Check each permission status
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.camera,
+      // Permission.storage,
+    ].request();
+
+    // Check if all permissions are granted
+    bool allGranted = statuses.values.every((status) => status.isGranted);
+
+    if (!allGranted) {
+      // Optionally, you can show a dialog directing users to app settings
+      // or handle the denial gracefully.
+      throw Exception('Permissions not granted');
+    }
+  }
+  // ======================================================================
+
+  /// Initialize the camera with the given [CameraDescription]
+  Future<void> initCamera({
+    required CameraDescription description,
+    required bool mounted,
+  }) async {
     try {
-      await cameraController.initialize().then((_) {
-        _isCameraReady = true;
-        if (!mounted) return;
-        notifyListeners();
-      });
+      await requestPermissions(); // Ensure permissions are granted
 
-      // Make sure flash is initially off
+      cameraController = CameraController(
+        description,
+        ResolutionPreset.max,
+        enableAudio: true, // Ensure audio is enabled if needed
+        imageFormatGroup:
+            ImageFormatGroup.jpeg, // Optional: specify image format
+      );
+
+      await cameraController.initialize();
+      _isCameraReady = true;
+      notifyListeners();
+
+      // Ensure flash is initially off
       await cameraController.setFlashMode(FlashMode.off);
       _isCameraFlashOn = false;
 
-      // Start recording if flag is set
+      // Fetch min and max zoom levels
+      _minZoomLevel = await cameraController.getMinZoomLevel();
+      _maxZoomLevel = await cameraController.getMaxZoomLevel();
+
+      // Initialize current zoom level
+      _currentZoomLevel = _minZoomLevel;
+      await cameraController.setZoomLevel(_currentZoomLevel);
+      notifyListeners();
+
+      // Start recording if the flag is set
       if (shouldStartRecording) {
         await startRecording();
         shouldStartRecording = false;
       }
     } on CameraException catch (e) {
-      debugPrint("camera error $e");
+      debugPrint("Camera error: $e");
       _isCameraReady = false;
       notifyListeners();
+    } on Exception catch (e) {
+      debugPrint("Permission error: $e");
+      _isCameraReady = false;
+      notifyListeners();
+      // Optionally, you can rethrow or handle the exception as needed
     }
   }
 
-  Future<void> startRecording() async {
-    buttonPressSize = 70;
-    percentIndicatorRadius = 50;
-    isRecordStart = true;
-    isVideoRecord = true;
+  // ======================== Zoom Method ============================
+  /// Sets the zoom level with debouncing to ensure smooth transitions
+  Future<void> setZoomLevel(double zoom) async {
+    if (!_isCameraReady) return;
 
-    if (isCameraFlashOn) {
+    // Clamp zoom level between min and max
+    double newZoom = zoom.clamp(_minZoomLevel, _maxZoomLevel);
+
+    // Cancel any existing debounce timer
+    _zoomDebounceTimer?.cancel();
+
+    // Start a new debounce timer
+    _zoomDebounceTimer = Timer(const Duration(milliseconds: 50), () async {
+      try {
+        await cameraController.setZoomLevel(newZoom);
+        _currentZoomLevel = newZoom;
+        notifyListeners();
+      } catch (e) {
+        log('Error setting zoom level: $e');
+      }
+    });
+  }
+  // ======================================================================
+
+  /// Starts video recording
+  Future<void> startRecording() async {
+    _buttonPressSize = 70;
+    _percentIndicatorRadius = 50;
+    _isRecordStart = true;
+    _isVideoRecord = true;
+
+    if (_isCameraFlashOn) {
       await cameraController.setFlashMode(FlashMode.torch);
     }
 
-    await cameraController.startVideoRecording();
-    log('DEBUG: Recording started');
-    startRecordingTimer();
-    startProgress();
+    try {
+      await cameraController.startVideoRecording();
+      log('DEBUG: Recording started');
+      startRecordingTimer();
+      startProgress();
+    } catch (e) {
+      log('Error starting video recording: $e');
+    }
   }
 
+  /// Stops video recording
   Future<void> stopRecording() async {
     progressReset();
 
-    if (isCameraFlashOn) {
+    if (_isCameraFlashOn) {
       await cameraController.setFlashMode(FlashMode.off);
     }
 
     stopRecordingTimer();
-    selectedVideo = await cameraController.stopVideoRecording();
-    initVideo();
-    cameraController.buildPreview();
-    log('DEBUG: Recording stopped');
+    try {
+      selectedVideo = await cameraController.stopVideoRecording();
+      _videoSegments.add(selectedVideo!); // Store the segment
+      initVideo();
+      cameraController.buildPreview();
+      log('DEBUG: Recording stopped');
+    } catch (e) {
+      log('Error stopping video recording: $e');
+    }
   }
 
+  /// Handles recording progress
   void startProgress() {
-    recordPercentage = 0.0;
-    _isTimerRunning = true;
+    _recordPercentage = 0.0;
 
     Timer.periodic(const Duration(milliseconds: 100), (timer) async {
-      recordPercentage += 0.001667;
-      if (recordPercentage >= 1.0) {
-        recordPercentage = 1.0;
-        _isTimerRunning = false;
+      _recordPercentage += 0.001667;
+      if (_recordPercentage >= 1.0) {
+        _recordPercentage = 1.0;
         timer.cancel();
-        if (isVideoRecord) {
+        if (_isVideoRecord) {
           await stopRecording();
         }
       }
@@ -183,33 +293,23 @@ class CameraProvider extends ChangeNotifier {
     });
   }
 
+  /// Stops recording progress
   void stopProgress() {
-    if (_isTimerRunning) {
-      _isTimerRunning = false;
-    }
-    recordPercentage = 0.0;
+    _recordPercentage = 0.0;
     notifyListeners();
   }
 
+  /// Resets progress indicators and flags
   void progressReset() {
-    recordPercentage = 0.0;
-    percentIndicatorRadius = 40;
-    buttonPressSize = 50;
-    isRecordStart = false;
-    isVideoRecord = false;
+    _recordPercentage = 0.0;
+    _percentIndicatorRadius = 40;
+    _buttonPressSize = 50;
+    _isRecordStart = false;
+    _isVideoRecord = false;
     notifyListeners();
   }
 
-  Future<void> handleFirstClick() async {
-    // Simplified to only start recording
-    percentIndicatorRadius = 50;
-    isRecordStart = true;
-    isVideoRecord = true;
-
-    await startRecording();
-    log('DEBUG: Recording started');
-  }
-
+  /// Initializes the video player after recording
   void initVideo() {
     if (selectedVideo != null) {
       videoController = VideoPlayerController.file(File(selectedVideo!.path));
@@ -218,13 +318,14 @@ class CameraProvider extends ChangeNotifier {
       });
       videoController?.setLooping(true);
       videoController?.initialize().then((_) {
-        videoController?.setPlaybackSpeed(videoSpeed);
+        videoController?.setPlaybackSpeed(_videoSpeed);
         videoController?.play();
         notifyListeners();
       });
     }
   }
 
+  /// Starts the recording timer
   void startRecordingTimer() {
     _recordingSeconds = 0;
     _recordingDuration = "00:00";
@@ -253,6 +354,7 @@ class CameraProvider extends ChangeNotifier {
     }
   }
 
+  /// Stops the recording timer
   void stopRecordingTimer() {
     if (!_isDisposed) {
       _recordingTimer?.cancel();
@@ -263,99 +365,173 @@ class CameraProvider extends ChangeNotifier {
     }
   }
 
-  void flipCamera({required List<CameraDescription> cameras}) {
+  // ======================== Enhanced flipCamera ========================
+  /// Flips the camera between front and back
+  Future<void> flipCamera({required List<CameraDescription> cameras}) async {
     if (_isCameraReady) {
       final lensDirection = cameraController.description.lensDirection;
-      final newCamera = cameras.firstWhere(
-        (camera) => camera.lensDirection != lensDirection,
-      );
+      CameraDescription newCamera;
+
+      try {
+        newCamera = cameras.firstWhere(
+          (camera) => camera.lensDirection != lensDirection,
+        );
+      } catch (e) {
+        log('No alternative camera found.');
+        return;
+      }
+
+      bool wasRecording = _isVideoRecord;
+
+      if (wasRecording) {
+        await stopRecording();
+      }
+
+      // Dispose the current controller
+      await cameraController.dispose();
+
+      // Initialize the new camera controller
       cameraController = CameraController(
         newCamera,
         ResolutionPreset.high,
+        enableAudio: true,
+        imageFormatGroup: ImageFormatGroup.jpeg,
       );
-      cameraController.initialize().then((_) {
+
+      try {
+        await cameraController.initialize();
+        _isCameraReady = true;
+
+        // Fetch min and max zoom levels
+        _minZoomLevel = await cameraController.getMinZoomLevel();
+        _maxZoomLevel = await cameraController.getMaxZoomLevel();
+
+        // Restore flash mode
+        await cameraController
+            .setFlashMode(_isCameraFlashOn ? FlashMode.torch : FlashMode.off);
+
+        // Reset zoom level
+        _currentZoomLevel = _minZoomLevel;
+        await cameraController.setZoomLevel(_currentZoomLevel);
+
         notifyListeners();
-      });
+
+        if (wasRecording) {
+          await startRecording();
+        }
+      } on CameraException catch (e) {
+        debugPrint("Error switching camera: $e");
+        _isCameraReady = false;
+        notifyListeners();
+      }
     }
   }
-  
-  void resetValues() {
-  if (_isDisposed) return;
-  if (videoController != null) {
-    videoController!.pause();
-    videoController!.dispose();
-    videoController = null; 
+  // ======================================================================
+
+  /// Merges all video segments into a single video file using ffmpeg_kit_flutter
+  Future<XFile?> mergeVideoSegments() async {
+    if (_videoSegments.isEmpty) return null;
+
+    // Create a text file listing all video segments
+    final Directory tempDir = await getTemporaryDirectory();
+    final File listFile = File('${tempDir.path}/video_list.txt');
+    String fileContent = '';
+    for (var video in _videoSegments) {
+      fileContent += "file '${video.path}'\n";
+    }
+    await listFile.writeAsString(fileContent);
+
+    // Define the output file
+    final String outputPath = '${tempDir.path}/merged_video.mp4';
+
+    // Execute ffmpeg command to concatenate videos
+    String ffmpegCommand =
+        "-f concat -safe 0 -i ${listFile.path} -c copy $outputPath";
+
+    log("Executing FFmpeg command: $ffmpegCommand");
+
+    await FFmpegKit.execute(ffmpegCommand).then((session) async {
+      final returnCode = await session.getReturnCode();
+
+      if (ReturnCode.isSuccess(returnCode)) {
+        log('Video segments merged successfully at $outputPath');
+        selectedVideo = XFile(outputPath);
+      } else if (ReturnCode.isCancel(returnCode)) {
+        log('Video merging was cancelled.');
+      } else {
+        log('Video merging failed with return code ${returnCode!.getValue()}');
+      }
+    });
+
+    if (selectedVideo != null) {
+      return selectedVideo;
+    } else {
+      return null;
+    }
   }
-  selectedVideo = null;
-  _recordingSeconds = 0;
-  _recordingDuration = "00:00";
-  _videoSpeed = 1.0;
-  _isCameraFlip = false;
-  _isVideoPause = false;
-  _isRecordStart = true;
-  _isVideoRecord = false;
-  _buttonPressSize = 50.0;
-  _percentIndicatorRadius = 70.0;
-  _showCameraScreen = false;
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (!_isDisposed) notifyListeners();
-  });
-}
+  /// Resets all values and states
+  void resetValues({bool isDisposing = false}) {
+    if (_isDisposed) return;
+    if (videoController != null) {
+      videoController!.pause();
+      videoController!.dispose();
+    }
+    selectedVideo = null;
+    videoController = null;
+    _recordingSeconds = 0;
+    _recordingDuration = "00:00";
+    _videoSpeed = 1.0;
+    _isCameraFlip = false;
+    _isVideoPause = false;
+    _isRecordStart = true;
+    _isVideoRecord = false;
+    _buttonPressSize = 50.0;
+    _percentIndicatorRadius = 70.0;
+    _showCameraScreen = false;
+    _videoSegments.clear(); // Clear video segments
 
+    if (!isDisposing) {
+      notifyListeners();
+    }
+  }
 
-  // void resetValues() {
-  //   if (_isDisposed) return;
-  //   if (videoController != null) {
-  //     videoController!.pause();
-  //     videoController!.dispose();
-  //   }
-  //   selectedVideo = null;
-  //   videoController = null;
-  //   _recordingSeconds = 0;
-  //   _recordingDuration = "00:00";
-  //   _videoSpeed = 1.0;
-  //   _isCameraFlip = false;
-  //   _isVideoPause = false;
-  //   _isRecordStart = true;
-  //   _isVideoRecord = false;
-  //   _buttonPressSize = 50.0;
-  //   _percentIndicatorRadius = 70.0;
-  //   _showCameraScreen = false;
-  //   notifyListeners();
-  // }
-
+  /// Toggles the flash mode between on and off
   Future<void> toggleFlash() async {
     if (_isCameraReady) {
       try {
-        isCameraFlashOn = !isCameraFlashOn;
+        _isCameraFlashOn = !_isCameraFlashOn;
 
-        if (isCameraFlashOn) {
+        if (_isCameraFlashOn) {
           await cameraController.setFlashMode(FlashMode.torch);
-          print("Flash ON"); // Debug print
+          log("Flash ON");
         } else {
           await cameraController.setFlashMode(FlashMode.off);
-          print("Flash OFF"); // Debug print
+          log("Flash OFF");
         }
+        notifyListeners();
       } catch (e) {
-        print('Flash error: $e');
+        log('Flash error: $e');
         // Reset flash state if there's an error
-        isCameraFlashOn = false;
+        _isCameraFlashOn = false;
+        notifyListeners();
       }
     } else {
-      print('Camera not ready'); // Debug print
+      log('Camera not ready');
     }
   }
 
   @override
   void dispose() {
     _recordingTimer?.cancel();
+    _zoomDebounceTimer?.cancel(); // Cancel Zoom Debounce Timer
     _isDisposed = true;
     videoController?.dispose();
     cameraController.dispose();
     super.dispose();
   }
 
+  /// Picks a video from the gallery using AssetPicker
   Future<void> imagePicker(BuildContext context) async {
     await AssetPicker.pickAssets(
       context,
