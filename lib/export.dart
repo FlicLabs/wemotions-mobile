@@ -219,7 +219,6 @@ export 'package:socialverse/features/search/presentation/subverse/subverse_scree
 export 'package:socialverse/features/profile/presentation/settings/general/settings_screen.dart';
 export 'package:socialverse/features/search/presentation/subverse/search_screen.dart';
 export 'package:socialverse/features/create/presentation/camera_screen.dart';
-export 'package:socialverse/features/create/presentation/instant_camera_screen.dart';
 export 'package:socialverse/features/create/presentation/post_screen.dart';
 export 'package:socialverse/features/profile/presentation/edit_profile/edit_bio_screen.dart';
 export 'package:socialverse/features/profile/presentation/edit_profile/edit_links_screen.dart';
