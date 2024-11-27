@@ -61,6 +61,7 @@ class AppAsset {
   static const icindicator = "assets/svg/indicator.svg";
   static const ichome = "assets/svg/home.svg";
   static const icsearch = "assets/svg/icsearch.svg";
+  static const icsearchlarge = "assets/svg/icsearchlarge.svg";
   static const icshare2 = "assets/svg/share2.svg";
   static const icAspectRatio = "assets/svg/icAspectRatio.svg";
   static const chat = "assets/svg/chat.svg";
@@ -92,5 +93,4 @@ class AppAsset {
   static const icreport = "assets/svg/report.svg";
   static const icdownload = "assets/svg/download.svg";
   static const icterms = "assets/svg/terms.svg";
-
 }

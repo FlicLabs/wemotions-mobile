@@ -11,9 +11,8 @@ class PostSearchList extends StatelessWidget {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.search,
-                size: 200,
+              SvgPicture.asset(
+                AppAsset.icsearchlarge,
                 color: Theme.of(context).indicatorColor,
               ),
               Text(
@@ -57,7 +56,6 @@ class PostSearchList extends StatelessWidget {
                     viewCount: __.post_search[index].viewCount,
                     username: __.post_search[index].username,
                     pictureUrl: __.post_search[index].pictureUrl,
-
                   ),
                 ),
                 height10,
