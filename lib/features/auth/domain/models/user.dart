@@ -29,7 +29,6 @@ class User {
     email = json['email'];
     firstName = json['first_name'];
     lastName = json['last_name'];
-    ownerId = json['owner_id'];
     profilePictureUrl = json['profile_picture_url'];
   }
 
@@ -42,7 +41,6 @@ class User {
     _data['email'] = email;
     _data['first_name'] = firstName;
     _data['last_name'] = lastName;
-    _data['owner_id'] = ownerId;
     _data['profile_picture_url'] = profilePictureUrl;
     return _data;
   }

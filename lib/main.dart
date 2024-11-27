@@ -21,7 +21,6 @@ int subverse_id = 2;
 int group_id = 1;
 String? prefs_address;
 String? prefs_network;
-String? owner_id;
 SharedPreferences? prefs;
 
 const String appGroupId = 'group.vible';
@@ -58,7 +57,6 @@ void main() async {
   isFirstExit = prefs?.getBool('exit') ?? false;
   token = await prefs?.getString('token') ?? '';
   logged_in = prefs?.getBool('logged_in') ?? false;
-  owner_id = prefs?.getString('owner_id') ?? '';
   gc_member = prefs?.getBool('gc_member') ?? false;
   // await dotenv.load();
   NetworkDio.setDynamicHeader(endPoint: API.endpoint);
