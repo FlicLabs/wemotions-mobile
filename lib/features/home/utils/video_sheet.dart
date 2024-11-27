@@ -62,29 +62,12 @@ class VideoSheet extends StatelessWidget {
         color: Theme.of(context).canvasColor,
       ),
       child: Container(
-        padding: EdgeInsets.only(left: 20,right: 20),
+        padding: EdgeInsets.only(left: 20, right: 20),
         height: 200,
         width: cs().width(context),
         child: Column(
           children: [
-            height10,
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.pop(context);
-                    },
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.grey.shade600,
-                      size: 24,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            height20,
             Expanded(
               child: ListView(
                 shrinkWrap: true,
@@ -95,7 +78,12 @@ class VideoSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       VideoSheetItemSVG(
-                        iconSVG: SvgPicture.asset(AppAsset.iclink,width:24,height: 24, color: Theme.of(context).indicatorColor,),
+                        iconSVG: SvgPicture.asset(
+                          AppAsset.iclink,
+                          width: 24,
+                          height: 24,
+                          color: Theme.of(context).indicatorColor,
+                        ),
                         label: 'Copy link',
                         onTap: () {
                           HapticFeedback.mediumImpact();
@@ -106,6 +94,7 @@ class VideoSheet extends StatelessWidget {
                           Navigator.of(context).pop();
                         },
                       ),
+                      height30,
                       if (isUser == true && isFromFeed == true) height32,
                       VideoSheetItem(
                         icon: Icons.file_download_rounded,
@@ -212,22 +201,22 @@ class VideoSheet extends StatelessWidget {
                           },
                         ),
                       ],
-                      height32,
-                      VideoSheetItem(
-                        icon: video.isViewMode
-                            ? Icons.fullscreen_exit
-                            : Icons.fullscreen_rounded,
-                        label: video.isViewMode ? 'Exit View' : 'View',
-                        onTap: () {
-                          HapticFeedback.mediumImpact();
-                          if (video.isViewMode) {
-                            video.isViewMode = false;
-                          } else {
-                            video.isViewMode = true;
-                          }
-                          Navigator.pop(context);
-                        },
-                      ),
+                      // height32,
+                      // VideoSheetItem(
+                      //   icon: video.isViewMode
+                      //       ? Icons.fullscreen_exit
+                      //       : Icons.fullscreen_rounded,
+                      //   label: video.isViewMode ? 'Exit View' : 'View',
+                      //   onTap: () {
+                      //     HapticFeedback.mediumImpact();
+                      //     if (video.isViewMode) {
+                      //       video.isViewMode = false;
+                      //     } else {
+                      //       video.isViewMode = true;
+                      //     }
+                      //     Navigator.pop(context);
+                      //   },
+                      // ),
                       height32,
                       if (isFromFeed == true) ...[
                         VideoSheetItem(
@@ -277,104 +266,106 @@ class VideoSheet extends StatelessWidget {
                       //   ),
                       //   width20,
                       // ],
-                      height32,
+                      //height32,
                       // Profile
-                      if (isFromProfile == true) ...[
-                        VideoSheetItem(
-                          icon: Icons.delete_outline,
-                          label: 'Delete',
-                          onTap: () async {
-                            HapticFeedback.mediumImpact();
-                            final response = await home.deletePost(id: video_id!);
-                            if (response == 200 || response == 201) {
-                              List<Posts> post_list = profile.posts;
-                              post_list.removeAt(current_index);
-                              profile.posts = post_list;
-                              profile.fetchProfile(username: prefs_username!);
-                              Navigator.of(context, rootNavigator: true)
-                                ..pop()
-                                ..pop();
-                              notification.show(
-                                title: 'Post has been deleted',
-                                type: NotificationType.local,
-                              );
-                            } else {
-                              Navigator.pop(context);
-                              notification.show(
-                                title: 'Something went wrong',
-                                type: NotificationType.local,
-                              );
-                            }
-                          },
-                        ),
-                      ],
+                      // if (isFromProfile == true) ...[
+                      //   VideoSheetItem(
+                      //     icon: Icons.delete_outline,
+                      //     label: 'Delete',
+                      //     onTap: () async {
+                      //       HapticFeedback.mediumImpact();
+                      //       final response =
+                      //           await home.deletePost(id: video_id!);
+                      //       if (response == 200 || response == 201) {
+                      //         List<Posts> post_list = profile.posts;
+                      //         post_list.removeAt(current_index);
+                      //         profile.posts = post_list;
+                      //         profile.fetchProfile(username: prefs_username!);
+                      //         Navigator.of(context, rootNavigator: true)
+                      //           ..pop()
+                      //           ..pop();
+                      //         notification.show(
+                      //           title: 'Post has been deleted',
+                      //           type: NotificationType.local,
+                      //         );
+                      //       } else {
+                      //         Navigator.pop(context);
+                      //         notification.show(
+                      //           title: 'Something went wrong',
+                      //           type: NotificationType.local,
+                      //         );
+                      //       }
+                      //     },
+                      //   ),
+                      // ],
 
                       // Admin - Subverse
-                      if (isAdmin && isFromSubverse == true) ...[
-                        VideoSheetItem(
-                          icon: Icons.delete_outline,
-                          label: 'Delete',
-                          onTap: () async {
-                            HapticFeedback.mediumImpact();
-                            final response =
-                                await home.deletePostAdmin(id: video_id!);
-                            if (response == 200 || response == 201) {
-                              List<Posts> subverse_list = subverse.currentSortedPosts;
-                              subverse_list.removeAt(current_index);
-                              subverse.currentSortedPosts = subverse_list;
-                              profile.fetchProfile(username: prefs_username!);
-                              Navigator.of(context, rootNavigator: true)
-                                ..pop()
-                                ..pop();
-                              notification.show(
-                                title: 'Post has been deleted',
-                                type: NotificationType.local,
-                              );
-                            } else {
-                              Navigator.pop(context);
-                              notification.show(
-                                title: 'Something went wrong',
-                                type: NotificationType.local,
-                              );
-                            }
-                          },
-                        ),
-                      ],
+                      // if (isAdmin && isFromSubverse == true) ...[
+                      //   VideoSheetItem(
+                      //     icon: Icons.delete_outline,
+                      //     label: 'Delete',
+                      //     onTap: () async {
+                      //       HapticFeedback.mediumImpact();
+                      //       final response =
+                      //           await home.deletePostAdmin(id: video_id!);
+                      //       if (response == 200 || response == 201) {
+                      //         List<Posts> subverse_list =
+                      //             subverse.currentSortedPosts;
+                      //         subverse_list.removeAt(current_index);
+                      //         subverse.currentSortedPosts = subverse_list;
+                      //         profile.fetchProfile(username: prefs_username!);
+                      //         Navigator.of(context, rootNavigator: true)
+                      //           ..pop()
+                      //           ..pop();
+                      //         notification.show(
+                      //           title: 'Post has been deleted',
+                      //           type: NotificationType.local,
+                      //         );
+                      //       } else {
+                      //         Navigator.pop(context);
+                      //         notification.show(
+                      //           title: 'Something went wrong',
+                      //           type: NotificationType.local,
+                      //         );
+                      //       }
+                      //     },
+                      //   ),
+                      // ],
 
                       // Admin - Feed
-                      if (isAdmin && isFromFeed == true) ...[
-                        VideoSheetItem(
-                          icon: Icons.delete_outline,
-                          label: 'Delete',
-                          onTap: () async {
-                            HapticFeedback.mediumImpact();
-                            final response =
-                                await home.deletePostAdmin(id: video_id!);
-                            if (response == 200 || response == 201) {
-                              HapticFeedback.mediumImpact();
-                              int index = current_index + 1;
-                              Navigator.pop(context);
-                              home.createIsolate(token: token);
-                              home.animateToPage(index);
-                              await home.removeController(current_index);
-                              List<List<Posts>> post_list = home.posts;
-                              post_list.removeAt(current_index);
-                              home.posts = post_list;
-                              notification.show(
-                                title: 'Post has been deleted',
-                                type: NotificationType.local,
-                              );
-                            } else {
-                              Navigator.pop(context);
-                              notification.show(
-                                title: 'Something went wrong',
-                                type: NotificationType.local,
-                              );
-                            }
-                          },
-                        ),
-                      ],
-                      height32,
+                      // if (isAdmin && isFromFeed == true) ...[
+                      //   VideoSheetItem(
+                      //     icon: Icons.delete_outline,
+                      //     label: 'Delete',
+                      //     onTap: () async {
+                      //       HapticFeedback.mediumImpact();
+                      //       final response =
+                      //           await home.deletePostAdmin(id: video_id!);
+                      //       if (response == 200 || response == 201) {
+                      //         HapticFeedback.mediumImpact();
+                      //         int index = current_index + 1;
+                      //         Navigator.pop(context);
+                      //         home.createIsolate(token: token);
+                      //         home.animateToPage(index);
+                      //         await home.removeController(current_index);
+                      //         List<List<Posts>> post_list = home.posts;
+                      //         post_list.removeAt(current_index);
+                      //         home.posts = post_list;
+                      //         notification.show(
+                      //           title: 'Post has been deleted',
+                      //           type: NotificationType.local,
+                      //         );
+                      //       } else {
+                      //         Navigator.pop(context);
+                      //         notification.show(
+                      //           title: 'Something went wrong',
+                      //           type: NotificationType.local,
+                      //         );
+                      //       }
+                      //     },
+                      //   ),
+                      // ],
+                      // height32,
                     ],
                   ),
                 ],

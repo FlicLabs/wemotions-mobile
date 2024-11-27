@@ -81,7 +81,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                 : (exit.isInit
                     ? shrink
                     : Container(
-                        height: 100,
+                        height: 70,
                         child: BottomNavigationBar(
                           currentIndex: nav.currentPage,
                           backgroundColor: Theme.of(context).canvasColor,
@@ -205,7 +205,7 @@ class _BottomNavBarState extends State<BottomNavBar>
             ),
           ],
           Positioned(
-            bottom: 65,
+            bottom: 35,
             left: 0,
             right: 0,
             child: Align(

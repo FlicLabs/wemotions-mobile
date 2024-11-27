@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:socialverse/export.dart';
 
 class CameraModeSelector extends StatelessWidget {
@@ -18,52 +19,48 @@ class CameraModeSelector extends StatelessWidget {
           width: 24,
           height: 42,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (nav.currentPage == 0) ...[
-              GestureDetector(
-                onTap: () {
-                  nav.selectedVideoUploadType = "Video";
-                },
-                child: Text(
-                  "Video",
-                  style: TextStyle(
-                      color: nav.selectedVideoUploadType == "Video"
-                          ? Theme.of(context).focusColor
-                          : Color(0xFF7C7C7C)),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  nav.selectedVideoUploadType = "Reply";
-                },
-                child: Text(
-                  "Reply",
-                  style: TextStyle(
-                    color: nav.selectedVideoUploadType == "Reply"
-                        ? Theme.of(context).focusColor
-                        : Color(0xFF7C7C7C),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: GestureDetector(
+                  onTap: () {
+                    nav.selectedVideoUploadType = "Video";
+                  },
+                  child: Text(
+                    "Video",
+                    style: TextStyle(
+                        color: nav.selectedVideoUploadType == "Video"
+                            ? Theme.of(context).focusColor
+                            : const Color(0xFF7C7C7C),
+                        fontSize: nav.currentPage == 0 ? 38 : 14),
                   ),
                 ),
               ),
-            ] else ...[
-              GestureDetector(
-                onTap: () {
-                  nav.selectedVideoUploadType = "Video";
-                },
-                child: Text(
-                  "Video",
-                  style: TextStyle(
-                      color: nav.selectedVideoUploadType == "Video"
-                          ? Theme.of(context).focusColor
-                          : Color(0xFF7C7C7C)),
+              if (nav.currentPage == 0)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: GestureDetector(
+                    onTap: () {
+                      nav.selectedVideoUploadType = "Reply";
+                    },
+                    child: Text(
+                      "Reply",
+                      style: TextStyle(
+                          color: nav.selectedVideoUploadType == "Reply"
+                              ? Theme.of(context).focusColor
+                              : const Color(0xFF7C7C7C),
+                          fontSize: 38),
+                    ),
+                  ),
                 ),
-              ),
-            ]
-          ],
-        )
+            ],
+          ),
+        ),
       ],
     );
   }

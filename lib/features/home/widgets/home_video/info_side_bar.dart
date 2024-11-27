@@ -12,16 +12,19 @@ class InfoSideBar extends StatelessWidget {
         return Positioned(
           left: 20,
           bottom:
-              video.downloading == true || video.downloadingCompleted ? 30 : 15,
+              video.downloading == true || video.downloadingCompleted ? 30 : 45,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               GestureDetector(
-                onTap: (){
-                  Navigator.of(context).pushNamed(UserProfileScreen.routeName, arguments: UserProfileScreenArgs(
-                    username: __.posts[__.index][0].username,
-                  ),);
+                onTap: () {
+                  Navigator.of(context).pushNamed(
+                    UserProfileScreen.routeName,
+                    arguments: UserProfileScreenArgs(
+                      username: __.posts[__.index][0].username,
+                    ),
+                  );
                 },
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
