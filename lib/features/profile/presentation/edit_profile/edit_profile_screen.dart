@@ -286,8 +286,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ],
                   if (__.loading == false) ...[
-                    CustomTransparentButton(
+                    TransparentButton(
                       title: 'Update',
+                      isBorder: false,
+                      gradient: LinearGradient(
+                          colors: [
+                            Color(0xFFA858F4),
+                            Color(0xFF9032E6),
+                          ],
+                          stops: [
+                            0.0,
+                            1.0
+                          ],
+                          begin: FractionalOffset.topCenter,
+                          end: FractionalOffset.bottomCenter,
+                          tileMode: TileMode.repeated),
                       onTap: () async {
                         if (__.selectedImage?.path != null) {
                           final response = await __.uploadImage();

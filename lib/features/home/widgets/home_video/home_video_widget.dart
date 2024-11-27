@@ -283,7 +283,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                                 if (!_isLastPage) ...[
                                   video.isViewMode ? shrink : HomeSideBar(),
                                 ],
-                                // HomeVideoProgressIndicator(),
+                                HomeVideoProgressIndicator(),
                               ],
                             ),
                           ),

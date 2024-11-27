@@ -8,7 +8,7 @@ class HomeVideoProgressIndicator extends StatelessWidget {
     return Consumer<HomeProvider>(
       builder: (_, __, ___) {
         return Positioned(
-          bottom: 0,
+          bottom: -1,
           child: SizedBox(
             height: 9.5,
             width: MediaQuery.of(context).size.width,

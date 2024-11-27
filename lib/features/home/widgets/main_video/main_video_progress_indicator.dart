@@ -9,7 +9,7 @@ class MainVideoProgressIndicator extends StatelessWidget {
       builder: (_, __, ___) {
         final Duration duration = __.videoController(__.index)!.value.duration;
         return Positioned(
-          bottom: 0,
+          bottom: -1,
           child: SizedBox(
             height: 10,
             width: MediaQuery.of(context).size.width,
