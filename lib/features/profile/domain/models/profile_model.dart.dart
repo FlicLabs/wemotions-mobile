@@ -17,8 +17,6 @@ class ProfileModel {
     required this.isFollowing,
     required this.isBlocked,
     this.chatId,
-    required this.walletAddress,
-    required this.hasWallet,
   });
 
   late final String instagramUrl;
@@ -38,8 +36,7 @@ class ProfileModel {
   late bool isFollowing;
   late bool isBlocked;
   late final int? chatId;
-  late String walletAddress;
-  late bool hasWallet;
+
 
   static var empty = ProfileModel(
     instagramUrl: '',
@@ -59,8 +56,6 @@ class ProfileModel {
     isFollowing: false,
     isBlocked: false,
     chatId: null,
-    walletAddress: '',
-    hasWallet: false,
   );
 
   ProfileModel.fromJson(Map<String, dynamic> json) {
@@ -81,8 +76,6 @@ class ProfileModel {
     isFollowing = json['is_following'] ?? false;
     isBlocked = json['is_blocked'] ?? false;
     chatId = json['chat_id'];
-    walletAddress = json['wallet_address'];
-    hasWallet = json['has_wallet'];
   }
 
   Map<String, dynamic> toJson() {
@@ -104,8 +97,6 @@ class ProfileModel {
     _data['is_following'] = isFollowing;
     _data['is_blocked'] = isBlocked;
     _data['chat_id'] = chatId;
-    _data['wallet_address'] = walletAddress;
-    _data['has_wallet'] = hasWallet;
     return _data;
   }
 }
