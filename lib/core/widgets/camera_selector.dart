@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:socialverse/export.dart';
 
 class CameraModeSelector extends StatelessWidget {
@@ -17,7 +16,7 @@ class CameraModeSelector extends StatelessWidget {
       children: [
         SizedBox(
           width: 24,
-          height: 42,
+          height: 47,
         ),
         FittedBox(
           fit: BoxFit.scaleDown,
@@ -29,6 +28,7 @@ class CameraModeSelector extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: GestureDetector(
                   onTap: () {
+                    HapticFeedback.mediumImpact();
                     nav.selectedVideoUploadType = "Video";
                   },
                   child: Text(
@@ -37,7 +37,7 @@ class CameraModeSelector extends StatelessWidget {
                         color: nav.selectedVideoUploadType == "Video"
                             ? Theme.of(context).focusColor
                             : const Color(0xFF7C7C7C),
-                        fontSize: nav.currentPage == 0 ? 38 : 14),
+                        fontSize: nav.currentPage == 0 ? 38 : 13.5),
                   ),
                 ),
               ),
@@ -46,6 +46,7 @@ class CameraModeSelector extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: GestureDetector(
                     onTap: () {
+                      HapticFeedback.mediumImpact();
                       nav.selectedVideoUploadType = "Reply";
                     },
                     child: Text(

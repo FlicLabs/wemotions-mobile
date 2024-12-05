@@ -75,13 +75,11 @@ class _BottomNavBarState extends State<BottomNavBar>
               children: _screens,
             ),
             bottomNavigationBar: camera.showCameraScreen
-                ? const SizedBox(
-                    height: 0,
-                  )
+                ? const SizedBox(height: 0)
                 : (exit.isInit
                     ? shrink
                     : Container(
-                        height: 70,
+                        height: Platform.isIOS ? 100 : 70,
                         child: BottomNavigationBar(
                           currentIndex: nav.currentPage,
                           backgroundColor: Theme.of(context).canvasColor,
@@ -136,63 +134,67 @@ class _BottomNavBarState extends State<BottomNavBar>
                           },
                           items: [
                             BottomNavigationBarItem(
-                                icon: nav.currentPage == 0
-                                    ? SvgPicture.asset(
-                                        AppAsset.ichome_active,
-                                        height: 24,
-                                        width: 24,
-                                      )
-                                    : SvgPicture.asset(
-                                        AppAsset.ichome,
-                                        color: Theme.of(context).focusColor,
-                                        height: 24,
-                                        width: 24,
-                                      ),
-                                label: ''),
+                              icon: nav.currentPage == 0
+                                  ? SvgPicture.asset(
+                                      AppAsset.ichome_active,
+                                      height: 24,
+                                      width: 24,
+                                    )
+                                  : SvgPicture.asset(
+                                      AppAsset.ichome,
+                                      color: Theme.of(context).focusColor,
+                                      height: 24,
+                                      width: 24,
+                                    ),
+                              label: '',
+                            ),
                             BottomNavigationBarItem(
-                                icon: nav.currentPage == 1
-                                    ? SvgPicture.asset(
-                                        AppAsset.icdiscover_active,
-                                        height: 24,
-                                        width: 24,
-                                      )
-                                    : SvgPicture.asset(
-                                        AppAsset.icdiscover,
-                                        color: Theme.of(context).focusColor,
-                                        height: 24,
-                                        width: 24,
-                                      ),
-                                label: ''),
+                              icon: nav.currentPage == 1
+                                  ? SvgPicture.asset(
+                                      AppAsset.icdiscover_active,
+                                      height: 24,
+                                      width: 24,
+                                    )
+                                  : SvgPicture.asset(
+                                      AppAsset.icdiscover,
+                                      color: Theme.of(context).focusColor,
+                                      height: 24,
+                                      width: 24,
+                                    ),
+                              label: '',
+                            ),
                             BottomNavigationBarItem(
                                 icon: CameraModeSelector(nav: nav), label: ''),
                             BottomNavigationBarItem(
-                                icon: nav.currentPage == 3
-                                    ? SvgPicture.asset(
-                                        AppAsset.icnotification_active,
-                                        height: 24,
-                                        width: 24,
-                                      )
-                                    : SvgPicture.asset(
-                                        AppAsset.icnotification,
-                                        color: Theme.of(context).focusColor,
-                                        height: 24,
-                                        width: 24,
-                                      ),
-                                label: ''),
+                              icon: nav.currentPage == 3
+                                  ? SvgPicture.asset(
+                                      AppAsset.icnotification_active,
+                                      height: 24,
+                                      width: 24,
+                                    )
+                                  : SvgPicture.asset(
+                                      AppAsset.icnotification,
+                                      color: Theme.of(context).focusColor,
+                                      height: 24,
+                                      width: 24,
+                                    ),
+                              label: '',
+                            ),
                             BottomNavigationBarItem(
-                                icon: nav.currentPage == 4
-                                    ? SvgPicture.asset(
-                                        AppAsset.icuser_active,
-                                        height: 24,
-                                        width: 24,
-                                      )
-                                    : SvgPicture.asset(
-                                        AppAsset.icuser,
-                                        color: Theme.of(context).focusColor,
-                                        height: 24,
-                                        width: 24,
-                                      ),
-                                label: ''),
+                              icon: nav.currentPage == 4
+                                  ? SvgPicture.asset(
+                                      AppAsset.icuser_active,
+                                      height: 24,
+                                      width: 24,
+                                    )
+                                  : SvgPicture.asset(
+                                      AppAsset.icuser,
+                                      color: Theme.of(context).focusColor,
+                                      height: 24,
+                                      width: 24,
+                                    ),
+                              label: '',
+                            ),
                           ],
                         ),
                       )),
@@ -205,7 +207,7 @@ class _BottomNavBarState extends State<BottomNavBar>
             ),
           ],
           Positioned(
-            bottom: 35,
+            bottom: Platform.isIOS ? 68 : 35,
             left: 0,
             right: 0,
             child: Align(
