@@ -11,9 +11,8 @@ class PostSearchList extends StatelessWidget {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.search,
-                size: 200,
+              SvgPicture.asset(
+                AppAsset.icsearchlarge,
                 color: Theme.of(context).indicatorColor,
               ),
               Text(
