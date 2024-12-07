@@ -10,7 +10,7 @@ class InfoSideBar extends StatelessWidget {
       builder: (_, __, ___) {
         final postTitle = __.posts[__.index][0].title;
         return Positioned(
-          left: 20,
+          left: 16,
           bottom:
               video.downloading == true || video.downloadingCompleted ? 30 : 45,
           child: Column(
