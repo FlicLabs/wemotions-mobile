@@ -12,7 +12,6 @@ class UserPreferences {
     required grid_view,
     required logged_in,
     required profile_picture,
-    required owner_id,
     // required gc_member,
   }) async {
     prefs!.setInt("balance", balance);
@@ -24,7 +23,6 @@ class UserPreferences {
     prefs!.setBool("grid_view", grid_view);
     prefs!.setBool("logged_in", logged_in);
     prefs!.setString("profile_picture", profile_picture);
-    prefs!.setString("owner_id", owner_id);
     return;
   }
 
@@ -35,15 +33,12 @@ class UserPreferences {
     required String name,
     required String address,
     required bool wallet_created,
-    required String owner_id,
   }) async {
     prefs!.setString("id", id);
     prefs!.setString("createdAt", createdAt);
     prefs!.setString("network", network);
     prefs!.setString("address", address);
     prefs!.setBool("wallet_created", wallet_created);
-    prefs!.setString("owner_id", owner_id);
-
     return;
   }
 
@@ -65,7 +60,6 @@ class UserPreferences {
     String email = prefs!.getString("email")!;
     String firstName = prefs!.getString("firstName")!;
     String lastName = prefs!.getString("lastName")!;
-    String ownerId = prefs!.getString("owner_id")!;
     // String profilePictureUrl = prefs.getString("profilePictureUrl")!;
 
     return User(
@@ -76,7 +70,6 @@ class UserPreferences {
       email: email,
       firstName: firstName,
       lastName: lastName,
-      ownerId: ownerId,
       // profilePictureUrl: profilePictureUrl,
     );
   }
@@ -98,9 +91,7 @@ class UserPreferences {
     prefs!.remove("createdAt");
     prefs!.remove("network");
     prefs!.remove("name");
-    prefs!.remove("ownerId");
     prefs!.remove("address");
-    prefs!.remove("owner_id");
     prefs!.remove("pincode");
   }
 

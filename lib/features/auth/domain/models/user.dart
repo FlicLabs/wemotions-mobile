@@ -7,7 +7,6 @@ class User {
     this.email,
     this.firstName,
     this.lastName,
-    this.ownerId,
     this.profilePictureUrl,
   });
 
@@ -18,7 +17,6 @@ class User {
   late final String? email;
   late final String? firstName;
   late final String? lastName;
-  late final String? ownerId;
   late final String? profilePictureUrl;
 
   User.fromJson(Map<String, dynamic> json) {
@@ -29,7 +27,6 @@ class User {
     email = json['email'];
     firstName = json['first_name'];
     lastName = json['last_name'];
-    ownerId = json['owner_id'];
     profilePictureUrl = json['profile_picture_url'];
   }
 
@@ -42,7 +39,6 @@ class User {
     _data['email'] = email;
     _data['first_name'] = firstName;
     _data['last_name'] = lastName;
-    _data['owner_id'] = ownerId;
     _data['profile_picture_url'] = profilePictureUrl;
     return _data;
   }

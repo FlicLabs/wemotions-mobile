@@ -63,7 +63,7 @@ class VideoSheet extends StatelessWidget {
       ),
       child: Container(
         padding: EdgeInsets.only(left: 20, right: 20),
-        height: 200,
+        height: 180,
         width: cs().width(context),
         child: Column(
           children: [
@@ -95,7 +95,7 @@ class VideoSheet extends StatelessWidget {
                         },
                       ),
                       height30,
-                      if (isUser == true && isFromFeed == true) height32,
+                      if (isUser == true && isFromFeed == true) height30,
                       VideoSheetItem(
                         icon: Icons.file_download_rounded,
                         label: 'Download',
@@ -108,7 +108,15 @@ class VideoSheet extends StatelessWidget {
                           Navigator.of(context).pop();
                         },
                       ),
-                      if (isUser == true && isFromFeed == true) height32,
+                      height30,
+                      VideoSheetItem(
+                        icon: Icons.report_problem_rounded,
+                        label: 'Report',
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      if (isUser == true && isFromFeed == true) height30,
                       if (isUser == true && isFromSubverse == true) ...[
                         VideoSheetItem(
                           icon: Icons.warning_rounded,
@@ -178,7 +186,7 @@ class VideoSheet extends StatelessWidget {
                           },
                         ),
                       ],
-                      if (isUser == true && isFromFeed == true) height32,
+                      if (isUser == true && isFromFeed == true) height30,
                       if (isUser == true && isFromFeed == true) ...[
                         VideoSheetItem(
                           icon: Icons.heart_broken_outlined,
@@ -217,7 +225,7 @@ class VideoSheet extends StatelessWidget {
                       //     Navigator.pop(context);
                       //   },
                       // ),
-                      height32,
+                      height30,
                       if (isFromFeed == true) ...[
                         VideoSheetItem(
                           icon: Icons.speed,

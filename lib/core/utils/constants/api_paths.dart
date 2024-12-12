@@ -72,7 +72,6 @@ class API {
   static String balance = 'wallet/balance';
   static String export = 'wallet/export';
   static String address = 'wallet/get_by_address';
-  static String ownerID = 'wallet/get_by_owner_id';
   static String tokens = 'tokens';
   static String activity = 'activity';
   static String transfer_token = 'transfer-tokens';

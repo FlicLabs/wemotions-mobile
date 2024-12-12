@@ -130,8 +130,15 @@ class _CameraScreenState extends State<CameraScreen> {
                                         onVerticalDragUpdate:
                                             _onVerticalDragUpdate,
                                         onDoubleTap: _onDoubleTap,
-                                        child: CameraPreview(
-                                            __.cameraController),
+                                        child:
+                                         Transform.scale(
+                                          scale: 1.35,
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: CameraPreview(
+                                                __.cameraController),
+                                          ),
+                                        ),
                                       )
                                     : VideoPlayer(
                                         __.videoController!,
@@ -140,8 +147,7 @@ class _CameraScreenState extends State<CameraScreen> {
                             ),
                           ),
                           // Flip and Flash Buttons
-                          if (__.isRecordStart &&
-                              __.selectedVideo == null)
+                          if (__.isRecordStart && __.selectedVideo == null)
                             Positioned(
                               top: Platform.isIOS ? 85 : 60,
                               right: 20,

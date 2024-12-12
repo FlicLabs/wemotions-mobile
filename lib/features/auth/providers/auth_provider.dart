@@ -179,13 +179,10 @@ class AuthProvider extends ChangeNotifier {
           profile_picture: user.profilePictureUrl,
           grid_view: false,
           logged_in: true,
-          owner_id: user.ownerId ?? '',
         );
 
         logged_in = prefs?.getBool('logged_in') ?? false;
         prefs_username = prefs?.getString('username') ?? '';
-        owner_id = prefs?.getString('owner_id') ?? '';
-        log('owner_id: $owner_id');
         token = prefs?.getString('token') ?? '';
         prefs_email = prefs?.getString('email') ?? '';
 
@@ -331,13 +328,10 @@ class AuthProvider extends ChangeNotifier {
         profile_picture: user.profilePictureUrl,
         grid_view: false,
         logged_in: true,
-        owner_id: user.ownerId ?? '',
       );
 
       logged_in = prefs?.getBool('logged_in') ?? false;
       prefs_username = prefs?.getString('username') ?? '';
-      owner_id = prefs?.getString('owner_id') ?? '';
-      log('owner_id: $owner_id');
       token = prefs?.getString('token') ?? '';
       prefs_email = prefs?.getString('email') ?? '';
 
@@ -400,14 +394,11 @@ class AuthProvider extends ChangeNotifier {
         profile_picture: user.profilePictureUrl,
         grid_view: false,
         logged_in: true,
-        owner_id: user.ownerId ?? '',
       );
     }
 
     logged_in = prefs?.getBool('logged_in') ?? false;
     prefs_username = prefs?.getString('username') ?? '';
-    owner_id = prefs?.getString('owner_id') ?? '';
-    log('owner_id: $owner_id');
     token = prefs?.getString('token') ?? '';
     prefs_email = prefs?.getString('email') ?? '';
 
