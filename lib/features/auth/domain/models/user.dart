@@ -7,7 +7,6 @@ class User {
     this.email,
     this.firstName,
     this.lastName,
-    this.ownerId,
     this.profilePictureUrl,
   });
 
@@ -18,7 +17,6 @@ class User {
   late final String? email;
   late final String? firstName;
   late final String? lastName;
-  late final String? ownerId;
   late final String? profilePictureUrl;
 
   User.fromJson(Map<String, dynamic> json) {

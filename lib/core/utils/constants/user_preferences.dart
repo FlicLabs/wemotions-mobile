@@ -91,7 +91,6 @@ class UserPreferences {
     prefs!.remove("createdAt");
     prefs!.remove("network");
     prefs!.remove("name");
-    prefs!.remove("ownerId");
     prefs!.remove("address");
     prefs!.remove("pincode");
   }
