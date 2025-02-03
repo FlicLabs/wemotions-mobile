@@ -15,8 +15,8 @@ class DescBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: cs().height(context) / 5,
-      width: cs().width(context) / 1.65,
+      height: cs.height(context) / 5,
+      width: cs.width(context) / 1.65,
       child: TextField(
         expands: true,
         maxLines: null,

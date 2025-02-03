@@ -35,8 +35,8 @@ class ShareToItem extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  fontSize: 12,
-                ),
+              fontSize: 12,
+            ),
           ),
         ],
       ),

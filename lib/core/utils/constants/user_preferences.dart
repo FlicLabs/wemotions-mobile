@@ -61,6 +61,7 @@ class UserPreferences {
     String firstName = prefs!.getString("firstName")!;
     String lastName = prefs!.getString("lastName")!;
     // String profilePictureUrl = prefs.getString("profilePictureUrl")!;
+    print("${token},${status},${email},${username}");
 
     return User(
       balance: balance,

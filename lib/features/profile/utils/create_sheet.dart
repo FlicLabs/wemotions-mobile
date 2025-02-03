@@ -1,5 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/utils/create_sheet_item.dart';
 
 class CreateSheet extends StatelessWidget {
   const CreateSheet({

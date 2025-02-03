@@ -1,5 +1,7 @@
 import 'package:socialverse/export.dart';
 
+import '../../../core/configs/page_routers/slide_route.dart';
+
 class PostScreenArgs {
   bool isReply;
   final XFile? path;
@@ -45,7 +47,7 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final nav = Provider.of<BottomNavBarProvider>(context);
+    // final nav = Provider.of<BottomNavBarProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -62,8 +64,8 @@ class _PostScreenState extends State<PostScreen> {
             return CustomProgressIndicator();
           } else {
             return Container(
-              height: cs().height(context),
-              width: cs().width(context),
+              height: cs.height(context),
+              width: cs.width(context),
               padding: const EdgeInsets.only(left: 20, right: 20),
               child: SafeArea(
                 child: Column(
@@ -124,15 +126,15 @@ class _PostScreenState extends State<PostScreen> {
                         isGradient: true,
                         onTap: () {
                           if (__.formKey.currentState!.validate()) {
-                            if (mounted) {
-                              Navigator.of(context, rootNavigator: true)..pop();
-                            }
-                            __.uploadVideo(
-                                path: widget.path!.path,
-                                isReply: widget.isReply,
-                                parent_video_id: widget.parent_video_id);
-                            nav.currentPage = 0;
-                            nav.jumpToPage();
+                            // if (mounted) {
+                            //   Navigator.of(context, rootNavigator: true)..pop();
+                            // }
+                            // __.uploadVideo(
+                            //     path: widget.path!.path,
+                            //     isReply: widget.isReply,
+                            //     parent_video_id: widget.parent_video_id);
+                            // nav.currentPage = 0;
+                            // nav.jumpToPage();
                           }
                         },
                         title: 'Upload Video',

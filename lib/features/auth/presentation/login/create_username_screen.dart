@@ -1,5 +1,7 @@
 import 'package:socialverse/export.dart';
 
+import '../../../profile/widgets/profile/edit_profile/profile_aligned_text.dart';
+
 class CreateUsernameScreenArgs {
   final String username;
 

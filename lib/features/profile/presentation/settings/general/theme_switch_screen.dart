@@ -48,6 +48,7 @@ class ThemeSwitchScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
+        toolbarHeight: 80,
         backgroundColor: Theme.of(context).primaryColor,
         title: Text(
           'Theme',

@@ -1,3 +1,5 @@
+import 'package:socialverse/app.dart';
+
 import 'export.dart';
 
 @pragma('vm:entry-point')
@@ -23,9 +25,9 @@ String? prefs_address;
 String? prefs_network;
 SharedPreferences? prefs;
 
-const String appGroupId = 'group.vible';
-const String iOSWidgetName = 'VibleWidgets';
-const String androidWidgetName = 'VibleWidgets';
+const String appGroupId = 'group.wemotions';
+const String iOSWidgetName = 'WeMotionWidgets';
+const String androidWidgetName = 'WeMotionWidgets';
 
 ThemeMode getThemeMode(String themeModeString) {
   switch (themeModeString) {
@@ -48,7 +50,9 @@ void main() async {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
   FirebaseMessaging.onBackgroundMessage(_backgroundHandler);
+
   HomeWidget.setAppGroupId(appGroupId);
+
   prefs = await SharedPreferences.getInstance();
   prefs_username = prefs?.getString('username') ?? '';
   prefs_email = prefs?.getString('email') ?? '';
@@ -58,14 +62,16 @@ void main() async {
   token = await prefs?.getString('token') ?? '';
   logged_in = prefs?.getBool('logged_in') ?? false;
   gc_member = prefs?.getBool('gc_member') ?? false;
-  // await dotenv.load();
+
   NetworkDio.setDynamicHeader(endPoint: API.endpoint);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
+
+
   SharedPreferences.getInstance().then(
-    (prefs) {
+        (prefs) {
       var mode = prefs.getString('themeMode') ?? 'ThemeMode.system';
       getThemeMode(mode);
       bool value = mode == 'ThemeMode.dark';
@@ -73,21 +79,16 @@ void main() async {
         MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => AuthProvider()),
+            ChangeNotifierProvider(create: (_) => SmoothPageIndicatorProvider()),
             ChangeNotifierProvider(create: (_) => HomeProvider()),
-            ChangeNotifierProvider(create: (_) => SearchProvider()),
             ChangeNotifierProvider(create: (_) => VideoProvider()),
-            ChangeNotifierProvider(create: (_) => CommentProvider()),
             ChangeNotifierProvider(create: (_) => CameraProvider()),
             ChangeNotifierProvider(create: (_) => PostProvider()),
             ChangeNotifierProvider(create: (_) => SettingsProvider()),
-            ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
             ChangeNotifierProvider(create: (_) => ProfileProvider()),
             ChangeNotifierProvider(create: (_) => UserProfileProvider()),
             ChangeNotifierProvider(create: (_) => BottomNavBarProvider()),
             ChangeNotifierProvider(create: (_) => ReportProvider()),
-            ChangeNotifierProvider(create: (_) => CreateSubverseProvider()),
-            ChangeNotifierProvider(create: (_) => EditSubverseProvider()),
-            ChangeNotifierProvider(create: (_) => EditProfileProvider()),
             ChangeNotifierProvider(create: (_) => AccountProvider()),
             ChangeNotifierProvider(create: (_) => InviteProvider()),
             ChangeNotifierProvider(create: (_) => QrCodeProvider()),
@@ -99,7 +100,7 @@ void main() async {
             create: (_) => ThemeProvider(
               value ? Constants.darkTheme : Constants.lightTheme,
             ),
-            builder: (context, child) => WeMotions(),
+            builder: (context, child) =>  const WeMotions(),
           ),
         ),
       );

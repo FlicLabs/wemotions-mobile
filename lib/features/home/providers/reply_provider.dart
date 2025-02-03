@@ -7,7 +7,6 @@ class ReplyProvider extends ChangeNotifier {
   final home = PageController();
 
   final _homeService = HomeService();
-  final _subverseService = SubverseService();
 
   int _page = 1;
   int get page => _page;
@@ -87,13 +86,6 @@ class ReplyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // int _prevIndex = -1;
-  // int get prevIndex => _prevIndex;
-
-  // set prevIndex(int value) {
-  //   _prevIndex = value;
-  //   notifyListeners();
-  // }
 
   bool _didScroll = false;
   bool get didScroll => _didScroll;
@@ -200,7 +192,7 @@ class ReplyProvider extends ChangeNotifier {
 
   // List<Posts> _replies = <Posts>[];
   // List<Posts> get replies => _replies;
-
+  //
   // set replies(List<Posts> value) {
   //   _replies = value;
   // }
@@ -257,31 +249,12 @@ class ReplyProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getSubversePosts({required int id, required int page}) async {
-    _temp.clear();
-    await _subverseService
-        .getSubversePosts(page: page)
-        .then((response) {
-      addSubversePostsToList(SubverseModel.fromJson(response).posts);
-      _subversePosts.addAll(_temp.toList());
-    });
-    notifyListeners();
-  }
 
   void addSubversePostsToList(List<Posts> postData) {
     _temp.addAll(postData);
     notifyListeners();
   }
 
-  Future<void> getSinglePost({required int id}) async {
-    Response response = await _homeService.getSinglePost(id: id);
-    if (response.statusCode == 200 && response.statusCode == 201) {
-      final post = SinglePostModel.fromJson(response.data).post;
-      _single_post.addAll(post);
-      print(_single_post);
-      notifyListeners();
-    }
-  }
 
   Future<void> updateViewCount({required int id}) async {
     Map data = {
@@ -348,90 +321,13 @@ class ReplyProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> showInspiredDialog(context, {required int id}) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return InspiredDialog(id: id);
-      },
-    );
-  }
 
-  Future<void> showContextMenu(BuildContext context,
-      {required id, required rate_value}) async {
-    final RenderObject? overlay =
-        Overlay.of(context).context.findRenderObject();
-
-    showMenu(
-      context: context,
-      color: Colors.transparent,
-      elevation: 0,
-      position: RelativeRect.fromRect(
-        Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 100, 100),
-        Rect.fromLTWH(
-          0,
-          50,
-          overlay!.paintBounds.size.width,
-          overlay.paintBounds.size.height,
-        ),
-      ),
-      items: [
-        PopupMenuSlider(
-          rate_value: rate_value.toDouble(),
-          id: id,
-        ),
-      ],
-    );
-  }
 
   void getTapPosition(BuildContext context, TapDownDetails details) {
     final RenderBox referenceBox = context.findRenderObject() as RenderBox;
     _tapPosition = referenceBox.globalToLocal(details.globalPosition);
     notifyListeners();
     print(_tapPosition);
-  }
-
-  Future<void> browseSubverse({
-    required BuildContext context,
-    required category_name,
-    required category_desc,
-    required category_count,
-    required category_id,
-    required category_photo,
-    Function()? callBack,
-  }) async {
-    await getSubversePosts(id: category_id, page: subverse_page);
-    if (_subversePosts.isEmpty) {
-      Navigator.of(context).pushNamed(
-        SubverseEmptyScreen.routeName,
-        arguments: SubverseEmptyScreenArgs(
-          category_name: category_name,
-          category_desc: category_desc,
-          category_count: category_count,
-          category_id: category_id,
-          fromVideoPlayer: false,
-          category_photo: category_photo,
-        ),
-      );
-    } else {
-      SchedulerBinding.instance.addPostFrameCallback(
-        (_) {
-          Navigator.of(context)
-              .pushNamed(
-                SubverseDetailScreen.routeName,
-                arguments: SubverseDetailScreenArgs(
-                  category_name: category_name,
-                  category_desc: category_desc,
-                  category_count: category_count,
-                  category_id: category_id,
-                  fromVideoPlayer: false,
-                  category_photo: category_photo,
-                ),
-              )
-              .then((value) => callBack!());
-        },
-      );
-    }
   }
 
   final Map<String, VideoPlayerController> controllers = {};
@@ -549,55 +445,6 @@ class ReplyProvider extends ChangeNotifier {
     };
   }
 
-  Future<void> _autoScroll(index) async {
-    _isPlaying = true;
-    posts_page++;
-    // createIsolate(token: token);
-    notifyListeners();
-
-    int newIndex = index;
-    newIndex++;
-    // print("new index $newIndex");
-    // print("index $index");
-    animateToPage(newIndex);
-    _stopController(index);
-    _index = newIndex;
-    notifyListeners();
-    // print("_index $_index");
-
-    if (_index < index) {
-      // print("_index $_index < index $index");
-      if (_index == posts.length - 1) {
-        return;
-      }
-
-      print("_index $index");
-
-      if (_index - 1 >= 0) {
-        _removeController(_index - 1);
-      }
-      _playController(_index);
-      if (_index == posts.length - 1) {
-      } else {
-        _initController(_index + 1);
-      }
-      notifyListeners();
-    } else {
-      if (_index == 0) {
-        controllers.forEach((key, value) {});
-        return;
-      }
-      _stopController(_index);
-      if (_index + 1 < posts.length) {
-        _removeController(_index + 1);
-      }
-      _playController(--_index);
-      if (_index == 0) {
-      } else {
-        _initController(_index - 1);
-      }
-    }
-  }
 
   Future<void> _nextVideo() async {
     if (_index == posts.length - 1) {

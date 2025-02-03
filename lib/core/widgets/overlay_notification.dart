@@ -31,6 +31,18 @@ class _OverlayNotificationState extends State<OverlayNotification>
   late AnimationController controller;
   late Animation<Offset> position;
 
+
+  double _calculateTextHeight(String text, TextStyle style) {
+    final textSpan = TextSpan(text: text, style: style);
+    final textPainter = TextPainter(
+      text: textSpan,
+      textDirection: TextDirection.ltr,
+      maxLines: 2,
+    );
+    textPainter.layout(maxWidth: MediaQuery.of(context).size.width - 32);
+    return textPainter.size.height;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -49,11 +61,16 @@ class _OverlayNotificationState extends State<OverlayNotification>
 
   @override
   Widget build(BuildContext context) {
+    double titleHeight = _calculateTextHeight(widget.title ?? '', Theme.of(context).textTheme.bodyMedium!);
+    double bodyHeight=_calculateTextHeight(widget.body ?? '', Theme.of(context).textTheme.bodyMedium!);
+    double totalHeight = titleHeight + bodyHeight;
+    // print(totalHeight);
+
     return Padding(
       padding: EdgeInsets.only(
         left: 16,
         right: 16,
-        bottom: cs().height(context) * 0.85,
+        bottom: cs.height(context) * 0.85,
       ),
       child: Material(
         // elevation: 2,
@@ -70,7 +87,8 @@ class _OverlayNotificationState extends State<OverlayNotification>
               position: position,
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: widget.type == NotificationType.push ? 65 : 45,
+                height: widget.type == NotificationType.push ? 65 : (totalHeight>45)?58:45,
+
                 margin:
                     EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                 decoration: ShapeDecoration(

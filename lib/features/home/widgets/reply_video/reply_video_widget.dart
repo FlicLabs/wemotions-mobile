@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:socialverse/export.dart';
 
+import '../../helper/smooth_page_indicator.dart';
+
 class ReplyVideoWidget extends StatefulWidget {
   final Posts video;
   final PageController pageController;
@@ -161,8 +163,8 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                             alignment: Alignment.center,
                             children: [
                               CustomNetworkImage(
-                                height: cs().height(context),
-                                width: cs().width(context),
+                                height: cs.height(context),
+                                width: cs.width(context),
                                 imageUrl: reply.posts[index].thumbnailUrl,
                                 isLoading: true,
                               ),
@@ -214,7 +216,23 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                   ),
                                 )
                               ],
-                              video.isViewMode ? shrink : ReplySideBar(),
+                              video.isViewMode ? shrink :
+                              Positioned(
+                                bottom: 15,
+                                right: 0,
+                                child: Container(
+                                  width: cs.width(context) / 4.5,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ReplySideBar(),
+                                      height2,
+                                      SmoothPageIndicatorView(),
+                                      height15
+                                    ],
+                                  ),
+                                ),
+                              ),
                               ReplyVideoProgressIndicator(),
                             ],
                           ),
@@ -294,7 +312,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                                 Image.asset(
                                               AppAsset.load,
                                               fit: BoxFit.cover,
-                                              height: cs().height(context),
+                                              height: cs.height(context),
                                             ),
                                             errorWidget:
                                                 (context, url, error) =>

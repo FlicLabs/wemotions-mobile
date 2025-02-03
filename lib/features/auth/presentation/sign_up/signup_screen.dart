@@ -67,8 +67,8 @@ class SignUpScreen extends StatelessWidget {
           body: WillPopScope(
             onWillPop: () async => false,
             child: Container(
-              height: cs().height(context),
-              width: cs().width(context),
+              height: cs.height(context),
+              width: cs.width(context),
               child: SafeArea(
                 child: Stack(
                   children: [
@@ -118,6 +118,9 @@ class SignUpScreen extends StatelessWidget {
                                                 keyboardType: TextInputType.name,
                                                 hintText: 'Bryan',
                                                 controller: __.first_name,
+                                                onChanged: (val){
+                                                  __.firstnameError=null;
+                                                },
                                                 validator: (String? value) {
                                                   if (value == null || value.isEmpty) {
                                                     __.firstnameError = 'First name is required';
@@ -135,19 +138,27 @@ class SignUpScreen extends StatelessWidget {
                                                   children: [
                                                     Icon(Icons.error_outline_rounded, color: Colors.red.shade600,size: 17,),
                                                     width5,
-                                                    Text(
-                                                      __.firstnameError!,
-                                                      style: TextStyle(color: Colors.red.shade600,fontSize: 12),
+                                                    SizedBox(
+                                                      width: cs.width(context)/3,
+                                                      child: Text(
+                                                        __.firstnameError!,
+                                                        style: TextStyle(color: Colors.red.shade600,fontSize: 12),
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
                                               ],
+                                              if(__.lastnameError!=null) ...[
+                                                if(__.firstnameError==null)
+                                                  height26
+                                              ]
                                             ],
                                           ),
                                         ),
                                         width20,
                                         Expanded(
                                           child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
@@ -167,6 +178,9 @@ class SignUpScreen extends StatelessWidget {
                                                 keyboardType: TextInputType.name,
                                                 hintText: 'Reichert',
                                                 controller: __.last_name,
+                                                onChanged: (val){
+                                                  __.lastnameError=null;
+                                                },
                                                 validator: (String? value) {
                                                   if (value == null || value.isEmpty) {
                                                     __.lastnameError = 'Last name is required';
@@ -184,7 +198,8 @@ class SignUpScreen extends StatelessWidget {
                                                   children: [
                                                     Icon(Icons.error_outline_rounded, color: Colors.red.shade600,size: 17,),
                                                     width5,
-                                                    Center(
+                                                    SizedBox(
+                                                      width: cs.width(context)/3,
                                                       child: Text(
                                                         __.lastnameError!,
                                                         style: TextStyle(color: Colors.red.shade600,fontSize: 12),
@@ -193,6 +208,11 @@ class SignUpScreen extends StatelessWidget {
                                                   ],
                                                 ),
                                               ],
+                                              if(__.firstnameError!=null ) ...[
+                                                if(__.lastnameError==null)
+                                                  height26
+                                              ]
+
                                             ],
                                           ),
                                         ),
@@ -213,6 +233,9 @@ class SignUpScreen extends StatelessWidget {
                                       keyboardType: TextInputType.name,
                                       hintText: 'Bryan_Reichert38',
                                       controller: __.username,
+                                      onChanged: (val){
+                                        __.usernameError=null;
+                                      },
                                       validator: (String? value) {
                                         if (value == null || value.isEmpty) {
                                           __.usernameError = 'Username is required';
@@ -230,9 +253,11 @@ class SignUpScreen extends StatelessWidget {
                                         children: [
                                           Icon(Icons.error_outline_rounded, color: Colors.red.shade600,size: 17,),
                                           width5,
-                                          Center(
+                                          SizedBox(
+                                            width: cs.width(context)/1.3,
                                             child: Text(
                                               __.usernameError!,
+                                              softWrap: true,
                                               style: TextStyle(color: Colors.red.shade600,fontSize: 12),
                                             ),
                                           ),
@@ -254,6 +279,9 @@ class SignUpScreen extends StatelessWidget {
                                       keyboardType: TextInputType.emailAddress,
                                       hintText: 'Bryan_Reichert15@hotmail.com',
                                       controller: __.email,
+                                      onChanged: (val){
+                                        __.emailError=null;
+                                      },
                                       validator: (String? value) {
                                         if (value == null || value.isEmpty) {
                                           __.emailError = 'Email is required';
@@ -271,7 +299,8 @@ class SignUpScreen extends StatelessWidget {
                                         children: [
                                           Icon(Icons.error_outline_rounded, color: Colors.red.shade600,size: 17,),
                                           width5,
-                                          Center(
+                                          SizedBox(
+        width: cs.width(context)/1.3,
                                             child: Text(
                                               __.emailError!,
                                               style: TextStyle(color: Colors.red.shade600,fontSize: 12),
@@ -298,6 +327,9 @@ class SignUpScreen extends StatelessWidget {
                                         hintText: '********',
                                         obscureText: __.obscureText,
                                         controller: __.password,
+                                        onChanged: (val){
+                                          __.passwordError=null;
+                                        },
                                         suffixIcon: GestureDetector(
                                           onTap: () {
                                             __.obscureText = !__.obscureText;
@@ -325,7 +357,8 @@ class SignUpScreen extends StatelessWidget {
                                         children: [
                                           Icon(Icons.error_outline_rounded, color: Colors.red.shade600,size: 17,),
                                           width5,
-                                          Center(
+                                          SizedBox(
+        width: cs.width(context)/1.3,
                                             child: Text(
                                               __.passwordError!,
                                               style: TextStyle(color: Colors.red.shade600,fontSize: 12),
@@ -366,6 +399,7 @@ class SignUpScreen extends StatelessWidget {
                                   log('tap');
                                   if (__.signUpFormKey.currentState!
                                       .validate()) {
+
                                     await __.register(
                                       firstName:
                                       __.first_name.text.trim(),

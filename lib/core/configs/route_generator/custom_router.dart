@@ -1,4 +1,7 @@
 import 'package:socialverse/export.dart';
+import 'package:socialverse/features/profile/presentation/settings/account/change_password_screen.dart';
+
+import '../../presentation/welcome_screen.dart';
 
 Route<dynamic> getPlatformPageRoute({
   required WidgetBuilder builder,
@@ -26,6 +29,7 @@ class CustomRouter {
           settings: const RouteSettings(name: '/'),
           builder: (_) => Scaffold(),
         );
+
       case WelcomeScreen.routeName:
         return WelcomeScreen.route();
       case LoginScreen.routeName:
@@ -50,11 +54,8 @@ class CustomRouter {
         return SignUpScreen.route();
       case BottomNavBar.routeName:
         return BottomNavBar.route();
-      case SearchScreen.routeName:
-        return SearchScreen.route();
-      case CreateSubverseScreen.routeName:
-        return CreateSubverseScreen.route();
-      case SettingsScreen.routeName:
+
+        case SettingsScreen.routeName:
         return SettingsScreen.route();
       case DataControlsScreen.routeName:
         return DataControlsScreen.route();
@@ -66,57 +67,22 @@ class CustomRouter {
         return FollowingScreen.route(
           args: settings.arguments as FollowingScreenArgs,
         );
-      case EditSubverseScreen.routeName:
-        return EditSubverseScreen.route(
-          args: settings.arguments as EditSubverseScreenArgs,
-        );
-      case CameraScreen.routeName:
+
+        case CameraScreen.routeName:
         return CameraScreen.route(
           args: settings.arguments as CameraScreenArgs,
         );
-      // case InstantCameraScreen.routeName:
-      //   return InstantCameraScreen.route(
-      //     args: settings.arguments as InstantCameraScreenArgs,
-      //   );
+    // case InstantCameraScreen.routeName:
+    //   return InstantCameraScreen.route(
+    //     args: settings.arguments as InstantCameraScreenArgs,
+    //   );
       case PostScreen.routeName:
         return PostScreen.route(
           args: settings.arguments as PostScreenArgs,
         );
-      case VideoWidget.routeName:
-        return VideoWidget.route(
-          args: settings.arguments as VideoWidgetArgs,
-        );
       case UserProfileScreen.routeName:
         return UserProfileScreen.route(
           args: settings.arguments as UserProfileScreenArgs,
-        );
-      case EditProfileScreen.routeName:
-        return EditProfileScreen.route(
-          args: settings.arguments as EditProfileScreenArgs,
-        );
-      case EditNameScreen.routeName:
-        return EditNameScreen.route(
-          args: settings.arguments as EditNameScreenArgs,
-        );
-      case EditUsernameScreen.routeName:
-        return EditUsernameScreen.route(
-          args: settings.arguments as EditUsernameScreenArgs,
-        );
-      case EditBioScreen.routeName:
-        return EditBioScreen.route(
-          args: settings.arguments as EditBioScreenArgs,
-        );
-      case EditLinksScreen.routeName:
-        return EditLinksScreen.route(
-          args: settings.arguments as EditLinksScreenArgs,
-        );
-      case SubverseDetailScreen.routeName:
-        return SubverseDetailScreen.route(
-          args: settings.arguments as SubverseDetailScreenArgs,
-        );
-      case SubverseEmptyScreen.routeName:
-        return SubverseEmptyScreen.route(
-          args: settings.arguments as SubverseEmptyScreenArgs,
         );
       case QrCodeScreen.routeName:
         return QrCodeScreen.route(
@@ -140,6 +106,9 @@ class CustomRouter {
         return ManageAccountScreen.route();
       case AccountInformationScreen.routeName:
         return AccountInformationScreen.route();
+      case ChangePasswordScreen.routeName:
+        return ChangePasswordScreen.route();
+
 
       default:
         return _errorRoute();

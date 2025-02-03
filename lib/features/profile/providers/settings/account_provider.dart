@@ -8,6 +8,31 @@ class AccountProvider extends ChangeNotifier {
   final firstName = TextEditingController();
   final lastName = TextEditingController();
 
+  final password = TextEditingController();
+  final password_confirm = TextEditingController();
+
+  bool _obscureText = true;
+  bool get obscureText => _obscureText;
+
+  set obscureText(bool value) {
+    _obscureText = value;
+    notifyListeners();
+  }
+
+  String? _passwordError = null;
+  String? get passwordError => _passwordError;
+
+  set passwordError(String? error) {
+    _passwordError = error;
+    notifyListeners();
+  }
+
+  clearPasswordController(){
+    password.text='';
+    password_confirm.text='';
+    notifyListeners();
+  }
+
   final notification = getIt<NotificationProvider>();
 
   final _service = AccountService();
@@ -154,4 +179,39 @@ class AccountProvider extends ChangeNotifier {
 
     return response;
   }
+
+  Future<void> resetPassword(BuildContext context)async {
+
+    _loading = true;
+    notifyListeners();
+
+    Map data= {
+      "token": token ?? '',
+    "password": password.text,
+    "password-confirm": password_confirm.text
+    };
+
+    // print("==============================================$data");
+
+    final response = await _service.resetPassword(data);
+    if (response == 200) {
+      _loading = false;
+      notifyListeners();
+      Navigator.pop(context);
+      notification.show(
+        title: 'Your password has been updated',
+        type: NotificationType.local,
+      );
+    } else {
+      _loading = false;
+      notifyListeners();
+      Navigator.pop(context);
+      notification.show(
+        title: 'Something went wrong',
+        type: NotificationType.local,
+      );
+    }
+
+  }
+
 }

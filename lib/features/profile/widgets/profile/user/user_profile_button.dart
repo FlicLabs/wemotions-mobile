@@ -35,6 +35,7 @@ class UserProfileButton extends StatelessWidget {
                             textColor: Color(0xFF9032E6),
                             title: 'Following',
                             // textColor: Theme.of(context).indicatorColor,
+                            color: Theme.of(context).canvasColor,
                             onTap: () {
                               if (logged_in == true) {
                                 if (isFollowing != null) {
@@ -58,8 +59,9 @@ class UserProfileButton extends StatelessWidget {
                                 stops: [0.0, 1.0],
                                 begin: FractionalOffset.topCenter,
                                 end: FractionalOffset.bottomCenter,
-                                tileMode: TileMode.repeated
+                                tileMode: TileMode.repeated,
                             ) ,
+                            textColor: Constants.lightPrimary,
                             title: 'Follow',
                             onTap: () {
                               if (logged_in == true) {
@@ -85,7 +87,7 @@ class UserProfileButton extends StatelessWidget {
                     right: 40,
                   ),
                   child: SizedBox(
-                    width: cs().height(context) * 0.75,
+                    width: cs.height(context) * 0.75,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

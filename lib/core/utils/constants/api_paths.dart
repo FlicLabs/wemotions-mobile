@@ -13,11 +13,11 @@ class API {
   static String signup = 'user/create';
   static String login = 'user/login';
   static String logout = 'user/logout';
-  static String block_list = 'user/block-list';
-  static String suggested = 'users/active';
+  // static String block_list = 'user/block-list';
+  // static String suggested = 'users/active';
   static String logoutEverywhere = 'user/logout-everywhere';
   static String oauth = 'auth/firebase';
-  static String reset = 'auth/credentials/reset/start';
+  static String reset = 'auth/credentials/reset';
   static String notification = 'user/notification';
 
   //Profile

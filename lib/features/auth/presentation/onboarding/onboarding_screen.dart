@@ -27,8 +27,8 @@ class OnboardingScreen extends StatelessWidget {
         body: WillPopScope(
           onWillPop: () async => false,
           child: Container(
-            height: cs().height(context),
-            width: cs().width(context),
+            height: cs.height(context),
+            width: cs.width(context),
             child: SafeArea(
               child: Padding(
                 padding: EdgeInsets.only(left: 20, right: 20),

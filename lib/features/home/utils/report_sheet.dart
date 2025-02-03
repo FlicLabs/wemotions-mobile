@@ -1,5 +1,7 @@
 import 'package:socialverse/export.dart';
 
+import '../widgets/report/button_with_color.dart';
+
 class ReportSheet extends StatefulWidget {
   const ReportSheet({
     Key? key,
@@ -10,11 +12,10 @@ class ReportSheet extends StatefulWidget {
 }
 
 class _ReportSheetState extends State<ReportSheet> {
-  String? _selectedReason = ""; // Initialize the variable
+  String? _selectedReason = "";
 
   @override
   Widget build(BuildContext context) {
-    // RadioListTile builder function
     Widget _buildRadioListTile(
         String title, String? selectedReason, Function(String?) onChanged) {
       bool isSelected = title == selectedReason;
@@ -30,10 +31,10 @@ class _ReportSheetState extends State<ReportSheet> {
                 value: title,
                 groupValue: selectedReason,
                 onChanged:
-                    onChanged, // Calls the passed setState method from StatefulBuilder
+                onChanged,
                 activeColor: Color(0xFF0A858F4),
                 fillColor: MaterialStateProperty.resolveWith<Color>(
-                  (Set<MaterialState> states) {
+                      (Set<MaterialState> states) {
                     if (states.contains(MaterialState.selected)) {
                       return Color(0xFF0A858F4); // Selected color
                     }
@@ -48,7 +49,7 @@ class _ReportSheetState extends State<ReportSheet> {
                     color: Theme.of(context).focusColor,
                     fontSize: 14,
                     fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -77,16 +78,16 @@ class _ReportSheetState extends State<ReportSheet> {
             ),
             child: Container(
               height: 540,
-              width: cs().width(context),
+              width: cs.width(context),
               child: Column(
                 children: [
                   Container(
-                    width: cs().width(context),
+                    width: cs.width(context),
                     padding: EdgeInsets.only(
                         top: 18, bottom: 18, left: 20, right: 20),
                     child: Stack(
                       alignment:
-                          Alignment.center, // Center the Stack's children
+                      Alignment.center, // Center the Stack's children
                       children: [
                         Positioned(
                           child: Text(
@@ -128,24 +129,24 @@ class _ReportSheetState extends State<ReportSheet> {
                                 children: [
                                   _buildRadioListTile(
                                       "Bullying or harassment", _selectedReason,
-                                      (String? value) {
-                                    setState(() {
-                                      _selectedReason = value;
-                                    });
-                                  }),
+                                          (String? value) {
+                                        setState(() {
+                                          _selectedReason = value;
+                                        });
+                                      }),
                                   _buildRadioListTile("Spam", _selectedReason,
-                                      (value) {
-                                    setState(() {
-                                      _selectedReason = value;
-                                    });
-                                  }),
+                                          (value) {
+                                        setState(() {
+                                          _selectedReason = value;
+                                        });
+                                      }),
                                   _buildRadioListTile(
                                       "Intellectual property", _selectedReason,
-                                      (String? value) {
-                                    setState(() {
-                                      _selectedReason = value;
-                                    });
-                                  }),
+                                          (String? value) {
+                                        setState(() {
+                                          _selectedReason = value;
+                                        });
+                                      }),
                                   _buildRadioListTile(
                                       "Nudity or sexual activity",
                                       _selectedReason, (String? value) {
@@ -169,18 +170,18 @@ class _ReportSheetState extends State<ReportSheet> {
                                   }),
                                   _buildRadioListTile(
                                       "False information", _selectedReason,
-                                      (String? value) {
-                                    setState(() {
-                                      _selectedReason = value;
-                                    });
-                                  }),
+                                          (String? value) {
+                                        setState(() {
+                                          _selectedReason = value;
+                                        });
+                                      }),
                                   _buildRadioListTile(
                                       "Something else", _selectedReason,
-                                      (String? value) {
-                                    setState(() {
-                                      _selectedReason = value;
-                                    });
-                                  }),
+                                          (String? value) {
+                                        setState(() {
+                                          _selectedReason = value;
+                                        });
+                                      }),
                                   if (_selectedReason == "Something else") ...[
                                     Padding(
                                       padding: EdgeInsets.only(left: 15),
@@ -205,7 +206,7 @@ class _ReportSheetState extends State<ReportSheet> {
                   Padding(
                     padding: EdgeInsets.only(
                         top: 20, bottom: 20, left: 20, right: 20),
-                    child: AuthButtonWithColor(
+                    child: ButtonWithColor(
                       title: "Submit",
                       onTap: () {
                         Navigator.pop(context);

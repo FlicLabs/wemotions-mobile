@@ -1,4 +1,5 @@
 import 'package:socialverse/export.dart';
+import 'package:socialverse/features/profile/presentation/settings/account/change_password_screen.dart';
 
 class ManageAccountScreen extends StatefulWidget {
   static const String routeName = '/manage-account';
@@ -30,6 +31,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 80,
         title: Text(
           'Manage Account',
           style: AppTextStyle.normalBold24
@@ -46,14 +48,15 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                 Navigator.of(context).pushNamed(
                   AccountInformationScreen.routeName,
                 );
+
               },
               label: 'Account Info',
             ),
             CustomListTile(
               onTap: () {
-                // Navigator.of(context).pushNamed(
-                //   AccountInformationScreen.routeName,
-                // );
+                Navigator.of(context).pushNamed(
+                  ChangePasswordScreen.routeName,
+                );
               },
               label: 'Change Password',
             ),

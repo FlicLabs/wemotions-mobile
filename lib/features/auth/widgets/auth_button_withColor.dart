@@ -39,7 +39,7 @@ class AuthButtonWithColor extends StatelessWidget {
             ) : null
         ),
         height: height ?? 59,
-        width: width ?? cs().width(context),
+        width: width ?? cs.width(context),
         alignment: Alignment.center,
         child: Center(
           child: Text(

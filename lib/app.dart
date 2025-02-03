@@ -1,3 +1,8 @@
+
+import 'package:socialverse/core/presentation/welcome_screen.dart';
+
+import 'core/configs/route_generator/custom_router.dart';
+import 'core/widgets/bottom_nav_bar.dart';
 import 'export.dart';
 
 class WeMotions extends StatefulWidget {
@@ -13,7 +18,7 @@ class _WeMotionsState extends State<WeMotions> {
     super.initState();
     fetchFeed();
     fetchProfile();
-    fetchSubverse();
+    // fetchSubverse();
     fetchActivity();
   }
 
@@ -30,19 +35,22 @@ class _WeMotionsState extends State<WeMotions> {
     final reply = Provider.of<ReplyProvider>(context, listen: false);
 
     await home.createIsolate(token: token);
-    await home.getVotings();
+    // await home.getVotings();
     home.fetchingReplies = true;
     await home.createReplyIsolate(0, token: token);
     reply.posts = home.posts[0].sublist(1);
+
     if (home.posts.length > 1) {
       await home.createReplyIsolate(1, token: token);
     }
     if (home.posts.length > 2) {
       await home.createReplyIsolate(2, token: token);
     }
+    print("=======================");
+    print(reply.posts.map((e) => e.username).toList());
 
-    // reply.posts = home.posts[0].sublist(1);
   }
+
 
   fetchProfile() async {
     if (prefs_username == null || prefs_username != '') {
@@ -51,12 +59,12 @@ class _WeMotionsState extends State<WeMotions> {
     }
   }
 
-  fetchSubverse() async {
-    final subverse = Provider.of<SearchProvider>(context, listen: false);
-    if (logged_in!) {
-      await subverse.getSubversePosts();
-    }
-  }
+  // fetchSubverse() async {
+  //   final subverse = Provider.of<SearchProvider>(context, listen: false);
+  //   if (logged_in!) {
+  //     await subverse.getSubversePosts();
+  //   }
+  // }
 
   fetchActivity() async {
     if (logged_in!) {
@@ -68,6 +76,7 @@ class _WeMotionsState extends State<WeMotions> {
   initNotifications() {
     Provider.of<NotificationProvider>(context, listen: false).initialize();
   }
+
 
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
@@ -82,11 +91,13 @@ class _WeMotionsState extends State<WeMotions> {
           title: 'WeMotions',
           debugShowCheckedModeBanner: false,
           onGenerateRoute: CustomRouter.onGenerateRoute,
+          // initialRoute: logged_in! ? BottomNavBar.routeName : WelcomeScreen.routeName,
           initialRoute: BottomNavBar.routeName,
-          // onboard == false
-          //     ? WelcomeScreen.routeName
-          //     : BottomNavBar.routeName,
-          routes: {BottomNavBar.routeName: (context) => BottomNavBar()},
+
+          // home: WelcomeScreen(),
+          routes: {
+            WelcomeScreen.routeName: (context) => WelcomeScreen(),
+          BottomNavBar.routeName:(context) => BottomNavBar()},
         );
       },
     );

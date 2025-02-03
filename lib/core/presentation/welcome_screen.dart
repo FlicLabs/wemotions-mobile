@@ -25,61 +25,93 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   fetchFeed() async {
     final home = Provider.of<HomeProvider>(context, listen: false);
     await home.createIsolate(token: token);
+    final theme = Provider.of<ThemeProvider>(context, listen: false);
+    theme.setSelectedThemeMode(ThemeMode.light);
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+    print("${isDarkTheme}+++++++++++++");
+
     return Scaffold(
       body: WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
-          backgroundColor: Colors.white,
-          body: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Swipe Up',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(fontSize: 30, color: Colors.black),
+          body: Stack(
+            children: [
+
+              Image.asset('assets/images/imagePicker.png',
+                fit: BoxFit.cover,),
+              Positioned(
+                  right: 10,
+                  top: 50,
+                  child: CustomTextButton(title: 'Log in', onTap: (){
+                    goToLogIn(context);
+                  }),
+              ),
+            ],
+          ),
+          bottomSheet: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.only(top: 20, left: 0, bottom: 40, right: 0),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
+                ),
+                color: Theme.of(context).canvasColor,
+              ),
+              child: SizedBox(
+                height: cs.height(context)/2.3,
+                width: cs.width(context),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20.0,left: 20,right:20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Think..Record..Engage",
+                          style: AppTextStyle.ultraLarge,)
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                              "Get Started with just a few quick taps. Jump right into engaging conversations and connect with others effortlessly,no delays or hassle.",style: AppTextStyle.bodyMedium,)),
+                      height15,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TransparentButton(
+                          title: 'Dive into WeMotions',
+                          color: Constants.primaryColor,
+                          isBorder: false,
+                          textColor: Constants.lightPrimary,
+                          onTap: () async {
+                            prefs?.setBool('onboard', true);
+                            goToHomeWithoutRegister(context);
+                          },
                         ),
-                        height10,
-                        Text(
-                          'Curated customized video feed which does not maximize its extraction of you, but the empowerment of you',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(fontSize: 16, color: Colors.black),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0,left: 8,right: 8),
+                        child: CustomTransparentButton(
+                          title: 'Sign up',
+                          color: Theme.of(context).canvasColor,
+                          textColor: Theme.of(context).indicatorColor,
+                          // isBorder: true,
+                          borderColor: Theme.of(context).indicatorColor,
+                          onTap: () async {
+                            // prefs?.setBool('onboard', true);
+                            goToSignUp(context);
+                          },
                         ),
-                        Center(
-                          child: Image.asset(AppAsset.vible, height: 515),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                    child: TransparentButton(
-                      title: 'Get Empowered',
-                      onTap: () async {
-                        prefs?.setBool('onboard', true);
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          BottomNavBar.routeName,
-                          (route) => false,
-                        );
-                      },
-                    ),
-                  )
-                ],
+                ),
               ),
             ),
           ),
@@ -87,4 +119,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       ),
     );
   }
+
+
+  goToSignUp(BuildContext context){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SignUpScreen(),
+      ),
+    );
+  }
+
+  goToLogIn(BuildContext context){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LoginScreen(),
+      ),
+    );
+  }
+
+  goToHomeWithoutRegister(BuildContext context){
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      BottomNavBar.routeName,
+          (route) => false,
+    );
+  }
+
+
 }

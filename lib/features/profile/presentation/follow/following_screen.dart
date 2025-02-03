@@ -1,6 +1,5 @@
 
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/widgets/profile/profile/following_item.dart';
 
 class FollowingScreenArgs {
   final String username;

@@ -95,32 +95,55 @@ class UserProfileProvider extends ChangeNotifier {
     required String username,
     bool? forceRefresh,
   }) async {
-    Response response = await _service.getUserProfile(
-      username: username,
-      forceRefresh: forceRefresh,
-    );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      _posts.isEmpty ? getUserPosts(username: username) : null;
-      String jsonString = json.encode(response.data);
-      final Map<String, dynamic> responseData = json.decode(jsonString);
-      // log('${responseData}');
-      ProfileModel userProfile = ProfileModel.fromJson(responseData);
-      _user = userProfile;
-      notifyListeners();
-    } else {
+    try {
+      _loading = true;
+      Response response = await _service.getUserProfile(
+        username: username,
+        forceRefresh: forceRefresh,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _user = ProfileModel.fromJson(response.data);
+        _loading = false;
+        notifyListeners();
+      } else {
+        notification.show(
+          title: 'Something went wrong',
+          type: NotificationType.local,
+        );
+        _loading = false;
+      }
+    } catch (e) {
+      _loading = false;
       notification.show(
-        title: 'Something went wrong',
+        title: 'Failed to load profile data',
         type: NotificationType.local,
       );
     }
   }
 
   Future<void> getUserPosts({required String username}) async {
-    Response response = await _service.getPosts(username, page);
-    final posts = ProfilePostsModel.fromJson(response.data).posts;
-    _posts.addAll(posts.toList());
-    _loading = false;
-    notifyListeners();
+    try {
+      if (_loading) return;
+      _loading = true;
+
+      Response response = await _service.getPosts(username, page);
+      final newPosts = ProfilePostsModel.fromJson(response.data).posts;
+
+      if (newPosts.isNotEmpty) {
+        _posts.addAll(newPosts);
+        _page++;
+      }
+
+      _loading = false;
+      notifyListeners();
+    } catch (e) {
+      _loading = false;
+      notification.show(
+        title: 'Failed to load posts',
+        type: NotificationType.local,
+      );
+    }
   }
 
   Future<void> getUserLikedPosts() async {

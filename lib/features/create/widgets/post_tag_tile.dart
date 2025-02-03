@@ -20,11 +20,12 @@ class PostTagTile extends StatelessWidget {
                 ),
               ),
               builder: (context) {
-                return TagPeopleWidget();
+                return SizedBox();
+                // TagPeopleWidget();
               },
             ).whenComplete(() {
-              __.searched_users.clear();
-              __.searchController.clear();
+              // __.searched_users.clear();
+              // __.searchController.clear();
             });
           },
           child: Row(
@@ -47,23 +48,23 @@ class PostTagTile extends StatelessWidget {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  if(__.selected_users.isNotEmpty)...[
-                    if(__.selected_users.length > 1)...[
-                      Text(__.selected_users.length.toString()+" people")
-                    ]else...[
-                      Text(__.selected_users.first.username)
-                    ]
-                  ],
-                  Icon(
-                        Icons.arrow_forward_ios_rounded
-                            ,
-                      color: Theme.of(context).focusColor,
-                      size: 16,
-                    ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     if(__.selected_users.isNotEmpty)...[
+              //       if(__.selected_users.length > 1)...[
+              //         Text(__.selected_users.length.toString()+" people")
+              //       ]else...[
+              //         Text(__.selected_users.first.username)
+              //       ]
+              //     ],
+              //     Icon(
+              //           Icons.arrow_forward_ios_rounded
+              //               ,
+              //         color: Theme.of(context).focusColor,
+              //         size: 16,
+              //       ),
+              //   ],
+              // ),
             ],
           ),
         );

@@ -1,6 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/widgets/profile/shared/post_grid_item.dart';
-import 'package:socialverse/features/search/widgets/subverse_detail/subverse_post_grid_placeholder.dart';
 
 class PostsGrid extends StatelessWidget {
   const PostsGrid({
@@ -51,17 +49,17 @@ class PostsGrid extends StatelessWidget {
                         (BuildContext context, int index) {
                           return PostGridItem(
                             onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                VideoWidget.routeName,
-                                arguments: VideoWidgetArgs(
-                                  posts: posts,
-                                  pageController:
-                                      PageController(initialPage: index),
-                                  pageIndex: index,
-                                  isFromProfile: true,
-                                ),
-                              );
+                              // Navigator.pushNamed(
+                              //   context,
+                              //   VideoWidget.routeName,
+                              //   arguments: VideoWidgetArgs(
+                              //     posts: posts,
+                              //     pageController:
+                              //         PageController(initialPage: index),
+                              //     pageIndex: index,
+                              //     isFromProfile: true,
+                              //   ),
+                              // );
                             },
                             imageUrl: posts[index].thumbnailUrl,
                             createdAt: posts[index].createdAt,
@@ -85,14 +83,14 @@ class PostsGrid extends StatelessWidget {
                             ),
                             height20,
                             Text(
-                              likedTab ? 'No Liked Videos' : 'No Videos Posted',
+                              likedTab ? 'No Liked Videos' : 'No Videos Yet',
                               textAlign: TextAlign.center,
                               style: AppTextStyle.normalBold26.copyWith(
                                   color: Theme.of(context).focusColor),
                             ),
                             height20,
                             Container(
-                              width: cs().width(context) * 0.7,
+                              width: cs.width(context) * 0.7,
                               child: isSelfProfile
                                   ? Text(
                                       likedTab

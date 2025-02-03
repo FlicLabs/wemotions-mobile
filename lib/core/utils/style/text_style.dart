@@ -3,6 +3,16 @@ import 'package:socialverse/export.dart';
 class AppTextStyle {
   AppTextStyle._();
 
+  static const ultraLarge = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const ultraMedium = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+  );
+
   static const bodyMedium = TextStyle(
     fontSize: 15,
     fontWeight: FontWeight.w400,

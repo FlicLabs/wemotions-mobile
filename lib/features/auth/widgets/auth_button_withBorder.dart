@@ -27,7 +27,7 @@ class AuthButtonWithBorder extends StatelessWidget {
           border: Border.all(color: Theme.of(context).indicatorColor,width: 1),
         ),
         height: height ?? 59,
-        width: width ?? cs().width(context),
+        width: width ?? cs.width(context),
         alignment: Alignment.center,
         child: Center(
           child: Text(

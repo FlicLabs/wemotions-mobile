@@ -37,8 +37,8 @@ class ForgotPasswordScreen extends StatelessWidget {
         body: WillPopScope(
           onWillPop: () async => false,
           child: Container(
-            height: cs().height(context),
-            width: cs().width(context),
+            height: cs.height(context),
+            width: cs.width(context),
             child: SafeArea(
               child: Column(
                 children: [

@@ -139,6 +139,7 @@ class TransparentButton extends StatelessWidget {
   final Color? textColor;
   final Gradient? gradient;
   final bool isBorder;
+  final Color? borderColor;
 
   const TransparentButton({
     Key? key,
@@ -152,6 +153,7 @@ class TransparentButton extends StatelessWidget {
     this.textColor,
     this.gradient,
     this.isBorder = true,
+    this.borderColor,
   }) : super(key: key);
 
   @override
@@ -160,7 +162,7 @@ class TransparentButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: height ?? 50,
-        width: width ?? cs().width(context),
+        width: width ?? cs.width(context),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: color ?? Theme.of(context).indicatorColor,
@@ -169,15 +171,15 @@ class TransparentButton extends StatelessWidget {
           border: isBorder
               ? Border.all(
                   width: 1,
-                  color: Theme.of(context).indicatorColor,
+                  color: borderColor ??Constants.primaryColor,
                 )
               : null,
         ),
         child: Center(
           child: Text(
             title,
-            style: AppTextStyle.bodyMedium
-                .copyWith(color: Theme.of(context).primaryColor),
+            style: AppTextStyle.bodyLarge
+                .copyWith(color: textColor),
             textAlign: TextAlign.center,
           ),
         ),
@@ -216,7 +218,7 @@ class CustomTransparentButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: height ?? 50,
-        width: width ?? cs().width(context),
+        width: width ?? cs.width(context),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: color ?? Theme.of(context).primaryColor,

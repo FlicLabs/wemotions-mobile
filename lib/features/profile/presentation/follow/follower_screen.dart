@@ -1,5 +1,4 @@
 
-
 import 'package:socialverse/export.dart';
 
 class FollowersScreenArgs {

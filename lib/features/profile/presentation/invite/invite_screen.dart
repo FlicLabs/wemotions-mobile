@@ -1,7 +1,5 @@
 import 'package:line_icons/line_icons.dart';
-import 'package:socialverse/core/utils/constants/constants.dart';
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/widgets/profile/invite/invite_item.dart';
 
 class InviteScreen extends StatelessWidget {
   static const String routeName = '/invite';
@@ -36,7 +34,7 @@ class InviteScreen extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              width: cs().width(context),
+              width: cs.width(context),
               height: 100,
               child: ListView(
                 shrinkWrap: true,

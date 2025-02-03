@@ -50,7 +50,7 @@ class QrCodeScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(30),
                             ),
                             height: 350,
-                            width: cs().width(context) - 70,
+                            width: cs.width(context) - 70,
                             child: Padding(
                               padding: EdgeInsets.all(20),
                               child: Column(
@@ -162,7 +162,7 @@ class QrCodeScreen extends StatelessWidget {
                         height10,
                         Container(
                           height: 80,
-                          width: cs().width(context),
+                          width: cs.width(context),
                           child: ListView(
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,

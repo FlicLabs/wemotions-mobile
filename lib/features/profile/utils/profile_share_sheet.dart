@@ -31,7 +31,7 @@ class ProfileShareSheet extends StatelessWidget {
                 const EdgeInsets.only(top: 10, left: 20, bottom: 20, right: 0),
             child: SizedBox(
               height: 100,
-              width: cs().width(context),
+              width: cs.width(context),
               child: ListView(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,

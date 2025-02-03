@@ -62,8 +62,8 @@ class LoginScreen extends StatelessWidget {
         body: WillPopScope(
           onWillPop: () async => false,
           child: Container(
-            height: cs().height(context),
-            width: cs().width(context),
+            height: cs.height(context),
+            width: cs.width(context),
             child: SafeArea(
               child: Column(
                 children: [
@@ -103,7 +103,7 @@ class LoginScreen extends StatelessWidget {
                                   if (value == null || value.isEmpty) {
                                     __.emailError =
                                         'Please enter your email or username';
-                                    return ''; // Return empty to suppress default error message
+                                    return '';
                                   }
                                   __.emailError = null;
                                   return null; // No error
@@ -154,11 +154,11 @@ class LoginScreen extends StatelessWidget {
                                   if (value == null || value.isEmpty) {
                                     __.passwordError =
                                         'Please enter your password';
-                                    return ''; // Return empty to suppress default error message
+                                    return '';
                                   } else {
                                     if (__.incorrectPassword == true) {
                                       __.passwordError =
-                                          'Credentials don\'t match';
+                                          'Oh no! Your credentials don\'t match!';
                                       return '';
                                     }
                                     __.passwordError = null;

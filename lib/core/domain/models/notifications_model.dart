@@ -12,7 +12,7 @@ class Notifications {
   });
 
   late final int id;
-  late final User user;
+  late final CurrUser user;
   late final Actor actor;
   late final String actionType;
   late final String? hasSeen;
@@ -23,7 +23,7 @@ class Notifications {
 
   Notifications.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        user = User.fromJson(json['user']),
+        user = CurrUser.fromJson(json['user']),
         actor = Actor.fromJson(json['actor']),
         actionType = json['action_type'],
         hasSeen = json['has_seen'],
@@ -35,7 +35,7 @@ class Notifications {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
       'id': id,
-      'user': user.toJson(),
+      'user':  user.toJson(),
       'actor': actor.toJson(),
       'action_type': actionType,
       'has_seen': hasSeen,
@@ -48,8 +48,8 @@ class Notifications {
   }
 }
 
-class User {
-  User({
+class CurrUser {
+  CurrUser({
     required this.id,
     required this.username,
     required this.firstName,
@@ -67,7 +67,7 @@ class User {
   late final String profileUrl;
   late final bool? isFollowing;
 
-  User.fromJson(Map<String, dynamic> json)
+  CurrUser.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         username = json['username'],
         firstName = json['first_name'],

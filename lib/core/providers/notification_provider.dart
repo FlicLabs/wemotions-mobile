@@ -1,9 +1,8 @@
-import 'package:socialverse/core/domain/models/notification_model.dart';
-import 'package:socialverse/core/domain/models/notifications_model.dart';
 import 'package:socialverse/core/domain/models/payload_model.dart';
-import 'package:socialverse/core/widgets/overlay_notification.dart';
 import 'package:socialverse/export.dart';
 import 'package:dio/dio.dart';
+import '../domain/services/messaging_service.dart';
+import '../widgets/overlay_notification.dart';
 
 enum NotificationType { push, local }
 

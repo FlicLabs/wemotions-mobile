@@ -1,5 +1,7 @@
 import 'package:socialverse/export.dart';
 
+import '../widgets/report/button_with_color.dart';
+
 class ReportSubmitDialog extends StatelessWidget {
   const ReportSubmitDialog({Key? key}) : super(key: key);
 
@@ -77,9 +79,8 @@ class ReportSubmitDialog extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
 
-            SizedBox(height: 30), // Space before the button
-
-            Container(width:200,child: AuthButtonWithColor(title: "Continue", onTap: (){Navigator.of(context).pop();}, isGradient: true)),
+            SizedBox(height: 30),
+            Container(width:200,child: ButtonWithColor(title: "Continue", onTap: (){Navigator.of(context).pop();}, isGradient: true)),
           ],
         ),
       ),

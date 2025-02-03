@@ -1,10 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:provider/provider.dart';
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/widgets/profile/shared/bio.dart';
-import 'package:socialverse/features/profile/widgets/profile/shared/posts_grid.dart';
-import 'package:socialverse/features/profile/widgets/profile/shared/profile_info.dart';
-import 'package:socialverse/features/profile/widgets/profile/shared/profile_stats_item.dart';
-import 'package:socialverse/features/profile/widgets/profile/user/user_profile_button.dart';
-import 'package:socialverse/features/profile/widgets/profile/user/user_profile_header.dart';
 
 class UserProfileScreenArgs {
   final String username;
@@ -44,96 +41,124 @@ class UserProfileScreen extends StatefulWidget {
 class _UserProfileScreenState extends State<UserProfileScreen>
     with TickerProviderStateMixin {
   late TabController _controller;
-  late ScrollController _posts;
-
-  fetchData() async {
-    final user = Provider.of<UserProfileProvider>(context, listen: false);
-
-    await user.getUserProfile(
-      username: widget.username,
-    );
-
-    if (widget.username != prefs_username) {
-      user.isFollowing = user.user.isFollowing;
-      user.isBlocked = user.user.isBlocked;
-    }
-  }
+  late ScrollController _postsController;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
     _controller = TabController(length: 1, vsync: this);
+    _postsController = ScrollController();
+    _postsController.addListener(_onScroll);
+    _controller.addListener(_onTabChange);
 
-    _posts = ScrollController();
-
-    _posts.addListener(() {
-      _profileScrollListener(_posts);
-    });
-
-    _controller.addListener(_tabChangeListener);
+    _fetchUserProfile();
   }
 
-  void _tabChangeListener() {
+  Future<void> _fetchUserProfile() async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
+
+    final userProvider = Provider.of<UserProfileProvider>(context, listen: false);
+    userProvider.page = 1;
+    userProvider.posts.clear();
+
+    await userProvider.getUserProfile(username: widget.username);
+
+    if (widget.username != prefs_username) {
+      userProvider.isFollowing = userProvider.user.isFollowing;
+      userProvider.isBlocked = userProvider.user.isBlocked;
+    }
+
+    await userProvider.getUserPosts(username: widget.username);
+
+    // Defer the state update to the next frame
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    });
+  }
+
+  void _onTabChange() {
     if (_controller.index == 1) {
-      _posts.jumpTo(0);
+      _postsController.jumpTo(0);
     }
   }
 
-  void _profileScrollListener(ScrollController controller) {
-    if (controller.position.pixels == controller.position.maxScrollExtent) {
-      final user = Provider.of<UserProfileProvider>(context, listen: false);
-      user.page++;
-      if (_controller.index == 0) {
-        user.getUserPosts(username: widget.username);
+  void _onScroll() {
+    if (_postsController.position.pixels == _postsController.position.maxScrollExtent) {
+      final userProvider = Provider.of<UserProfileProvider>(context, listen: false);
+      if (!userProvider.loading) {
+        // Defer the state update to the next frame
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          userProvider.getUserPosts(username: widget.username);
+        });
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProfileProvider>(
-      builder: (_, __, ___) {
-        return Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(
-              __.user.username,
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Consumer<UserProfileProvider>(
+          builder: (context, userProvider, child) {
+            return Text(
+              userProvider.user.username,
               style: Theme.of(context).textTheme.bodyLarge,
               textAlign: TextAlign.start,
-            ),
-            surfaceTintColor: Colors.transparent,
-            actions: [UserProfileHeader(username: __.user.username)],
+            );
+          },
+        ),
+        surfaceTintColor: Colors.transparent,
+        actions: [
+          Consumer<UserProfileProvider>(
+            builder: (context, userProvider, child) {
+              return UserProfileHeader(username: userProvider.user.username);
+            },
           ),
-          body: RefreshIndicator(
-            color: Theme.of(context).indicatorColor,
-            backgroundColor: Theme.of(context).primaryColor,
-            notificationPredicate: (notification) {
-              return notification.depth == 2;
+        ],
+      ),
+      body: Consumer<UserProfileProvider>(
+        builder: (context, userProvider, child) {
+          if (_isLoading && userProvider.posts.isEmpty) {
+            return Center(child: CustomProgressIndicator());
+          }
+
+          return NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (!userProvider.loading &&
+                  scrollInfo is ScrollEndNotification &&
+                  scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                userProvider.getUserPosts(username: widget.username);
+                return true;
+              }
+              return false;
             },
-            onRefresh: () async {
-              __.page = 1;
-              __.posts.clear();
-              __.loading = true;
-              __.getUserProfile(username: __.user.username, forceRefresh: true);
-            },
-            child: NotificationListener<ScrollNotification>(
-              onNotification: (ScrollNotification scrollInfo) {
-                if (!__.loading &&
-                    scrollInfo is ScrollEndNotification &&
-                    scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent) {
-                  __.page++;
-                  if (_controller.index == 0) {
-                    __.getUserPosts(username: widget.username);
+            child: RefreshIndicator(
+              color: Theme.of(context).indicatorColor,
+              backgroundColor: Theme.of(context).primaryColor,
+              notificationPredicate: (notification) => notification.depth == 2,
+              onRefresh: () async {
+                final userProvider = Provider.of<UserProfileProvider>(context, listen: false);
+                userProvider.page = 1;
+                userProvider.posts.clear();
+                userProvider.loading = true;
+
+                await userProvider.getUserProfile(username: widget.username, forceRefresh: true);
+                await userProvider.getUserPosts(username: widget.username);
+                // Defer the state update to the next frame
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    setState(() {});
                   }
-                  return true;
-                }
-                return false;
+                });
               },
               child: NestedScrollView(
-                controller: _posts,
-                headerSliverBuilder: (context, ___) {
+                controller: _postsController,
+                headerSliverBuilder: (context, innerBoxIsScrolled) {
                   return [
                     SliverToBoxAdapter(
                       child: Column(
@@ -145,11 +170,11 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                             borderColor: Theme.of(context).hintColor,
                             height: 100,
                             width: 100,
-                            imageUrl: __.user.profilePictureUrl,
+                            imageUrl: userProvider.user.profilePictureUrl,
                           ),
                           height10,
                           Text(
-                            __.user.name,
+                            userProvider.user.name,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyLarge!
@@ -161,29 +186,14 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                             children: [
                               Expanded(
                                 child: ProfileStatsItem(
-                                    value: __.user.followerCount,
-                                    label: 'Followers',
-                                    onTap: () {
-                                      if (__.user.followerCount != 0) {
-                                        Navigator.of(context).pushNamed(
-                                          FollowersScreen.routeName,
-                                          arguments: FollowersScreenArgs(
-                                            username: __.user.username,
-                                          ),
-                                        );
-                                      }
-                                    }),
-                              ),
-                              Expanded(
-                                child: ProfileStatsItem(
-                                  value: __.user.followingCount,
-                                  label: 'Following',
+                                  value: userProvider.user.followerCount,
+                                  label: 'Followers',
                                   onTap: () {
-                                    if (__.user.followingCount != 0) {
+                                    if (userProvider.user.followerCount != 0) {
                                       Navigator.of(context).pushNamed(
-                                        FollowingScreen.routeName,
-                                        arguments: FollowingScreenArgs(
-                                          username: __.user.username,
+                                        FollowersScreen.routeName,
+                                        arguments: FollowersScreenArgs(
+                                          username: userProvider.user.username,
                                         ),
                                       );
                                     }
@@ -192,7 +202,23 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               ),
                               Expanded(
                                 child: ProfileStatsItem(
-                                  value: __.user.postCount,
+                                  value: userProvider.user.followingCount,
+                                  label: 'Following',
+                                  onTap: () {
+                                    if (userProvider.user.followingCount != 0) {
+                                      Navigator.of(context).pushNamed(
+                                        FollowingScreen.routeName,
+                                        arguments: FollowingScreenArgs(
+                                          username: userProvider.user.username,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: ProfileStatsItem(
+                                  value: userProvider.user.postCount,
                                   label: 'Videos',
                                 ),
                               ),
@@ -201,15 +227,15 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                           height20,
                           UserProfileButton(
                             isFollowing: widget.isFollowing,
-                            username: __.user.username,
-                            chat_id: __.user.chatId,
+                            username: userProvider.user.username,
+                            chat_id: userProvider.user.chatId,
                           ),
-                          Bio(bio: __.user.bio),
+                          Bio(bio: userProvider.user.bio),
                           ProfileInfo(
-                            instagram: __.user.instagramUrl,
-                            tiktok: __.user.tiktokUrl,
-                            youtube: __.user.youtubeUrl,
-                            site: __.user.website,
+                            instagram: userProvider.user.instagramUrl,
+                            tiktok: userProvider.user.tiktokUrl,
+                            youtube: userProvider.user.youtubeUrl,
+                            site: userProvider.user.website,
                           ),
                           height20,
                         ],
@@ -232,7 +258,6 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                           dividerColor: Colors.transparent,
                           tabs: [
                             Tab(text: 'Videos'),
-                            // Tab(text: 'Liked'),
                           ],
                         ),
                       ),
@@ -244,37 +269,33 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                   controller: _controller,
                   children: [
                     PostsGrid(
-                      posts: __.posts,
+                      posts: userProvider.posts,
                       isFromProfile: false,
                       likedTab: false,
                       isSelfProfile: false,
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.all(20),
-                    //   child: Text(
-                    //     'This user\'s liked videos are private',
-                    //     style: Theme.of(context)
-                    //         .textTheme
-                    //         .displaySmall!
-                    //         .copyWith(fontSize: 15),
-                    //     textAlign: TextAlign.center,
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _postsController.dispose();
+    super.dispose();
   }
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate(this._tabBar);
-
   final TabBar _tabBar;
+
+  _SliverAppBarDelegate(this._tabBar);
 
   @override
   double get minExtent => _tabBar.preferredSize.height;
@@ -282,9 +303,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
 
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return new Container(
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
       color: Theme.of(context).primaryColor,
       child: _tabBar,
     );

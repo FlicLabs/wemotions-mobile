@@ -111,6 +111,10 @@ class ProfileProvider extends ChangeNotifier {
         title: 'Something went wrong',
         type: NotificationType.local,
       );
+      if(_loading){
+        _loading=false;
+        notifyListeners();
+      }
     }
   }
 

@@ -22,6 +22,7 @@ class _RecordButtonState extends State<RecordButton> {
           onTap: () async {
             if (__ .isVideoRecord) {
               await __.stopRecording();
+              __.isRecordingLocked=false;
             }
           },
           child: CircularPercentIndicator(

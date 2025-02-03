@@ -27,9 +27,11 @@ class AccountInformationScreen extends StatelessWidget {
           },
           child: Scaffold(
             appBar: AppBar(
+              toolbarHeight: 80,
               title: Text(
                 'Account Info',
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: AppTextStyle.normalBold24
+                    .copyWith(color: Theme.of(context).focusColor),
                 textAlign: TextAlign.start,
               ),
             ),

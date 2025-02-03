@@ -21,7 +21,7 @@ class ProfileLinkTree extends StatelessWidget {
         children: [
           height5,
           SizedBox(
-            width: cs().width(context) / 1.2,
+            width: cs.width(context) / 1.2,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,

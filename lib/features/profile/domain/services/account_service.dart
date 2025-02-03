@@ -68,4 +68,20 @@ class AccountService {
       return e;
     }
   }
+
+  resetPassword(Map data) async {
+    try {
+      Response response = await dio.put(
+        '${API.endpoint}${API.reset}/finish',
+        data: data,
+      );
+      print(response.data);
+      print(response.statusCode);
+      return response.statusCode;
+    } catch (e) {
+      print(e);
+      return e;
+    }
+  }
+
 }

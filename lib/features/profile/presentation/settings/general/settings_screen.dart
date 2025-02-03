@@ -21,6 +21,7 @@ class SettingsScreen extends StatelessWidget {
       builder: (_, __, ___) {
         return Scaffold(
           appBar: AppBar(
+            toolbarHeight: 80,
             title: Text(
               'Settings',
               style: AppTextStyle.normalBold24
@@ -128,7 +129,7 @@ class SettingsScreen extends StatelessWidget {
                         builder: (context) => CustomAlertDialog(
                           title: prefs_username!,
                           action: 'Sign Out',
-                          content: 'Are you sure you want to log out of Vible?',
+                          content: 'Are you sure you want to log out of WeMotions?',
                           tap: () {
                             HapticFeedback.heavyImpact();
                             nav.currentPage = 0;

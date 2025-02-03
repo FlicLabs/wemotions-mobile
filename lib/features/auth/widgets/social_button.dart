@@ -23,7 +23,7 @@ class SocialButton extends StatelessWidget {
           color: Theme.of(context).indicatorColor,
         ),
         height: 50,
-        width: width ?? cs().width(context),
+        width: width ?? cs.width(context),
         alignment: Alignment.center,
         child: Center(
           child: Row(

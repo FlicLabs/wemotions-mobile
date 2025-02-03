@@ -18,7 +18,7 @@ class DownloadBar extends StatelessWidget {
       bottom: 3,
       child: Container(
         height: 28,
-        width: cs().width(context),
+        width: cs.width(context),
         color: color,
         child: Padding(
           padding: const EdgeInsets.symmetric(

@@ -1,9 +1,8 @@
-import 'package:socialverse/features/search/domain/models/search/subverse_search_model.dart';
 
 class UserPostModel {
   UserPostModel({
     required this.id,
-    required this.category,
+    // required this.category,
     required this.slug,
     required this.title,
     required this.identifier,
@@ -27,7 +26,7 @@ class UserPostModel {
     required this.pictureUrl,
   });
   late final int id;
-  late final SubverseSearchModel category;
+  // late final SubverseSearchModel category;
   late final String slug;
   late final String title;
   late final String identifier;
@@ -52,7 +51,7 @@ class UserPostModel {
 
   UserPostModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    category = SubverseSearchModel.fromJson(json['category'] ?? {});
+    // category = SubverseSearchModel.fromJson(json['category'] ?? {});
     slug = json['slug'] ?? '';
     title = json['title'] ?? '';
     identifier = json['identifier'] ?? '';
@@ -79,7 +78,7 @@ class UserPostModel {
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['id'] = id;
-    _data['category'] = category.toJson();
+    // _data['category'] = category.toJson();
     _data['slug'] = slug;
     _data['title'] = title;
     _data['identifier'] = identifier;

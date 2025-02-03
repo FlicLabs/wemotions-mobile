@@ -84,14 +84,14 @@ class ChangeUsernameScreen extends StatelessWidget {
                       }
                     },
                   ),
-                  // height20,
-                  // Text(
-                  //   'Your username ${username} cannot be changed at the moment, this feature will be available soon.',
-                  //   style: Theme.of(context)
-                  //       .textTheme
-                  //       .displaySmall!
-                  //       .copyWith(fontSize: 15),
-                  // ),
+                  height20,
+                  Text(
+                    'Your username ${username} cannot be changed at the moment, this feature will be available soon.',
+                    style: Theme.of(context)
+                        .textTheme
+                        .displaySmall!
+                        .copyWith(fontSize: 15),
+                  ),
                   height20,
                   height20,
                   if (__.loading) ...[

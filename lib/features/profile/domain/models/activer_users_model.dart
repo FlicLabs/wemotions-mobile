@@ -1,5 +1,3 @@
-
-
 import 'package:socialverse/features/profile/domain/models/users_model.dart';
 
 class ActiveUsersModel {

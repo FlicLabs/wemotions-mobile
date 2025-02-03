@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:socialverse/core/utils/style/text_style.dart';
+import 'package:socialverse/export.dart';
 
 class Constants {
-  static String appName = "Socialverse";
+  static String appName = "WeMotions";
 
   static Color lightPrimary = Colors.white;
   //static Color lightSecondary = Color(0xfffafafa);
@@ -16,6 +15,9 @@ class Constants {
   static Color tertiaryGrey800 = Colors.grey.shade800;
   static Color primaryGrey500 = Colors.grey.shade500;
   static Color tabBarGrey = Colors.grey.withOpacity(0.5);
+  static Color whiteAndBlackRich= Color.fromRGBO(41, 41, 41, 1);
+  static Color whiteAndBlack= Color.fromRGBO(61, 61, 61, 1);
+
 
   static Color fillGrey = Color(0xff2B2B2B);
 

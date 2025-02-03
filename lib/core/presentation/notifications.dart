@@ -147,15 +147,15 @@ class ActivityScreen extends StatelessWidget {
             if (home.isPlaying == true) {
               await home.videoController(home.index)?.pause();
             }
-            Navigator.pushNamed(
-              context,
-              VideoWidget.routeName,
-              arguments: VideoWidgetArgs(
-                posts: home.single_post,
-                pageController: PageController(initialPage: 0),
-                pageIndex: 0,
-              ),
-            );
+            // Navigator.pushNamed(
+            //   context,
+            //   VideoWidget.routeName,
+            //   arguments: VideoWidgetArgs(
+            //     posts: home.single_post,
+            //     pageController: PageController(initialPage: 0),
+            //     pageIndex: 0,
+            //   ),
+            // );
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
@@ -177,15 +177,15 @@ class ActivityScreen extends StatelessWidget {
             if (home.isPlaying == true) {
               await home.videoController(home.index)?.pause();
             }
-            Navigator.pushNamed(
-              context,
-              VideoWidget.routeName,
-              arguments: VideoWidgetArgs(
-                posts: home.single_post,
-                pageController: PageController(initialPage: 0),
-                pageIndex: 0,
-              ),
-            );
+            // Navigator.pushNamed(
+            //   context,
+            //   VideoWidget.routeName,
+            //   arguments: VideoWidgetArgs(
+            //     posts: home.single_post,
+            //     pageController: PageController(initialPage: 0),
+            //     pageIndex: 0,
+            //   ),
+            // );
           },
           child: CustomNetworkImage(
             imageUrl: notification.contentAvatarUrl,

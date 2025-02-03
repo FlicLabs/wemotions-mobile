@@ -30,7 +30,7 @@ class VideoSheetItem extends StatelessWidget {
           Text(
             label,
             style:
-                Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 14),
+            Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 14),
           ),
         ],
       ),
@@ -63,8 +63,8 @@ class VideoSheetItemSVG extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  fontSize: 14,
-                ),
+              fontSize: 14,
+            ),
           ),
         ],
       ),

@@ -5,19 +5,19 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeProvider>(
-      builder: (_, __, ___) {
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Stack(
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Consumer<HomeProvider>(
+        builder: (_,__,___){
+          return Stack(
             children: [
-              if (__.posts.isEmpty) ...[
+              // if (__.posts.isEmpty) ...[
                 // Center(child: CustomProgressIndicator())
                 Padding(
                   padding: EdgeInsets.only(bottom: 50),
                   child: Container(
-                    height: cs().height(context),
-                    width: cs().width(context),
+                    height: cs.height(context),
+                    width: cs.width(context),
                     color: Colors.black,
                     child: Center(
                       child: Image.asset(
@@ -37,11 +37,11 @@ class EmptyState extends StatelessWidget {
                 //     width: MediaQuery.of(context).size.width,
                 //   ),
                 // ),
-              ],
+              // ],
             ],
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

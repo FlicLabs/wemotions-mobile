@@ -11,7 +11,6 @@ class HomeService {
         '${API.endpoint}${API.feed}?page=$page',
         options: Options(headers: {'Flic-Token': token}),
       );
-      ;
       // print(response.statusCode);
       // print(response.data);
       return response.data;

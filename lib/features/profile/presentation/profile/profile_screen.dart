@@ -1,8 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/widgets/profile/shared/bio.dart';
-import 'package:socialverse/features/profile/widgets/profile/shared/posts_grid.dart';
-import 'package:socialverse/features/profile/widgets/profile/shared/profile_info.dart';
-import 'package:socialverse/features/profile/widgets/profile/shared/profile_stats_item.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -76,6 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               __.loading = true;
               await __.fetchProfile(
                   username: __.user.username, forceRefresh: true);
+              // __.loading= false;
             },
             child: NotificationListener<ScrollNotification>(
               onNotification: (ScrollNotification scrollInfo) {

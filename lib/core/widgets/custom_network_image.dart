@@ -15,13 +15,11 @@ Future<String> fetchSvg(String url) async {
 }
 
 String preprocessSvgContent(String svgContent) {
-  // Remove or convert 3D transformations
   RegExp exp3d = RegExp(r'translate3d\(([^,]+),([^,]+),[^)]+\)');
   svgContent = svgContent.replaceAllMapped(exp3d, (Match match) {
     return 'translate(${match.group(1)}, ${match.group(2)})'; // Converts 3D translate to 2D
   });
 
-  // Handle percentages as described above
   RegExp expPercent = RegExp(r'(\d+)%');
   svgContent = svgContent.replaceAllMapped(expPercent, (Match match) {
     double value = double.parse(match.group(1)!);
@@ -101,7 +99,7 @@ class CustomNetworkImage extends StatelessWidget {
             },
             errorWidget: (context, url, error) => Container(
               color: Theme.of(context).hoverColor,
-              height: cs().height(context),
+              height: cs.height(context),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Image.asset(

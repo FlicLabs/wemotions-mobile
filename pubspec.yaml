@@ -70,9 +70,10 @@ dependencies:
   video_player: ^2.7.0
   audioplayers: ^5.0.0
   home_widget: ^0.5.0
+  receive_sharing_intent:
 
-  smooth_page_indicator:
-    path: ./lib/features/home/helper/smooth_page_indicator-1.2.0+3/
+#  smooth_page_indicator:
+#    path: ./lib/features/home/helper/smooth_page_indicator-1.2.0+3/
 
   flutter:
     sdk: flutter

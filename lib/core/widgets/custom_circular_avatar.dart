@@ -45,7 +45,7 @@ class CustomCircularAvatar extends StatelessWidget {
                 Image.asset(
               AppAsset.load,
               fit: BoxFit.cover,
-              height: cs().height(context),
+              height: cs.height(context),
             ),
             errorWidget: (context, url, error) => Container(
               color: errorColor ?? Theme.of(context).primaryColor,

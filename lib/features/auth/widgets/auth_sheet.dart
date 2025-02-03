@@ -86,43 +86,6 @@ class AuthBottomSheet extends StatelessWidget {
                 },
               ),
               height40,
-              // Divider(
-              //   thickness: 1,
-              //   color: Colors.grey.withOpacity(0.5),
-              // ),
-              // height10,
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   crossAxisAlignment: CrossAxisAlignment.center,
-              //   children: [
-              //     Text(
-              //       'Already have an account?',
-              //       style: TextStyle(
-              //         fontFamily: 'sofia',
-              //         fontSize: 17,
-              //         fontWeight: FontWeight.w400,
-              //         color: Colors.grey,
-              //       ),
-              //     ),
-              //     InkWell(
-              //       onTap: () {
-              //         // if (home.isPlaying == true) {
-              //         //   home.videoController(home.index)?.pause();
-              //         // }
-              //         Navigator.of(context).pushNamed(LoginScreen.routeName);
-              //       },
-              //       child: Text(
-              //         ' Sign in',
-              //         style: TextStyle(
-              //           fontFamily: 'sofia',
-              //           fontSize: 17,
-              //           fontWeight: FontWeight.bold,
-              //           color: Theme.of(context).indicatorColor,
-              //         ),
-              //       ),
-              //     )
-              //   ],
-              // ),
             ],
           ),
         ),

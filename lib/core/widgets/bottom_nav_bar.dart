@@ -1,8 +1,6 @@
 import 'dart:developer';
-import 'package:socialverse/core/presentation/notifications.dart';
-import 'package:socialverse/core/widgets/camera_button.dart';
-import 'package:socialverse/core/widgets/camera_selector.dart';
 import 'package:socialverse/export.dart';
+
 
 class BottomNavBar extends StatefulWidget {
   static const String routeName = '/bottom-nav';
@@ -23,7 +21,8 @@ class _BottomNavBarState extends State<BottomNavBar>
     with WidgetsBindingObserver {
   final List<Widget> _screens = [
     HomeScreen(),
-    SubverseScreen(),
+    Container(),
+    // SubverseScreen(),
     Container(),
     ActivityScreen(),
     ProfileScreen(),
@@ -62,6 +61,127 @@ class _BottomNavBarState extends State<BottomNavBar>
         home.videoController(home.index)?.play();
       });
     }
+
+    Future<bool> _checkAndRequestPermissions(BuildContext context) async {
+      if (!logged_in!) {
+        auth.showAuthBottomSheet(context);
+        return false;
+      }
+
+
+      try {
+        // First check current camera permission status
+        PermissionStatus cameraStatus = await Permission.camera.status;
+        print('Camera Status: $cameraStatus');
+
+        // If camera permission is denied, request it
+        if (cameraStatus.isDenied) {
+          cameraStatus = await Permission.camera.request();
+          print('Camera Status after request: $cameraStatus');
+
+          // If the user denies the permission permanently, show the dialog to open settings
+          if (cameraStatus.isPermanentlyDenied) {
+            if (context.mounted) {
+              bool? shouldOpenSettings = await showDialog<bool>(
+                context: context,
+                builder: (context) => CustomAlertDialog(
+                  title: 'Permission Required',
+                  action: 'Open Settings',
+                  content: 'Please allow camera access to record videos',
+                  tap: () {
+                    Navigator.pop(context, true);
+                  },
+                ),
+              );
+
+              if (shouldOpenSettings == true) {
+                await openAppSettings();
+                return false;
+              }
+            }
+            return false;
+          }
+
+          // If the user denies the permission temporarily, just return false
+          if (cameraStatus.isDenied) {
+            return false;
+          }
+        }
+
+        // If camera permission is granted, proceed with storage permission
+        if (cameraStatus.isGranted) {
+          setState(() {
+
+          });
+          PermissionStatus storageStatus = await Permission.storage.status;
+          print('Storage Status: $storageStatus');
+
+          // If storage permission is denied, request it
+          if (storageStatus.isDenied) {
+            storageStatus = await Permission.storage.request();
+            print('Storage Status after request: $storageStatus');
+
+            // Wait for the user's response to the storage permission request
+            if (storageStatus.isPermanentlyDenied) {
+              if (context.mounted) {
+                bool? shouldOpenSettings = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => CustomAlertDialog(
+                    title: 'Permission Required',
+                    action: 'Open Settings',
+                    content: 'Please allow storage access to record videos',
+                    tap: () {
+                      Navigator.pop(context, true);
+                    },
+                  ),
+                );
+
+                if (shouldOpenSettings == true) {
+                  await openAppSettings();
+                  return false;
+                }
+              }
+              return false;
+            }
+
+            // If the user denies the storage permission temporarily, just return false
+            // if (storageStatus.isDenied) {
+            //   return false;
+            // }
+          }
+
+          // Return true only if both permissions are granted
+          return cameraStatus.isGranted ;
+        }
+
+        return false;
+      } catch (e) {
+        print('Error checking permissions: $e');
+        return false;
+      }
+    }
+
+    void _onVerticalDragUpdate(DragUpdateDetails details) {
+      if (camera.isRecordingLocked) return;
+
+      double sensitivity = 0.005;
+      double delta = details.delta.dy * sensitivity;
+
+      // Invert delta to make upward drag increase zoom
+      double newZoom = camera.currentZoomLevel - delta;
+
+      // Clamp zoom level
+      newZoom = newZoom.clamp(
+        camera.minZoomLevel,
+        camera.maxZoomLevel,
+      );
+
+      camera.currentZoomLevel = newZoom;
+
+      // Set the new zoom level via provider
+      camera.setZoomLevel(camera.currentZoomLevel);
+    }
+
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -214,47 +334,102 @@ class _BottomNavBarState extends State<BottomNavBar>
               alignment: Alignment.center,
               child: Stack(
                 children: [
-                  if (!camera.showCameraScreen) ...[
-                    GestureDetector(
-                      onLongPress: () async {
-                        PermissionStatus status =
-                            await Permission.camera.request();
-                        await Permission.storage.request();
-                        if (logged_in == false) {
-                          auth.showAuthBottomSheet(context);
-                        } else {
-                          if (status.isDenied || status.isPermanentlyDenied) {
-                            showDialog(
-                              context: context,
-                              builder: (context) => CustomAlertDialog(
-                                title: 'Permission Denied',
-                                action: 'Open Settings',
-                                content:
-                                    'Please allow access to camera to record videos',
-                                tap: () {
-                                  openAppSettings();
-                                },
-                              ),
-                            );
-                          } else {
-                            await availableCameras().then(
-                              (value) async {
-                                local_value = value;
-                                isReply = nav.selectedVideoUploadType == 'Video'
-                                    ? false
-                                    : true;
-                                camera.shouldStartRecording = true;
-                                camera.showCameraScreen = true;
-                                log('DEBUG: Show camera screen and start recording');
-                              },
-                            );
-                          }
+                  // if (!camera.showCameraScreen) ...[
+                  //   GestureDetector(
+                  //     onTap: () async {
+                  //
+                  //       bool permissionsGranted = await _checkAndRequestPermissions(context);
+                  //       print("${permissionsGranted} ontap");
+                  //       if (permissionsGranted) {
+                  //         camera.hasPermission = true;
+                  //         print("${true} ontap");
+                  //       }
+                  //     },
+                  //
+                  //     onLongPress: () async {
+                  //
+                  //       bool permissionsGranted = await _checkAndRequestPermissions(context);
+                  //       if (permissionsGranted) {
+                  //         camera.hasPermission = true;
+                  //         await availableCameras().then((value) {
+                  //           local_value = value;
+                  //           isReply = nav.selectedVideoUploadType == 'Video' ? false : true;
+                  //           camera.shouldStartRecording = true;
+                  //           camera.showCameraScreen = true;
+                  //           log('DEBUG: Show camera screen and start recording');
+                  //
+                  //           // Start recording automatically when the screen opens
+                  //           WidgetsBinding.instance.addPostFrameCallback((_) {
+                  //             camera.startRecording();
+                  //           });
+                  //         });
+                  //         print(true);
+                  //       }
+                  //     },
+                  //     onLongPressEnd: (details) async {
+                  //       // final camera = Provider.of<CameraProvider>(context, listen: false);
+                  //       camera.stopRecording();
+                  //     },
+                  //     child: camera.showCameraScreen?RecordButton():CameraButton(isDark: isDark, nav: nav),
+                  //   ),
+                  // ],
+                  // if (camera.showCameraScreen) ...[RecordButton()]
+                  GestureDetector(
+                    onTap: () async {
+                      bool permissionsGranted = await _checkAndRequestPermissions(context);
+                      if (permissionsGranted) {
+                        camera.hasPermission = true;
+                      }
+                    },
+
+                    onLongPress: () async {
+                      camera.isLongPressed = true;
+                      // Store the initial press position
+                      camera.pressPosition = null;
+                      bool permissionsGranted = await _checkAndRequestPermissions(context);
+                      if (permissionsGranted) {
+                        camera.hasPermission = true;
+                        await availableCameras().then((value) {
+                          local_value = value;
+                          isReply = nav.selectedVideoUploadType == 'Video' ? false : true;
+                          camera.shouldStartRecording = true;
+                          camera.showCameraScreen = true;
+
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            camera.startRecording();
+                          });
+                        });
+                      }
+                    },
+
+                    onLongPressMoveUpdate: (details) {
+                      if (camera.pressPosition == null) {
+                        camera.pressPosition = details.globalPosition;
+                        // double horizontalDifference = details.globalPosition.dx - camera.pressPosition!.dx;
+                        // if((camera.isLongPressed && horizontalDifference <-5)){
+                        //   print(":::::::::::::::::::::");
+                        //   camera.isLockIconHovered=true;
+                        // }
+                      }
+                    },
+
+                    onLongPressEnd: (details) async {
+                      if (camera.pressPosition != null) {
+                        double horizontalDifference = details.globalPosition.dx - camera.pressPosition!.dx;
+                        if (horizontalDifference < -20) {
+                          camera.isRecordingLocked = true;
+
                         }
-                      },
-                      child: CameraButton(isDark: isDark, nav: nav),
-                    ),
-                  ],
-                  if (camera.showCameraScreen) ...[RecordButton()]
+                      }
+
+                      camera.isLongPressed = false;
+                      if (!camera.isRecordingLocked) {
+                        camera.stopRecording();
+                      }
+                    },
+
+                    child: camera.showCameraScreen ? RecordButton() : CameraButton(isDark: isDark, nav: nav),
+                  )
                 ],
               ),
             ),

@@ -1,7 +1,7 @@
 import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/home/domain/models/voting_model.dart';
+
 
 enum RateItem { LOVE_IT, LIKE_IT, OKAY, DISLIKE_IT, HATE_IT }
 
@@ -10,7 +10,6 @@ class HomeProvider extends ChangeNotifier {
   final replies = PageController();
 
   final _homeService = HomeService();
-  final _subverseService = SubverseService();
 
   int _page = 1;
   int get page => _page;
@@ -28,6 +27,8 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+
+
   bool _isSlider = false;
   bool get isSlider => _isSlider;
 
@@ -43,6 +44,23 @@ class HomeProvider extends ChangeNotifier {
     _posts_page = value;
     notifyListeners();
   }
+
+  bool _video_trend_bar = true;
+  bool get video_trend_bar => _video_trend_bar;
+
+  set video_trend_bar(bool value) {
+    _video_trend_bar = value;
+    notifyListeners();
+  }
+
+  int _vertical_drag_direction=0; // 0 for no drag at initial
+  int get vertical_drag_direction=> _vertical_drag_direction;
+
+  set vertical_drag_direction(int value){
+    _vertical_drag_direction=value;
+    notifyListeners();
+  }
+
 
   double _playback_speed = 1.0;
   double get playback_speed => _playback_speed;
@@ -243,7 +261,7 @@ class HomeProvider extends ChangeNotifier {
 
     Timer.periodic(stepDuration, (timer) {
       _expansionProgress =
-          _isTextExpanded ? (currentStep / steps) : 1 - (currentStep / steps);
+      _isTextExpanded ? (currentStep / steps) : 1 - (currentStep / steps);
       notifyListeners();
       currentStep++;
 
@@ -263,48 +281,6 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  // Future<void> getFeed() async {
-  //   Random random = Random();
-  //   int randomNumber = random.nextInt(45) + 1;
-  //   _page = randomNumber;
-  //   await _homeService.getFeed(_page).then((response) {
-  //     int randomNumber = random.nextInt(26) + 1;
-  //     _page = randomNumber;
-  //     addPostsToList(FeedModel.fromJson(response).posts);
-  //   });
-  //   notifyListeners();
-  // }
-
-  // void addPostsToList(List<Posts> postData) {
-  //   _posts.addAll(postData);
-  //   notifyListeners();
-  // }
-
-  Future<void> getSubversePosts({required int id, required int page}) async {
-    _temp.clear();
-    await _subverseService
-        .getSubversePosts(page: page)
-        .then((response) {
-      addSubversePostsToList(SubverseModel.fromJson(response).posts);
-      _subversePosts.addAll(_temp.toList());
-    });
-    notifyListeners();
-  }
-
-  void addSubversePostsToList(List<Posts> postData) {
-    _temp.addAll(postData);
-    notifyListeners();
-  }
-
-  Future<void> getSinglePost({required int id}) async {
-    Response response = await _homeService.getSinglePost(id: id);
-    if (response.statusCode == 200 && response.statusCode == 201) {
-      final post = SinglePostModel.fromJson(response.data).post;
-      _single_post.addAll(post);
-      print(_single_post);
-      notifyListeners();
-    }
-  }
 
   Future<void> updateViewCount({required int id}) async {
     Map data = {
@@ -351,11 +327,15 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> postLikeAdd({required int id}) async {
+    isLiked=true;
     await _homeService.postLikeAdd(id);
+
   }
 
   Future<void> postLikeRemove({required int id}) async {
+    isLiked=false;
     await _homeService.postLikeRemove(id);
+
   }
 
   Future<dynamic> deletePost({required int id}) async {
@@ -380,41 +360,6 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> showInspiredDialog(context, {required int id}) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return InspiredDialog(id: id);
-      },
-    );
-  }
-
-  Future<void> showContextMenu(BuildContext context,
-      {required id, required rate_value}) async {
-    final RenderObject? overlay =
-        Overlay.of(context).context.findRenderObject();
-
-    showMenu(
-      context: context,
-      color: Colors.transparent,
-      elevation: 0,
-      position: RelativeRect.fromRect(
-        Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 100, 100),
-        Rect.fromLTWH(
-          0,
-          50,
-          overlay!.paintBounds.size.width,
-          overlay.paintBounds.size.height,
-        ),
-      ),
-      items: [
-        PopupMenuSlider(
-          rate_value: rate_value.toDouble(),
-          id: id,
-        ),
-      ],
-    );
-  }
 
   void getTapPosition(BuildContext context, TapDownDetails details) {
     final RenderBox referenceBox = context.findRenderObject() as RenderBox;
@@ -423,48 +368,6 @@ class HomeProvider extends ChangeNotifier {
     print(_tapPosition);
   }
 
-  Future<void> browseSubverse({
-    required BuildContext context,
-    required category_name,
-    required category_desc,
-    required category_count,
-    required category_id,
-    required category_photo,
-    Function()? callBack,
-  }) async {
-    await getSubversePosts(id: category_id, page: subverse_page);
-    if (_subversePosts.isEmpty) {
-      Navigator.of(context).pushNamed(
-        SubverseEmptyScreen.routeName,
-        arguments: SubverseEmptyScreenArgs(
-          category_name: category_name,
-          category_desc: category_desc,
-          category_count: category_count,
-          category_id: category_id,
-          fromVideoPlayer: false,
-          category_photo: category_photo,
-        ),
-      );
-    } else {
-      SchedulerBinding.instance.addPostFrameCallback(
-        (_) {
-          Navigator.of(context)
-              .pushNamed(
-                SubverseDetailScreen.routeName,
-                arguments: SubverseDetailScreenArgs(
-                  category_name: category_name,
-                  category_desc: category_desc,
-                  category_count: category_count,
-                  category_id: category_id,
-                  fromVideoPlayer: false,
-                  category_photo: category_photo,
-                ),
-              )
-              .then((value) => callBack!());
-        },
-      );
-    }
-  }
 
   final Map<String, VideoPlayerController> _controllers = {};
   final Map<int, VoidCallback> _listeners = {};
@@ -505,9 +408,9 @@ class HomeProvider extends ChangeNotifier {
   }
 
   void _playController(
-    int index,
-    /* int bottomNavIndex */
-  ) async {
+      int index,
+      /* int bottomNavIndex */
+      ) async {
     if (!_listeners.keys.contains(index)) {
       _listeners[index] = _listenerSpawner(index);
     }
@@ -579,56 +482,6 @@ class HomeProvider extends ChangeNotifier {
       }
       notifyListeners();
     };
-  }
-
-  Future<void> _autoScroll(index) async {
-    _isPlaying = true;
-    posts_page++;
-    createIsolate(token: token);
-    notifyListeners();
-
-    int newIndex = index;
-    newIndex++;
-    // print("new index $newIndex");
-    // print("index $index");
-    animateToPage(newIndex);
-    _stopController(index);
-    _index = newIndex;
-    notifyListeners();
-    // print("_index $_index");
-
-    if (_index < index) {
-      // print("_index $_index < index $index");
-      if (_index == posts.length - 1) {
-        return;
-      }
-
-      print("_index $index");
-
-      if (_index - 1 >= 0) {
-        _removeController(_index - 1);
-      }
-      _playController(_index);
-      if (_index == posts.length - 1) {
-      } else {
-        _initController(_index + 1);
-      }
-      notifyListeners();
-    } else {
-      if (_index == 0) {
-        _controllers.forEach((key, value) {});
-        return;
-      }
-      _stopController(_index);
-      if (_index + 1 < posts.length) {
-        _removeController(_index + 1);
-      }
-      _playController(--_index);
-      if (_index == 0) {
-      } else {
-        _initController(_index - 1);
-      }
-    }
   }
 
   Future<void> _nextVideo() async {
@@ -725,43 +578,43 @@ class HomeProvider extends ChangeNotifier {
 
   Future createIsolate({String? token}) async {
     ReceivePort mainReceivePort = ReceivePort();
-    /* 
+    /*
        ReceivePort is a communication channel for receiving messages.
-       Here, we create a new ReceivePort called mainReceivePort, 
-       which will be used to receive messages from the spawned isolate. 
+       Here, we create a new ReceivePort called mainReceivePort,
+       which will be used to receive messages from the spawned isolate.
     */
     Isolate.spawn<SendPort>(getVideosTask, mainReceivePort.sendPort);
-    /* 
+    /*
        Isolate.spawn is used to create a new isolate. It takes two arguments:
-       the function (getVideosTask) to be executed in the isolate, and the SendPort 
+       the function (getVideosTask) to be executed in the isolate, and the SendPort
        (mainReceivePort.sendPort) through which the isolate can send messages back to the main isolate.
     */
     SendPort isolateSendPort = await mainReceivePort.first;
-    /* 
-       await mainReceivePort.first waits for the first message to be received on 
+    /*
+       await mainReceivePort.first waits for the first message to be received on
        the mainReceivePort. In this case, it waits for the SendPort of the spawned
        isolate to be received and assigns it to isolateSendPort.
     */
     ReceivePort isolateResponseReceivePort = ReceivePort();
-    /* 
-       Another ReceivePort called isolateResponseReceivePort is created. 
+    /*
+       Another ReceivePort called isolateResponseReceivePort is created.
        This port will be used to receive the response from the spawned isolate.
     */
 
     isolateSendPort
         .send([_posts_page, isolateResponseReceivePort.sendPort, token]);
-    /* 
-       The _posts_page and isolateResponseReceivePort.sendPort are sent 
-       to the spawned isolate through isolateSendPort. This is done by sending a 
+    /*
+       The _posts_page and isolateResponseReceivePort.sendPort are sent
+       to the spawned isolate through isolateSendPort. This is done by sending a
        list containing these values.
     */
 
     final isolateResponse = await isolateResponseReceivePort.first;
     _posts.addAll(isolateResponse.toList());
     notifyListeners();
-    /* 
-       await isolateResponseReceivePort.first waits for the first message to be 
-       received on isolateResponseReceivePort. Once received, it assigns the 
+    /*
+       await isolateResponseReceivePort.first waits for the first message to be
+       received on isolateResponseReceivePort. Once received, it assigns the
        message to isolateResponse, which is then added to the _posts list.
     */
   }
@@ -769,14 +622,14 @@ class HomeProvider extends ChangeNotifier {
   static void getVideosTask(SendPort mySendPort) async {
     final _homeService = HomeService();
     ReceivePort isolateReceivePort = ReceivePort();
-    /* 
-       In the spawned isolate, a new ReceivePort called isolateReceivePort is 
+    /*
+       In the spawned isolate, a new ReceivePort called isolateReceivePort is
        created. This will be used to receive messages from the main isolate.
     */
     mySendPort.send(isolateReceivePort.sendPort);
-    /* 
-       The SendPort of the spawned isolate's isolateReceivePort is sent back to 
-       the main isolate through mySendPort. This allows the main isolate to send 
+    /*
+       The SendPort of the spawned isolate's isolateReceivePort is sent back to
+       the main isolate through mySendPort. This allows the main isolate to send
        messages to the spawned isolate.
     */
 
@@ -785,12 +638,12 @@ class HomeProvider extends ChangeNotifier {
         final int index = message[0];
         final SendPort isolateResponseSendPort = message[1];
         final token = message[2];
-        /* 
+        /*
        The isolateReceivePort listens for incoming messages in a loop using a
        for loop. It waits for messages to be received on isolateReceivePort.
     */
-        /* 
-       If the received message is a List, it extracts the index and 
+        /*
+       If the received message is a List, it extracts the index and
        isolateResponseSendPort from the message.
     */
         // final _service = SubverseService();
@@ -799,23 +652,23 @@ class HomeProvider extends ChangeNotifier {
         final List<Posts> data = FeedModel.fromJson(response).posts;
         isolateResponseSendPort.send(data.map((e) => [e]).toList());
 
-        /* 
+        /*
        A network request is made to retrieve video data based on the index value
        received. The response is converted into a FeedModel object, and the posts list is extracted.
     */
-        /* 
+        /*
        The isolateResponseSendPort is then used to send the data (video posts) back to the main isolate.
     */
       }
     }
   }
 
-  /* 
-       In summary, this code sets up a communication mechanism using SendPort and 
-       ReceivePort to create a separate isolate that retrieves video data. The spawned 
-       isolate receives a random number from the main isolate, makes a network request 
-       based on that number, and sends the retrieved video posts back to the main isolate. 
-       This allows the main isolate to continue its execution without being blocked by the 
+  /*
+       In summary, this code sets up a communication mechanism using SendPort and
+       ReceivePort to create a separate isolate that retrieves video data. The spawned
+       isolate receives a random number from the main isolate, makes a network request
+       based on that number, and sends the retrieved video posts back to the main isolate.
+       This allows the main isolate to continue its execution without being blocked by the
        network request, resulting in faster and more efficient video playback
   */
 
@@ -863,140 +716,16 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  //Voting Feature Data
-  List<VotingModel> _votings = [];
-  List<VotingModel> get votings => _votings;
 
-  String? _currentEmote;
-  String? get currentEmote => _currentEmote;
-
-  Future<void> getVotings() async {
-    final response = await _homeService.getVotings();
-
-    _votings = List<VotingModel>.from(
-        response['votings'].map((x) => VotingModel(voting: x, marked: false)));
-    notifyListeners();
-  }
-
-  Future<void> addVoting(int postId, String voting) async {
-    Map data = {
-      "post_id": postId,
-      "votingIcon": voting,
-    };
-    _currentEmote = voting;
-    await _homeService.addVoting(data: data);
-    await updateVoting(postId);
-    // votings.forEach(
-    //   (element) {
-    //     if (element.marked) {
-    //       element.marked = false;
-    //     }
-    //   },
-    // );
-
-    notifyListeners();
-  }
-
-  Future<void> removeVoting(int postId) async {
-    Map data = {
-      "post_id": postId,
-    };
-    await _homeService.removeVoting(data: data);
-    await updateVoting(postId);
-    notifyListeners();
-  }
-
-  Future<void> updateVoting(int postId) async {
-    final response = await _homeService.updateVoting(postId);
-    Posts newPost =
-        List.from(response['post']).map((e) => Posts.fromJson(e)).toList()[0];
-    posts[index][0].voting_count = newPost.voting_count;
-    posts[index][0].votings = newPost.votings;
-    notifyListeners();
-  }
-
-  //Tagging Feature Data
-  List<UserSearchModel> _searched_users = [];
-  List<UserSearchModel> get searched_users => _searched_users;
-
-  List<UserSearchModel> _selected_users = [];
-  List<UserSearchModel> get selected_users => _selected_users;
-
-  Future<void> selectUsers(int postId,UserSearchModel user) async {
-    if (selected_users.contains(user)) {
-      selected_users.remove(user);
-      removeTag(postId, user);
-    } else {
-      selected_users.add(user);
-      addTag(postId, user);
+  Future<void> getSinglePost({required int id}) async {
+    Response response = await _homeService.getSinglePost(id: id);
+    if (response.statusCode == 200 && response.statusCode == 201) {
+      final post = SinglePostModel.fromJson(response.data).post;
+      _single_post.addAll(post);
+      print(_single_post);
+      notifyListeners();
     }
-    notifyListeners();
   }
 
-  final TextEditingController _searchController = TextEditingController();
-  TextEditingController get searchController => _searchController;
 
-  Timer? _debounce;
-  Timer? get debounce => _debounce;
-
-  void onSearchChanged(String query) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 300), () {
-      if (query.isNotEmpty) {
-        searchUsers(query);
-      } else {
-        _searched_users = [];
-      }
-    });
-  }
-
-  Future<void> searchUsers(String query) async {
-    final response = await _homeService.searchUserForTagging(query);
-    _searched_users =
-        List.from(response).map((e) => UserSearchModel.fromJson(e)).toList();
-    notifyListeners();
-  }
-
-  Future<void> addTag(int postId, UserSearchModel user) async {
-      Map data = {
-        "post_id": postId,
-        "username": user.username,
-      };
-      await _homeService.tagUser(data: data);
-    await updateTags(postId);
-    notifyListeners();
-  }
-
-  Future<void> removeTag(int postId, UserSearchModel user) async {
-    Map data = {
-      "post_id": postId,
-      "username": user.username,
-    };
-    await _homeService.removeTag(data: data);
-    await updateTags(postId);
-    notifyListeners();
-  }
-
-  Future<void> updateTags(int postId) async {
-    final response = await _homeService.updateTags(postId);
-    Posts newPost =
-        List.from(response['post']).map((e) => Posts.fromJson(e)).toList()[0];
-    posts[index][0].tags = newPost.tags;
-    notifyListeners();
-  }
-
-  // var items = <Item>[];
-  // var started = false;
-
-  // late AnimationController animationController;
-
-  // void makeItems(String emote) {
-  //   items.clear();
-  //   for (int i = 0; i < 15; i++) {
-  //     items.add(Item(emote));
-  //   }
-  //   animationController.reset();
-  //   animationController.forward();
-  //   notifyListeners();
-  // }
 }

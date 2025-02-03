@@ -1,5 +1,7 @@
 import 'package:socialverse/export.dart';
 
+import '../../../../core/configs/injection/locator.dart';
+
 class VerifyScreen extends StatelessWidget {
   static const String routeName = '/verify';
   const VerifyScreen({Key? key}) : super(key: key);
@@ -49,8 +51,8 @@ class VerifyScreen extends StatelessWidget {
           body: WillPopScope(
             onWillPop: () async => false,
             child: Container(
-              height: cs().height(context),
-              width: cs().width(context),
+              height: cs.height(context),
+              width: cs.width(context),
               child: SafeArea(
                 child: Stack(
                   children: [
@@ -122,19 +124,6 @@ class VerifyScreen extends StatelessWidget {
 
                       ],
                     ),
-                    // Positioned(
-                    //   top: Platform.isAndroid ? 5 : 0,
-                    //   left: 15,
-                    //   child: SafeArea(
-                    //     child: CustomIconButton(
-                    //       icon: Icons.arrow_back_ios_new_rounded,
-                    //       borderRadius: 12,
-                    //       onTap: () {
-                    //         Navigator.pop(context);
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),

@@ -18,7 +18,103 @@ class CameraProvider extends ChangeNotifier {
   Timer? _recordingTimer;
 
   int _recordingSeconds = 0;
+
+  // Start recording timer
+  void startRecordingTimer() {
+    _recordingSeconds = 0;
+    _recordingDuration = "00:00";
+
+    _recordingTimer?.cancel();
+
+    _recordingTimer = Timer.periodic(
+      const Duration(seconds: 1),
+          (Timer timer) {
+        _recordingSeconds++;
+
+        // Format minutes and seconds
+        final minutes = (_recordingSeconds ~/ 60).toString().padLeft(2, '0');
+        final seconds = (_recordingSeconds % 60).toString().padLeft(2, '0');
+
+        _recordingDuration = "$minutes:$seconds";
+        notifyListeners();
+      },
+    );
+  }
+
+  // Stop recording timer
+  void stopRecordingTimer() {
+    _recordingTimer?.cancel();
+    _recordingTimer = null;
+    _recordingSeconds = 0;
+    _recordingDuration = "00:00";
+    notifyListeners();
+  }
+
   bool _isDisposed = false;
+
+  bool _recordingCompleted=false;
+  bool get recordingCompleted=>_recordingCompleted;
+
+  set recordingCompleted(bool val){
+    _recordingCompleted=val;
+    notifyListeners();
+  }
+
+
+  bool _hasPermission=false;
+  bool get hasPermission=>_hasPermission;
+
+  set hasPermission(bool val){
+    _hasPermission=val;
+    notifyListeners();
+  }
+
+  // bool _isDraggedLeft = false;
+  // bool get isDraggedLeft=>_isDraggedLeft;
+  //
+  // set isDraggedLeft(bool val){
+  //   _isDraggedLeft=val;
+  //   notifyListeners();
+  // }
+  //
+  // double _dragStartX = 0.0;
+  // double get dragStartX => _dragStartX;
+  //
+  // set dragStartX(double val){
+  //   _dragStartX=val;
+  //   notifyListeners();
+  // }
+
+  Offset? _pressPosition;
+
+  Offset? get pressPosition=>_pressPosition;
+
+  set pressPosition(Offset? val){
+    _pressPosition=val;
+    notifyListeners();
+  }
+
+  bool _isRecordingLocked = false;
+  bool get isRecordingLocked=>_isRecordingLocked;
+
+  set isRecordingLocked(bool val){
+    _isRecordingLocked=val;
+    notifyListeners();
+  }
+
+  void toggleRecordingLock() {
+    _isRecordingLocked = !_isRecordingLocked;
+    notifyListeners();
+  }
+
+  bool _isLockIconHovered=false;
+  bool get isLockIconHovered => _isLockIconHovered;
+
+  set isLockIconHovered(bool val){
+    _isLockIconHovered=val;
+    notifyListeners();
+  }
+
 
   List<AssetEntity> _assets = <AssetEntity>[];
   List<AssetEntity> get assets => _assets;
@@ -81,6 +177,15 @@ class CameraProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+
+  bool _isLongPressed = false;
+  bool get isLongPressed => _isLongPressed;
+
+  set isLongPressed(bool value) {
+    _isLongPressed = value;
+    notifyListeners();
+  }
+
   bool _isVideoPause = false;
   bool get isVideoPause => _isVideoPause;
 
@@ -127,6 +232,9 @@ class CameraProvider extends ChangeNotifier {
   // ======================== Zoom Variables =========================
   double _currentZoomLevel = 1.0;
   double get currentZoomLevel => _currentZoomLevel;
+  set currentZoomLevel(double val){
+    _currentZoomLevel=val;
+  }
 
   double _minZoomLevel = 1.0;
   double get minZoomLevel => _minZoomLevel;
@@ -171,7 +279,7 @@ class CameraProvider extends ChangeNotifier {
 
       cameraController = CameraController(
         description,
-        ResolutionPreset.max,
+        ResolutionPreset.high,
         enableAudio: true, // Ensure audio is enabled if needed
         imageFormatGroup:
             ImageFormatGroup.jpeg, // Optional: specify image format
@@ -274,6 +382,7 @@ class CameraProvider extends ChangeNotifier {
     } catch (e) {
       log('Error stopping video recording: $e');
     }
+    _recordingCompleted=true;
   }
 
   /// Handles recording progress
@@ -309,6 +418,7 @@ class CameraProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+
   /// Initializes the video player after recording
   void initVideo() {
     if (selectedVideo != null) {
@@ -326,44 +436,44 @@ class CameraProvider extends ChangeNotifier {
   }
 
   /// Starts the recording timer
-  void startRecordingTimer() {
-    _recordingSeconds = 0;
-    _recordingDuration = "00:00";
+  // void startRecordingTimer() {
+  //   _recordingSeconds = 0;
+  //   _recordingDuration = "00:00";
+  //
+  //   _recordingTimer?.cancel();
+  //
+  //   if (!_isDisposed) {
+  //     _recordingTimer = Timer.periodic(
+  //       const Duration(seconds: 1),
+  //       (Timer timer) {
+  //         if (_isDisposed) {
+  //           timer.cancel();
+  //           return;
+  //         }
+  //
+  //         _recordingSeconds++;
+  //
+  //         // Format minutes and seconds
+  //         final minutes = (_recordingSeconds ~/ 60).toString().padLeft(2, '0');
+  //         final seconds = (_recordingSeconds % 60).toString().padLeft(2, '0');
+  //
+  //         _recordingDuration = "$minutes:$seconds";
+  //         notifyListeners();
+  //       },
+  //     );
+  //   }
+  // }
 
-    _recordingTimer?.cancel();
-
-    if (!_isDisposed) {
-      _recordingTimer = Timer.periodic(
-        const Duration(seconds: 1),
-        (Timer timer) {
-          if (_isDisposed) {
-            timer.cancel();
-            return;
-          }
-
-          _recordingSeconds++;
-
-          // Format minutes and seconds
-          final minutes = (_recordingSeconds ~/ 60).toString().padLeft(2, '0');
-          final seconds = (_recordingSeconds % 60).toString().padLeft(2, '0');
-
-          _recordingDuration = "$minutes:$seconds";
-          notifyListeners();
-        },
-      );
-    }
-  }
-
-  /// Stops the recording timer
-  void stopRecordingTimer() {
-    if (!_isDisposed) {
-      _recordingTimer?.cancel();
-      _recordingTimer = null;
-      _recordingSeconds = 0;
-      _recordingDuration = "00:00";
-      notifyListeners();
-    }
-  }
+  // /// Stops the recording timer
+  // void stopRecordingTimer() {
+  //   if (!_isDisposed) {
+  //     _recordingTimer?.cancel();
+  //     _recordingTimer = null;
+  //     _recordingSeconds = 0;
+  //     _recordingDuration = "00:00";
+  //     notifyListeners();
+  //   }
+  // }
 
   // ======================== Enhanced flipCamera ========================
   /// Flips the camera between front and back
@@ -495,6 +605,7 @@ class CameraProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
 
   /// Toggles the flash mode between on and off
   Future<void> toggleFlash() async {

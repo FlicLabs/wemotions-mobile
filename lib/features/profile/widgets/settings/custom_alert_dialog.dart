@@ -9,11 +9,11 @@ class CustomAlertDialog extends StatelessWidget {
 
   const CustomAlertDialog(
       {Key? key,
-      required this.title,
-      required this.action,
-      required this.content,
-      required this.tap,
-      this.cancelTap})
+        required this.title,
+        required this.action,
+        required this.content,
+        required this.tap,
+        this.cancelTap})
       : super(key: key);
 
   @override
@@ -54,7 +54,7 @@ class CustomAlertDialog extends StatelessWidget {
       ),
       actions: [
         SizedBox(
-          width: cs().width(context),
+          width: cs.width(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -68,7 +68,7 @@ class CustomAlertDialog extends StatelessWidget {
                   Expanded(
                     child: GestureDetector(
                       onTap: cancelTap ??
-                          () {
+                              () {
                             Navigator.of(context).pop();
                           },
                       child: Center(
@@ -94,10 +94,10 @@ class CustomAlertDialog extends StatelessWidget {
                         child: Text(
                           action,
                           style:
-                              Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    fontSize: 15,
-                                    color: Theme.of(context).hintColor,
-                                  ),
+                          Theme.of(context).textTheme.bodySmall!.copyWith(
+                            fontSize: 15,
+                            color: Theme.of(context).hintColor,
+                          ),
                         ),
                       ),
                     ),

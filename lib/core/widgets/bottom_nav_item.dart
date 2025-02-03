@@ -1,5 +1,7 @@
 import 'package:socialverse/export.dart';
 
+import '../providers/bottom_nav_provider.dart';
+
 class BottomNavItem extends StatelessWidget {
   const BottomNavItem({
     Key? key,

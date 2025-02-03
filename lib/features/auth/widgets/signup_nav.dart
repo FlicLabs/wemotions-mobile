@@ -23,9 +23,9 @@ class SignUpNav extends StatelessWidget {
           SizedBox(width: 5),
           GestureDetector(
             onTap: () {
-              Navigator.of(context).pushNamed(
-                LoginScreen.routeName,
-              );
+              // Navigator.of(context).pushNamed(
+              //   LoginScreen.routeName,
+              // );
             },
             child: Text(
               'Sign In',

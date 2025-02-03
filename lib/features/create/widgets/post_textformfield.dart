@@ -15,8 +15,8 @@ class PostTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: cs().height(context) / 5,
-      width: cs().width(context),
+      height: cs.height(context) / 5,
+      width: cs.width(context),
       child: TextFormField(
         expands: true,
         maxLines: null,

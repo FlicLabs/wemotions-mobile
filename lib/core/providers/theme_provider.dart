@@ -1,26 +1,33 @@
 import 'dart:developer';
-
 import 'package:socialverse/export.dart';
 
-class ThemeProvider with ChangeNotifier {
+
+
+class ThemeProvider extends ChangeNotifier{
   ThemeData _themeData;
-  ThemeProvider(this._themeData) {
+
+  ThemeProvider(this._themeData){
     _loadThemeMode();
   }
-  getTheme() => _themeData;
 
-  ThemeMode _selectedThemeMode = themeMode ?? ThemeMode.system;
+  ThemeData getTheme() => _themeData;
+
+  ThemeMode _selectedThemeMode= themeMode?? ThemeMode.system;
   ThemeMode get selectedThemeMode => _selectedThemeMode;
 
-  Future<void> _loadThemeMode() async {
-    var prefs = await SharedPreferences.getInstance();
-    var themeModeString = prefs.getString('themeMode');
-    if (themeModeString != null) {
-      _selectedThemeMode = themeModeFromString(themeModeString);
+
+
+
+  Future<void > _loadThemeMode() async {
+    SharedPreferences pref= await SharedPreferences.getInstance();
+    var themeModeString=pref.getString('themeMode');
+    if(themeModeString!=null){
+      _selectedThemeMode= themeModeFromString(themeModeString);
     }
   }
 
-  ThemeMode themeModeFromString(String themeModeString) {
+
+  ThemeMode themeModeFromString(String themeModeString){
     switch (themeModeString) {
       case 'ThemeMode.light':
         return ThemeMode.light;
@@ -33,24 +40,26 @@ class ThemeProvider with ChangeNotifier {
     }
   }
 
-  void onThemeChanged(String themeMode) async {
-    var theme = themeModeFromString(themeMode);
-    switch (theme) {
-      case ThemeMode.light:
-        setTheme(Constants.lightTheme);
-        break;
-      case ThemeMode.dark:
-        setTheme(Constants.darkTheme);
-        break;
-      case ThemeMode.system:
-        setTheme(Constants.lightTheme);
-        break;
-    }
-    notifyListeners();
+
+  void onThemeChanged(String themeModeString){
+      ThemeMode theme= themeModeFromString(themeModeString);
+      switch (theme) {
+        case ThemeMode.light:
+          setTheme(Constants.lightTheme);
+          break;
+        case ThemeMode.dark:
+          setTheme(Constants.darkTheme);
+          break;
+        case ThemeMode.system:
+          setTheme(Constants.lightTheme);
+          break;
+      }
+      notifyListeners();
   }
 
-  setTheme(ThemeData themeData) async {
-    _themeData = themeData;
+
+  setTheme(ThemeData themeData){
+    _themeData=themeData;
     notifyListeners();
   }
 
@@ -62,4 +71,6 @@ class ThemeProvider with ChangeNotifier {
     onThemeChanged(_themeMode.toString());
     notifyListeners();
   }
+
+
 }

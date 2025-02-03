@@ -4,7 +4,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:socialverse/export.dart';
 import 'package:dio/dio.dart';
-import 'package:socialverse/features/auth/domain/service/auth_service.dart';
 import 'dart:math' show Random;
 import 'package:crypto/crypto.dart';
 
@@ -146,25 +145,22 @@ class AuthProvider extends ChangeNotifier {
     return digest.toString();
   }
 
-  Future<dynamic> login({
+  Future<void> login({
     required String email,
     required String password,
   }) async {
-    Map data = {
-      'mixed': email,
-      'password': password,
-    };
+    try {
+      _loggedInAuthStatus = AuthStatus.Authenticating;
+      notifyListeners();
 
-    _loggedInAuthStatus = AuthStatus.Authenticating;
-    notifyListeners();
+      final response = await _service.login({
+        'mixed': email,
+        'password': password,
+      });
 
-    Response response = await _service.login(data);
-
-    if (response.statusCode == 200) {
       if (response.data['status'] == 'success') {
-        final Map<String, dynamic> responseData = response.data;
-        var userData = responseData;
-        User authUser = User.fromJson(userData);
+        final userData = response.data;
+        final authUser = User.fromJson(userData);
 
         User user = authUser;
         log(user.token.toString());
@@ -181,6 +177,7 @@ class AuthProvider extends ChangeNotifier {
           logged_in: true,
         );
 
+        // Update local variables
         logged_in = prefs?.getBool('logged_in') ?? false;
         prefs_username = prefs?.getString('username') ?? '';
         token = prefs?.getString('token') ?? '';
@@ -189,31 +186,28 @@ class AuthProvider extends ChangeNotifier {
         _loggedInAuthStatus = AuthStatus.LoggedIn;
         notifyListeners();
 
+        // Navigate back
         navKey.currentState!
           ..pop()
           ..pop()
           ..pop();
 
-        log('Login Successful');
       } else {
-        _loggedInAuthStatus = AuthStatus.NotLoggedIn;
-        notifyListeners();
-        if (response.data['message'] ==
-            'Oh no! Your credentials do not match!') {
-          _incorrectPassword = true;
-          loginFormKey.currentState!.validate();
-        } else {
-          notification.show(
-            title: response.data['message'],
-            type: NotificationType.local,
-          );
-        }
+        throw response.data['message'] ?? 'Login failed';
       }
-    } else {
+    } catch (e) {
       _loggedInAuthStatus = AuthStatus.NotLoggedIn;
       notifyListeners();
+
+      final errorMessage = e.toString().replaceAll('Exception: ', '');
+
+      if (errorMessage == 'Oh no! Your credentials do not match!') {
+        _incorrectPassword = true;
+        loginFormKey.currentState!.validate();
+      }
+
       notification.show(
-        title: response.data['message'],
+        title: errorMessage,
         type: NotificationType.local,
       );
     }
@@ -234,24 +228,34 @@ class AuthProvider extends ChangeNotifier {
       'email': email,
     };
 
-    _registeredAuthStatus = AuthStatus.Registering;
-    notifyListeners();
+    try {
+      _registeredAuthStatus = AuthStatus.Registering;
+      notifyListeners();
 
-    Response response = await _service.signUp(data);
+      Response response = await _service.signUp(data);
 
-    if (response.statusCode == 200) {
-      if (response.data['status'] == 'success') {
-        _registeredAuthStatus = AuthStatus.Registered;
-        notifyListeners();
+      if (response.statusCode == 200) {
+        if (response.data['status'] == 'success') {
+          _registeredAuthStatus = AuthStatus.Registered;
+          notifyListeners();
 
-        navKey.currentState!.pushNamed(VerifyScreen.routeName);
+          navKey.currentState!.pushNamed(VerifyScreen.routeName);
 
-        notification.show(
-          title: 'Kindly check your email to verify your account',
-          type: NotificationType.local,
-        );
+          notification.show(
+            title: 'Kindly check your email to verify your account',
+            type: NotificationType.local,
+          );
 
-        // Registration Successful, Kindly check your email to verify your account and proceed back to login
+          // Registration Successful, Kindly check your email to verify your account and proceed back to login
+        } else {
+          _registeredAuthStatus = AuthStatus.NotRegistered;
+          notifyListeners();
+
+          notification.show(
+            title: response.data['message'],
+            type: NotificationType.local,
+          );
+        }
       } else {
         _registeredAuthStatus = AuthStatus.NotRegistered;
         notifyListeners();
@@ -260,15 +264,34 @@ class AuthProvider extends ChangeNotifier {
           title: response.data['message'],
           type: NotificationType.local,
         );
+
+        log('Something went wrong');
       }
-    } else {
+
+    } catch (e) {
       _registeredAuthStatus = AuthStatus.NotRegistered;
       notifyListeners();
+      print("///////////////");
+
+      final errorMessage = e.toString().replaceAll('Exception: ', '');
+
+      if (errorMessage == 'Username is already taken' || errorMessage == 'Username can only have alphanumeric characters and underscores') {
+        _usernameError = errorMessage;
+      }else if(errorMessage == 'This email is already in use' || errorMessage == 'Invalid Email address.'){
+        _emailError = errorMessage;
+      }else if(errorMessage == 'First name can only have alphabets'){
+        _firstnameError = errorMessage;
+      }else if(errorMessage == 'Last name can only have alphabets'){
+        _lastnameError = errorMessage;
+      }
+
+
 
       notification.show(
-        title: response.data['message'],
+        title: errorMessage,
         type: NotificationType.local,
       );
+
 
       log('Something went wrong');
     }
@@ -291,7 +314,6 @@ class AuthProvider extends ChangeNotifier {
       rawNonce: rawNonce,
     );
 
-    // print(oauthCredential.idToken);
 
     fb.User? user = (await fb.FirebaseAuth.instance.signInWithCredential(
       oauthCredential,
@@ -416,71 +438,6 @@ class AuthProvider extends ChangeNotifier {
       ..pop();
   }
 
-  // Future<int> updateUsername(context) async {
-  //   log('init');
-  //   _loading = true;
-  //   notifyListeners();
-
-  //   Map data = {
-  //     "new_username": username.text.trim(),
-  //   };
-
-  //   log('updating username');
-  //   Response response = await _edit_service.updateUsername(data);
-
-  //   if (response.data['status'] == 'success') {
-  //     Response response = await _edit_service.getUsername(
-  //       username: username.text.trim(),
-  //     );
-
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       String jsonString = json.encode(response.data);
-  //       final Map<String, dynamic> responseData = json.decode(jsonString);
-  //       var userData = responseData;
-  //       ProfileModel userProfile = ProfileModel.fromJson(userData);
-  //       _user = userProfile;
-  //       prefs!.setString("username", user.username);
-  //       prefs_username = prefs?.getString('username') ?? '';
-
-  //       // log('load user profile');
-  //       // getIt<UserProfileProvider>().getUserProfile(
-  //       //   context,
-  //       //   username: prefs_username!,
-  //       //   fromUser: true,
-  //       // );
-
-  //       _loading = false;
-  //       notifyListeners();
-
-  //       navKey.currentState!
-  //         ..pop()
-  //         ..pop()
-  //         ..pop();
-  //     }
-
-  //     getIt<SnackBarProvider>().floatingScaffold(
-  //       message: 'Your username has been updated',
-  //       height: 80,
-  //     );
-  //   } else if (response.data['status'] == 'error') {
-  //     username.text = '';
-  //     _loading = false;
-  //     notifyListeners();
-  //     getIt<SnackBarProvider>().floatingScaffold(
-  //       message: 'Username already exists',
-  //       height: 40,
-  //     );
-  //   } else {
-  //     _loading = false;
-  //     notifyListeners();
-  //     getIt<SnackBarProvider>().floatingScaffold(
-  //       message: 'Something went wrong, Please try again',
-  //       height: 40,
-  //     );
-  //   }
-
-  //   return response.statusCode!;
-  // }
 
   Future<void> showAuthBottomSheet(context) {
     return showModalBottomSheet(

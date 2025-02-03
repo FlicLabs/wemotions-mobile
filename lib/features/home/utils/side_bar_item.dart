@@ -22,7 +22,6 @@ class SideBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final VideoProvider video = Provider.of<VideoProvider>(context);
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,

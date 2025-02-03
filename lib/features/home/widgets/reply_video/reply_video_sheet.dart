@@ -1,6 +1,6 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/home/utils/playback_sheet.dart';
-import 'package:socialverse/features/home/widgets/home_video/action_sheet_item.dart';
+
+import '../home_video/action_sheet_item.dart';
 
 class ReplyActionSheet extends StatelessWidget {
   const ReplyActionSheet({
@@ -42,7 +42,7 @@ class ReplyActionSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final video = Provider.of<VideoProvider>(context);
     final home = Provider.of<HomeProvider>(context);
-    final profile = Provider.of<ProfileProvider>(context);
+    // final profile = Provider.of<ProfileProvider>(context);
     final notification = getIt<NotificationProvider>();
     bool isAdmin = isFromFeed == true ||
         isFromSubverse == true &&
@@ -63,35 +63,35 @@ class ReplyActionSheet extends StatelessWidget {
       ),
       child: SizedBox(
         // height: 200,
-        width: cs().width(context),
+        width: cs.width(context),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (isFromFeed == true) ...[
-              ActionSheetItem(
-                icon: Icons.speed,
-                label: 'Set video Speed',
-                onTap: () {
-                  HapticFeedback.mediumImpact();
-                  Navigator.pop(context);
-                  showModalBottomSheet(
-                    context: context,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
-                      ),
-                    ),
-                    builder: (context) {
-                      return PlaybackSheet();
-                    },
-                  );
-                },
-              ),
-              height20,
-            ],
+            // if (isFromFeed == true) ...[
+            //   ActionSheetItem(
+            //     icon: Icons.speed,
+            //     label: 'Set video Speed',
+            //     onTap: () {
+            //       HapticFeedback.mediumImpact();
+            //       Navigator.pop(context);
+            //       showModalBottomSheet(
+            //         context: context,
+            //         shape: const RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.only(
+            //             topLeft: Radius.circular(30.0),
+            //             topRight: Radius.circular(30.0),
+            //           ),
+            //         ),
+            //         builder: (context) {
+            //           return PlaybackSheet();
+            //         },
+            //       );
+            //     },
+            //   ),
+            //   height20,
+            // ],
             ActionSheetItem(
               svg: AppAsset.iccopy_link,
               label: 'Copy link',
@@ -102,7 +102,7 @@ class ReplyActionSheet extends StatelessWidget {
             ),
             height20,
             ActionSheetItem(
-              svg: AppAsset.icdownload,
+              svg: AppAsset.directDownload,
               label: 'Download',
               onTap: () {
                 HapticFeedback.mediumImpact();
@@ -117,7 +117,7 @@ class ReplyActionSheet extends StatelessWidget {
             // if (isUser == true && isFromFeed == true) height20,
             if (isUser == true && isFromFeed == true) ...[
               ActionSheetItem(
-                svg: AppAsset.icreport,
+                svg: AppAsset.icReport,
                 label: 'Report',
                 onTap: () async {
                   HapticFeedback.mediumImpact();
@@ -139,35 +139,35 @@ class ReplyActionSheet extends StatelessWidget {
             ],
 
             // Profile
-            if (isFromProfile == true) ...[
-              ActionSheetItem(
-                icon: Icons.delete_outline,
-                label: 'Delete',
-                onTap: () async {
-                  HapticFeedback.mediumImpact();
-                  final response = await home.deletePost(id: video_id!);
-                  if (response == 200 || response == 201) {
-                    List<Posts> post_list = profile.posts;
-                    post_list.removeAt(current_index);
-                    profile.posts = post_list;
-                    profile.fetchProfile(username: prefs_username!);
-                    Navigator.of(context, rootNavigator: true)
-                      ..pop()
-                      ..pop();
-                    notification.show(
-                      title: 'Post has been deleted',
-                      type: NotificationType.local,
-                    );
-                  } else {
-                    Navigator.pop(context);
-                    notification.show(
-                      title: 'Something went wrong',
-                      type: NotificationType.local,
-                    );
-                  }
-                },
-              ),
-            ],
+            // if (isFromProfile == true) ...[
+            //   ActionSheetItem(
+            //     icon: Icons.delete_outline,
+            //     label: 'Delete',
+            //     onTap: () async {
+            //       HapticFeedback.mediumImpact();
+            //       final response = await home.deletePost(id: video_id!);
+            //       if (response == 200 || response == 201) {
+            //         List<Posts> post_list = profile.posts;
+            //         post_list.removeAt(current_index);
+            //         profile.posts = post_list;
+            //         profile.fetchProfile(username: prefs_username!);
+            //         Navigator.of(context, rootNavigator: true)
+            //           ..pop()
+            //           ..pop();
+            //         notification.show(
+            //           title: 'Post has been deleted',
+            //           type: NotificationType.local,
+            //         );
+            //       } else {
+            //         Navigator.pop(context);
+            //         notification.show(
+            //           title: 'Something went wrong',
+            //           type: NotificationType.local,
+            //         );
+            //       }
+            //     },
+            //   ),
+            // ],
           ],
         ),
       ),

@@ -1,17 +1,24 @@
 import 'package:socialverse/export.dart';
 
 class cs {
-  // cs: custom size
-  height(BuildContext context) {
+
+  static height(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     return height;
   }
 
-  width(BuildContext context) {
+  static width(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return width;
   }
+
+  static availableHeightWithNav(BuildContext context){
+    double availableHeight= height(context) - MediaQuery.of(context).size.height * 0.0595;
+    return availableHeight;
+  }
+
 }
+
 
 const SizedBox shrink = SizedBox.shrink();
 
