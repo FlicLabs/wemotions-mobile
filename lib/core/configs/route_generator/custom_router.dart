@@ -84,6 +84,27 @@ class CustomRouter {
         return UserProfileScreen.route(
           args: settings.arguments as UserProfileScreenArgs,
         );
+      case EditProfileScreen.routeName:
+        return EditProfileScreen.route(
+          args: settings.arguments as EditProfileScreenArgs,
+        );
+      case EditNameScreen.routeName:
+        return EditNameScreen.route(
+          args: settings.arguments as EditNameScreenArgs,
+        );
+      case EditUsernameScreen.routeName:
+        return EditUsernameScreen.route(
+          args: settings.arguments as EditUsernameScreenArgs,
+        );
+      case EditBioScreen.routeName:
+        return EditBioScreen.route(
+          args: settings.arguments as EditBioScreenArgs,
+        );
+      case EditLinksScreen.routeName:
+        return EditLinksScreen.route(
+          args: settings.arguments as EditLinksScreenArgs,
+        );
+
       case QrCodeScreen.routeName:
         return QrCodeScreen.route(
           args: settings.arguments as QrCodeScreenArgs,

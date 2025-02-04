@@ -405,11 +405,6 @@ class _BottomNavBarState extends State<BottomNavBar>
                     onLongPressMoveUpdate: (details) {
                       if (camera.pressPosition == null) {
                         camera.pressPosition = details.globalPosition;
-                        // double horizontalDifference = details.globalPosition.dx - camera.pressPosition!.dx;
-                        // if((camera.isLongPressed && horizontalDifference <-5)){
-                        //   print(":::::::::::::::::::::");
-                        //   camera.isLockIconHovered=true;
-                        // }
                       }
                     },
 

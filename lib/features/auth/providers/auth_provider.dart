@@ -271,7 +271,6 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       _registeredAuthStatus = AuthStatus.NotRegistered;
       notifyListeners();
-      print("///////////////");
 
       final errorMessage = e.toString().replaceAll('Exception: ', '');
 

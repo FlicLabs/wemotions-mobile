@@ -95,6 +95,7 @@ void main() async {
             ChangeNotifierProvider(create: (_) => ExitProvider()),
             ChangeNotifierProvider(create: (_) => NotificationProvider()),
             ChangeNotifierProvider(create: (_) => ReplyProvider()),
+            ChangeNotifierProvider(create: (_) => EditProfileProvider()),
           ],
           child: ChangeNotifierProvider<ThemeProvider>(
             create: (_) => ThemeProvider(

@@ -1,5 +1,7 @@
 import 'package:socialverse/export.dart';
 
+
+
 class ProfileButton extends StatelessWidget {
   const ProfileButton({
     Key? key,
@@ -34,21 +36,21 @@ class ProfileButton extends StatelessWidget {
                         tileMode: TileMode.repeated),
                     textColor: Constants.lightPrimary,
                     onTap: () {
-                      // Navigator.of(context).pushNamed(
-                      //   EditProfileScreen.routeName,
-                      //   arguments: EditProfileScreenArgs(
-                      //     username: prefs_username!,
-                      //     name: __.user.name,
-                      //     bio: __.user.bio,
-                      //     firstname: __.user.firstName,
-                      //     surname: __.user.lastName,
-                      //     imageUrl: __.user.profilePictureUrl,
-                      //     website: __.user.website,
-                      //     tiktok: __.user.tiktokUrl,
-                      //     instagram: __.user.instagramUrl,
-                      //     youtube: __.user.youtubeUrl,
-                      //   ),
-                      // );
+                      Navigator.of(context).pushNamed(
+                        EditProfileScreen.routeName,
+                        arguments: EditProfileScreenArgs(
+                          username: prefs_username!,
+                          name: __.user.name,
+                          bio: __.user.bio,
+                          firstname: __.user.firstName,
+                          surname: __.user.lastName,
+                          imageUrl: __.user.profilePictureUrl,
+                          website: __.user.website,
+                          tiktok: __.user.tiktokUrl,
+                          instagram: __.user.instagramUrl,
+                          youtube: __.user.youtubeUrl,
+                        ),
+                      );
                     },
                   ),
                 ),

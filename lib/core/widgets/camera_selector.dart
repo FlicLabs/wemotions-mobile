@@ -16,7 +16,7 @@ class CameraModeSelector extends StatelessWidget {
       children: [
         SizedBox(
           width: 24,
-          height: 47,
+          height: 40,
         ),
         FittedBox(
           fit: BoxFit.scaleDown,
@@ -62,6 +62,7 @@ class CameraModeSelector extends StatelessWidget {
             ],
           ),
         ),
+        // height5,
       ],
     );
   }

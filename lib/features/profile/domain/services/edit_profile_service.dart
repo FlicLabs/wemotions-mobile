@@ -6,7 +6,7 @@ import 'package:socialverse/export.dart';
 class EditProfileService {
   Dio dio = new Dio();
 
-  updateProfile(Map data) async {
+  Future<Response> updateProfile(Map data) async {
     try {
       Response response = await dio.put(
         '${API.endpoint}${API.updateProfile}',
@@ -15,10 +15,11 @@ class EditProfileService {
       );
       print(response.data);
       print(response.statusCode);
-      return response.statusCode;
-    } catch (e) {
-      print(e);
-      return e;
+      return response;
+    } on DioError catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.data['message']);
+      throw 'Something went wrong';
     }
   }
 

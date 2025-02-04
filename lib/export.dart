@@ -179,6 +179,7 @@ export 'package:socialverse/features/profile/utils/profile_share_sheet.dart';
 // export 'package:socialverse/core/configs/route_generator/custom_router.dart';
 
 export 'package:socialverse/features/search/widgets/subverse_detail/subverse_post_grid_placeholder.dart';
+export 'package:socialverse/features/search/helper/image_helper.dart';
 
 
 
@@ -259,7 +260,10 @@ export 'package:socialverse/features/create/presentation/camera_screen.dart';
 export 'package:socialverse/features/create/presentation/post_screen.dart';
 
 export 'package:socialverse/core/presentation/notifications.dart';
+
+
 // export 'package:socialverse/core/presentation/welcome_screen.dart';
+
 
 
 
