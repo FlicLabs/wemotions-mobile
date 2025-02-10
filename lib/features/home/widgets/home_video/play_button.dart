@@ -7,6 +7,16 @@ class PlayButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HomeProvider>(
       builder: (_, __, ___) {
+
+        final controller = __.videoController(__.index);
+
+        if (controller == null) {
+          return EmptyState();
+        }
+        if (!controller.value.isInitialized) {
+          return EmptyState();
+        }
+
         return __.videoController(__.index)!.value.isInitialized
             ? __.videoController(__.index)!.value.isPlaying
                 ? shrink

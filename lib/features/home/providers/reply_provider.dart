@@ -40,6 +40,14 @@ class ReplyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _horizontal_drag_direction=0; // 0 for no drag at initial
+  int get horizontal_drag_direction=> _horizontal_drag_direction;
+
+  set horizontal_drag_direction(int value){
+    _horizontal_drag_direction=value;
+    notifyListeners();
+  }
+
   double _playback_speed = 1.0;
   double get playback_speed => _playback_speed;
 
@@ -78,11 +86,20 @@ class ReplyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  int _index = 0;
+  int _index = -1;
   int get index => _index;
 
   set index(int value) {
     _index = value;
+    notifyListeners();
+  }
+
+
+  bool _onReply=false;
+  bool get onReply => _onReply;
+
+  set onReply(bool value) {
+    _onReply = value;
     notifyListeners();
   }
 
@@ -330,7 +347,7 @@ class ReplyProvider extends ChangeNotifier {
     print(_tapPosition);
   }
 
-  final Map<String, VideoPlayerController> controllers = {};
+  final Map<String, VideoPlayerController> _controllers = {};
   final Map<int, VoidCallback> _listeners = {};
   final Map<int, bool> _viewCountUpdated = {};
 
@@ -338,16 +355,24 @@ class ReplyProvider extends ChangeNotifier {
     if (posts.isNotEmpty) {
       _index = 0;
       _isPlaying = true;
-      _initController(0).then((_) {
+      await _initController(0).then((_) {
         _playController(0);
       });
     }
     if (posts.length > 1) {
-      _initController(1);
+      await _initController(1);
     }
   }
 
+  makeFirstHControllerReady()async{
+    _isPlaying=false;
+    _onReply=false;
+    await _initController(0).then((value) => null);
+  }
+
   Future<void> _initController(int index) async {
+    if (_controllers.containsKey(posts.elementAt(index).videoLink)) return;
+
     var controller = VideoPlayerController.network(
       posts.elementAt(index).videoLink,
       videoPlayerOptions: VideoPlayerOptions(
@@ -356,45 +381,42 @@ class ReplyProvider extends ChangeNotifier {
       ),
     );
     _viewCountUpdated[index] = false;
-    controllers[posts.elementAt(index).videoLink] = controller;
-    await controller.initialize();
-  }
-
-  void setPlaybackSpeed(double speed) {
-    _playback_speed = speed;
-    controllers.values.forEach((controller) {
-      controller.setPlaybackSpeed(speed);
+    _controllers[posts.elementAt(index).videoLink] = controller;
+    controller.initialize().then((_) {
+      controller.setVolume(1.0);
+      if (index == _index && _onReply) {
+        _playController(index);
+      }
     });
-    notifyListeners();
   }
 
-  void _playController(
-    int index,
-    /* int bottomNavIndex */
-  ) async {
-    if (!_listeners.keys.contains(index)) {
-      _listeners[index] = _listenerSpawner(index);
-    }
-    videoController(index)?.addListener(_listeners[index]!);
-    if (_isPlaying /* && bottomNavIndex == 0 */) {
-      await videoController(index)?.play();
-      await videoController(index)?.setLooping(true);
-    } else {
+  Future<void> _stopController(int index) async{
+    try {
+      if (index < 0 || index >= posts.length) return;
+
+      if (_listeners[index] != null) {
+        videoController(index)?.removeListener(_listeners[index]!);
+      }
       await videoController(index)?.pause();
-      await videoController(index)?.setLooping(true);
+      await videoController(index)?.seekTo(const Duration(milliseconds: 0));
+    } catch (e) {
+      print("Error stopping controller at index $index: $e");
     }
-    _isPlaying = true;
-    notifyListeners();
   }
+
 
   VideoPlayerController? videoController(int index) {
-    return controllers[posts.elementAt(index).videoLink] ??
-        controllers[API.video_link];
+
+    if (posts.isEmpty || index < 0 || index >= posts.length) {
+      return null;
+    }
+    return _controllers[posts.elementAt(index).videoLink];
+
   }
 
   void disposed(index) {
     videoController(index)?.dispose();
-    controllers.remove(posts.elementAt(index));
+    _controllers.remove(posts.elementAt(index));
   }
 
   VoidCallback _listenerSpawner(index) {
@@ -445,93 +467,195 @@ class ReplyProvider extends ChangeNotifier {
     };
   }
 
+  // Future<void> removeController(index) async {
+  //   if (index == posts.length - 1) {
+  //     return;
+  //   }
+  //   _stopController(index);
+  //   if (index - 1 >= 0) {
+  //     _removeController(index - 1);
+  //   }
+  //   _playController(
+  //     ++index,
+  //   );
+  //   if (index == posts.length - 1) {
+  //   } else {
+  //     _initController(index + 1);
+  //   }
+  // }
+  //
+  // void _removeController(int index) {
+  //   _controllers.remove(posts.elementAt(index));
+  //   _listeners.remove(index);
+  //   videoController(index)?.dispose();
+  // }
+
+
+
+
+  void setPlaybackSpeed(double speed) {
+    _playback_speed = speed;
+    _controllers.values.forEach((controller) {
+      controller.setPlaybackSpeed(speed);
+    });
+    notifyListeners();
+  }
+
+
+  void _cleanupControllers(int currentIndex) {
+    final hKeepRange = 2;
+    final hValidIndices = <int>{};
+
+    // Calculate valid indices to keep
+    for (var i = currentIndex - hKeepRange; i <= currentIndex + hKeepRange; i++) {
+      if (i >= 0 && i < posts.length) {
+        hValidIndices.add(i);
+      }
+    }
+
+    // Cleanup controllers outside the range
+    final linksToRemove = <String>[];
+    _controllers.forEach((videoLink, controller) {
+      bool shouldKeep = false;
+      for (var idx in hValidIndices) {
+        if (idx < posts.length && posts.elementAt(idx).videoLink == videoLink) {
+          shouldKeep = true;
+          break;
+        }
+      }
+      if (!shouldKeep) {
+        controller.pause();
+        controller.dispose();
+        linksToRemove.add(videoLink);
+
+        // Find and remove corresponding listener
+        _listeners.removeWhere((index, _) =>
+        index < 0 ||
+            index >= posts.length ||
+            posts.elementAt(index).videoLink == videoLink
+        );
+      }
+    });
+
+    linksToRemove.forEach(_controllers.remove);
+  }
+
+
+
+  @override
+  void dispose() {
+    _controllers.forEach((_, controller) {
+      controller.pause();
+      controller.dispose();
+    });
+    _controllers.clear();
+    _listeners.clear();
+    _viewCountUpdated.clear();
+    super.dispose();
+  }
+
+
+
+  Future <void> _playController(int index) async {
+    try {
+      if (index < 0 || index >= posts.length) return;
+
+      if (!_listeners.keys.contains(index)) {
+        _listeners[index] = _listenerSpawner(index);
+      }
+
+      final controller = videoController(index);
+      if (controller != null) {
+        controller.removeListener(_listeners[index]!);
+        controller.addListener(_listeners[index]!);
+
+        if (_isPlaying) {
+          await controller.seekTo(const Duration(milliseconds: 0));
+          await controller.play();
+          await controller.setLooping(true);
+        } else {
+          await controller.pause();
+          await controller.setLooping(true);
+        }
+      }
+    } catch (e) {
+      print("Error playing controller at index $index: $e");
+    }
+  }
 
   Future<void> _nextVideo() async {
     if (_index == posts.length - 1) {
       return;
     }
-    _stopController(_index);
-    if (_index - 1 >= 0) {
-      _removeController(_index - 1);
-    }
-    _playController(
-      ++_index,
-    );
-    if (_index == posts.length - 1) {
-    } else {
+
+    if (_index + 1 < posts.length && !_controllers.containsKey(posts.elementAt(_index + 1).videoLink)) {
       _initController(_index + 1);
     }
+
+    await _stopController(_index);
+
+    await _playController(_index);
+
+
   }
 
-  Future<void> removeController(index) async {
-    if (index == posts.length - 1) {
-      return;
-    }
-    _stopController(index);
-    if (index - 1 >= 0) {
-      _removeController(index - 1);
-    }
-    _playController(
-      ++index,
-    );
-    if (index == posts.length - 1) {
-    } else {
-      _initController(index + 1);
-    }
-  }
+
 
   Future<void> _previousVideo() async {
-    if (_index == 0) {
-      controllers.forEach((key, value) {});
-      return;
-    }
-    _stopController(_index);
-    if (_index + 1 < posts.length) {
-      _removeController(_index + 1);
-    }
-    _playController(
-      --_index,
-    );
-    if (_index == 0) {
-    } else {
+
+    if (_index - 1 >= 0 && !_controllers.containsKey(posts.elementAt(_index - 1).videoLink)) {
       _initController(_index - 1);
     }
+
+    await _stopController(_index+1);
+
+    await _playController(_index);
+
   }
 
-  void _stopController(int index) {
-    if (_listeners[index] != null) {
-      videoController(index)?.removeListener(_listeners[index]!);
-    }
-    videoController(index)?.pause();
-    videoController(index)?.seekTo(const Duration(milliseconds: 0));
-  }
 
-  void _removeController(int index) {
-    videoController(index)?.dispose();
-    controllers.remove(posts.elementAt(index));
-    _listeners.remove(index);
-  }
 
-  onPageChanged(int index) async {
-    _isPlaying = true;
-    // createIsolate(token: token);
-    HomeWidget.saveWidgetData<String>('title', _posts[index].title);
-    HomeWidget.saveWidgetData<String>('description', _posts[index].username);
-    HomeWidget.saveWidgetData<String>('image', _posts[index].thumbnailUrl);
-    HomeWidget.updateWidget(
-      iOSName: iOSWidgetName,
-      androidName: androidWidgetName,
-    );
-    notifyListeners();
-    if (_index > index) {
-      await _previousVideo();
-      _index = index;
+
+
+
+
+    onPageChanged(int index) async {
+      _isPlaying = true;
+      // createIsolate(token: token);
+      HomeWidget.saveWidgetData<String>('title', _posts[index].title);
+      HomeWidget.saveWidgetData<String>('description', _posts[index].username);
+      HomeWidget.saveWidgetData<String>('image', _posts[index].thumbnailUrl);
+      HomeWidget.updateWidget(
+        iOSName: iOSWidgetName,
+        androidName: androidWidgetName,
+      );
+
+      final oldIndex =_index;
+
+      _index= index;
+
+      if(!_controllers.containsKey(posts.elementAt(index).videoLink)){
+        await _initController(index);
+      }
+
+      await _stopController(oldIndex);
+
+      if(_horizontal_drag_direction == -1){
+        await _previousVideo();
+      }else if(_horizontal_drag_direction == 1){
+        await _nextVideo();
+      }
+
+
+      if(_horizontal_drag_direction == 1){
+        if(index+1 < posts.length) _initController(index + 1);
+      }else{
+        if(index -1 >= 0) _initController(index -1);
+      }
+
+      _cleanupControllers(index);
+
       notifyListeners();
-    } else {
-      await _nextVideo();
-      _index = index;
-      notifyListeners();
     }
-    notifyListeners();
-  }
+
 }

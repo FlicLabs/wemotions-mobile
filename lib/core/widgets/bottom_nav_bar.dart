@@ -28,8 +28,7 @@ class _BottomNavBarState extends State<BottomNavBar>
     ProfileScreen(),
   ];
 
-  List<CameraDescription> local_value = [];
-  bool? isReply;
+
   bool wasPlayingBeforeCamera = false;
 
   @override
@@ -321,8 +320,8 @@ class _BottomNavBarState extends State<BottomNavBar>
           ),
           if (camera.showCameraScreen) ...[
             CameraScreen(
-              cameras: local_value,
-              isReply: isReply!,
+              cameras: camera.localValue,
+              isReply: camera.isReply,
               parent_video_id: nav.parentVideoId,
             ),
           ],
@@ -390,8 +389,8 @@ class _BottomNavBarState extends State<BottomNavBar>
                       if (permissionsGranted) {
                         camera.hasPermission = true;
                         await availableCameras().then((value) {
-                          local_value = value;
-                          isReply = nav.selectedVideoUploadType == 'Video' ? false : true;
+                          camera.localValue = value;
+                          camera.isReply = nav.selectedVideoUploadType == 'Video' ? false : true;
                           camera.shouldStartRecording = true;
                           camera.showCameraScreen = true;
 

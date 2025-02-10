@@ -70,32 +70,38 @@ class FollowerItem extends StatelessWidget {
                       return prefs_username == username
                           ? shrink
                           : isFollowing
-                              ? TransparentButton(
-                                  title: 'Unsubscribe',
-                                  height: 35,
-                                  width: 120,
-                                  onTap: () {
-                                    if (logged_in == true) {
-                                      __.toggleFollowers(index);
-                                      __.userUnfollow(username: username);
-                                    } else {
-                                      auth.showAuthBottomSheet(context);
-                                    }
-                                  },
-                                )
-                              : TransparentButton(
-                                  title: 'Subscribe',
-                                  height: 35,
-                                  width: 120,
-                                  onTap: () {
-                                    if (logged_in == true) {
-                                      __.toggleFollowers(index);
-                                      __.userFollow(username: username);
-                                    } else {
-                                      auth.showAuthBottomSheet(context);
-                                    }
-                                  },
-                                );
+                          ? TransparentButton(
+                        title: 'Following',
+                        height: 35,
+                        width: 120,
+                        color: Theme.of(context).canvasColor,
+                        borderColor: Constants.primaryColor,
+                        textColor: Constants.primaryColor,
+                        onTap: () {
+                          if (logged_in == true) {
+                            // __.toggleFollowing(index);
+                            // __.userUnfollow(username: username);
+                          } else {
+                            auth.showAuthBottomSheet(context);
+                          }
+                        },
+                      )
+                          : TransparentButton(
+                        title: 'Follow',
+                        height: 35,
+                        width: 80,
+                        color: Constants.primaryColor,
+                        isBorder: false,
+                        textColor: Constants.lightPrimary,
+                        onTap: () {
+                          if (logged_in == true) {
+                            // __.toggleFollowing(index);
+                            // __.userFollow(username: username);
+                          } else {
+                            auth.showAuthBottomSheet(context);
+                          }
+                        },
+                      );
                     },
                   )
                 ],

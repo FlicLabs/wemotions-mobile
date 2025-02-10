@@ -78,9 +78,10 @@ void main() async {
       runApp(
         MultiProvider(
           providers: [
+
             ChangeNotifierProvider(create: (_) => AuthProvider()),
-            ChangeNotifierProvider(create: (_) => SmoothPageIndicatorProvider()),
             ChangeNotifierProvider(create: (_) => HomeProvider()),
+            ChangeNotifierProvider(create: (_) => SmoothPageIndicatorProvider()),
             ChangeNotifierProvider(create: (_) => VideoProvider()),
             ChangeNotifierProvider(create: (_) => CameraProvider()),
             ChangeNotifierProvider(create: (_) => PostProvider()),
@@ -89,20 +90,20 @@ void main() async {
             ChangeNotifierProvider(create: (_) => UserProfileProvider()),
             ChangeNotifierProvider(create: (_) => BottomNavBarProvider()),
             ChangeNotifierProvider(create: (_) => ReportProvider()),
+            ChangeNotifierProvider(create: (_) => EditProfileProvider()),
             ChangeNotifierProvider(create: (_) => AccountProvider()),
             ChangeNotifierProvider(create: (_) => InviteProvider()),
             ChangeNotifierProvider(create: (_) => QrCodeProvider()),
             ChangeNotifierProvider(create: (_) => ExitProvider()),
             ChangeNotifierProvider(create: (_) => NotificationProvider()),
             ChangeNotifierProvider(create: (_) => ReplyProvider()),
-            ChangeNotifierProvider(create: (_) => EditProfileProvider()),
-          ],
-          child: ChangeNotifierProvider<ThemeProvider>(
-            create: (_) => ThemeProvider(
-              value ? Constants.darkTheme : Constants.lightTheme,
+            ChangeNotifierProvider<ThemeProvider>(
+              create: (_) => ThemeProvider(
+                value ? Constants.darkTheme : Constants.lightTheme,
+              ),
             ),
-            builder: (context, child) =>  const WeMotions(),
-          ),
+          ],
+          child:  const WeMotions(),
         ),
       );
     },

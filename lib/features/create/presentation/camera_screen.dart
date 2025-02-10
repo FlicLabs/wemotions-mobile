@@ -105,6 +105,7 @@ class _CameraScreenState extends State<CameraScreen> {
               ? WillPopScope(
                 onWillPop: () async{
                   _cameraProvider?.resetValues(isDisposing: true);
+
                   return true;
                 },
                 child: Column(

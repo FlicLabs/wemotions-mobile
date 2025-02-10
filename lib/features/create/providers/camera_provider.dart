@@ -12,12 +12,29 @@ class CameraProvider extends ChangeNotifier {
   bool _isCameraReady = false;
   bool get isCameraReady => _isCameraReady;
 
+  List<CameraDescription> _localValue = [];
+  List<CameraDescription> get localValue => _localValue;
+
+  set localValue(value){
+    _localValue=value;
+    notifyListeners();
+  }
+
+  bool _isReply=false;
+  bool get isReply=> _isReply;
+
+  set isReply(val)=> _isReply=val;
+
+
   String _recordingDuration = "00:00";
   String get recordingDuration => _recordingDuration;
 
   Timer? _recordingTimer;
 
   int _recordingSeconds = 0;
+
+  String _recordingLastDuration = "00:00";
+  String get recordingLastDuration => _recordingLastDuration;
 
   // Start recording timer
   void startRecordingTimer() {
@@ -43,6 +60,7 @@ class CameraProvider extends ChangeNotifier {
 
   // Stop recording timer
   void stopRecordingTimer() {
+    _recordingLastDuration=_recordingDuration;
     _recordingTimer?.cancel();
     _recordingTimer = null;
     _recordingSeconds = 0;
@@ -591,6 +609,7 @@ class CameraProvider extends ChangeNotifier {
     videoController = null;
     _recordingSeconds = 0;
     _recordingDuration = "00:00";
+    _recordingLastDuration = "00:00";
     _videoSpeed = 1.0;
     _isCameraFlip = false;
     _isVideoPause = false;
@@ -599,6 +618,9 @@ class CameraProvider extends ChangeNotifier {
     _buttonPressSize = 50.0;
     _percentIndicatorRadius = 70.0;
     _showCameraScreen = false;
+    _isReply=false;
+    _localValue=[];
+    _recordingCompleted=false;
     _videoSegments.clear(); // Clear video segments
 
     if (!isDisposing) {

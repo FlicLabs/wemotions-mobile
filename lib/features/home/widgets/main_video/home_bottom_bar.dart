@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:socialverse/export.dart';
 
 class HomeUserInfoBar extends StatelessWidget {
@@ -12,7 +14,7 @@ class HomeUserInfoBar extends StatelessWidget {
         final postTitle = __.posts[__.index][0].title;
         return Positioned(
           left: 20,
-          bottom: 20,
+          bottom: 25,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
             child: Column(
@@ -21,7 +23,6 @@ class HomeUserInfoBar extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-
                     if(__.isPlaying){
                       __.videoController(__.index)!.pause();
                       __.isPlaying=false;
