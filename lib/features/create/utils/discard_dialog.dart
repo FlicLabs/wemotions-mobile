@@ -58,7 +58,7 @@ class DiscardDialog extends StatelessWidget {
                     ),
                     onPressed: () {
                       // Handle discard action
-                      _cameraProvider.resetValues();
+                      _cameraProvider.resetValues(isDisposing: true);
                       Navigator.of(context).pop();
                     },
                     child: Text(

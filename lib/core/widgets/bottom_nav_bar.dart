@@ -405,6 +405,17 @@ class _BottomNavBarState extends State<BottomNavBar>
                       if (camera.pressPosition == null) {
                         camera.pressPosition = details.globalPosition;
                       }
+                      else{
+                        double horizontalDifference = details.globalPosition.dx - camera.pressPosition!.dx;
+
+
+                        if(horizontalDifference<-10){
+                          camera.isLockIconHovered=true;
+                        }else{
+                          camera.isLockIconHovered=false;
+                        }
+                      }
+
                     },
 
                     onLongPressEnd: (details) async {
@@ -412,6 +423,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                         double horizontalDifference = details.globalPosition.dx - camera.pressPosition!.dx;
                         if (horizontalDifference < -20) {
                           camera.isRecordingLocked = true;
+                          camera.isLockIconHovered=false;
 
                         }
                       }

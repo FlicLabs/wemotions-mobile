@@ -392,6 +392,7 @@ class CameraProvider extends ChangeNotifier {
 
     stopRecordingTimer();
     try {
+
       selectedVideo = await cameraController.stopVideoRecording();
       _videoSegments.add(selectedVideo!); // Store the segment
       initVideo();
@@ -433,6 +434,7 @@ class CameraProvider extends ChangeNotifier {
     _buttonPressSize = 50;
     _isRecordStart = false;
     _isVideoRecord = false;
+    shouldStartRecording=false;
     notifyListeners();
   }
 
@@ -452,46 +454,6 @@ class CameraProvider extends ChangeNotifier {
       });
     }
   }
-
-  /// Starts the recording timer
-  // void startRecordingTimer() {
-  //   _recordingSeconds = 0;
-  //   _recordingDuration = "00:00";
-  //
-  //   _recordingTimer?.cancel();
-  //
-  //   if (!_isDisposed) {
-  //     _recordingTimer = Timer.periodic(
-  //       const Duration(seconds: 1),
-  //       (Timer timer) {
-  //         if (_isDisposed) {
-  //           timer.cancel();
-  //           return;
-  //         }
-  //
-  //         _recordingSeconds++;
-  //
-  //         // Format minutes and seconds
-  //         final minutes = (_recordingSeconds ~/ 60).toString().padLeft(2, '0');
-  //         final seconds = (_recordingSeconds % 60).toString().padLeft(2, '0');
-  //
-  //         _recordingDuration = "$minutes:$seconds";
-  //         notifyListeners();
-  //       },
-  //     );
-  //   }
-  // }
-
-  // /// Stops the recording timer
-  // void stopRecordingTimer() {
-  //   if (!_isDisposed) {
-  //     _recordingTimer?.cancel();
-  //     _recordingTimer = null;
-  //     _recordingSeconds = 0;
-  //     _recordingDuration = "00:00";
-  //     notifyListeners();
-  //   }
-  // }
 
   // ======================== Enhanced flipCamera ========================
   /// Flips the camera between front and back
@@ -599,14 +561,20 @@ class CameraProvider extends ChangeNotifier {
   }
 
   /// Resets all values and states
+
+
   void resetValues({bool isDisposing = false}) {
     if (_isDisposed) return;
+
+    // Safely handle video controller
     if (videoController != null) {
       videoController!.pause();
       videoController!.dispose();
+      videoController = null;
     }
+
+    // Reset all state variables
     selectedVideo = null;
-    videoController = null;
     _recordingSeconds = 0;
     _recordingDuration = "00:00";
     _recordingLastDuration = "00:00";
@@ -618,14 +586,25 @@ class CameraProvider extends ChangeNotifier {
     _buttonPressSize = 50.0;
     _percentIndicatorRadius = 70.0;
     _showCameraScreen = false;
-    _isReply=false;
-    _localValue=[];
-    _recordingCompleted=false;
-    _videoSegments.clear(); // Clear video segments
+    _isReply = false;
+    _localValue = [];
+    _recordingCompleted = false;
+    _videoSegments.clear();
 
-    if (!isDisposing) {
-      notifyListeners();
+    // Comprehensive reset of camera state
+    _isCameraReady = false;
+    shouldStartRecording = false;
+    _isRecordingLocked = false;
+    _isLockIconHovered = false;
+
+    // Dispose and reinitialize camera controller if possible
+    try {
+      cameraController.dispose();
+    } catch (e) {
+      log('Error disposing camera controller: $e');
     }
+
+    notifyListeners();
   }
 
 

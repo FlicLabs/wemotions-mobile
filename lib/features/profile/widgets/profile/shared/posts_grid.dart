@@ -1,5 +1,7 @@
 import 'package:socialverse/export.dart';
 
+import '../../../../home/widgets/main_video/video_widget.dart';
+
 class PostsGrid extends StatelessWidget {
   const PostsGrid({
     Key? key,
@@ -47,24 +49,26 @@ class PostsGrid extends StatelessWidget {
                       ),
                       delegate: SliverChildBuilderDelegate(
                         (BuildContext context, int index) {
-                          return PostGridItem(
-                            onTap: () {
-                              // Navigator.pushNamed(
-                              //   context,
-                              //   VideoWidget.routeName,
-                              //   arguments: VideoWidgetArgs(
-                              //     posts: posts,
-                              //     pageController:
-                              //         PageController(initialPage: index),
-                              //     pageIndex: index,
-                              //     isFromProfile: true,
-                              //   ),
-                              // );
-                            },
-                            imageUrl: posts[index].thumbnailUrl,
-                            createdAt: posts[index].createdAt,
-                            viewCount: posts[index].viewCount,
-                            voteCount: posts[index].voting_count,
+                          return Hero(
+                            tag: 'video_${posts[index].id}',
+                            child: PostGridItem(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  VideoViewPage.routeName,
+                                  arguments: VideoViewPageArgs(
+                                    videoUrl: posts[index].videoLink,
+                                    thumbnailUrl: posts[index].thumbnailUrl,
+                                    videoId: posts[index].id.toString(),
+                                  ),
+                                );
+
+                              },
+                              imageUrl: posts[index].thumbnailUrl,
+                              createdAt: posts[index].createdAt,
+                              viewCount: posts[index].viewCount,
+                              voteCount: posts[index].voting_count,
+                            ),
                           );
                         },
                         childCount: posts.length,

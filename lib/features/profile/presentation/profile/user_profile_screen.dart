@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:provider/provider.dart';
 import 'package:socialverse/export.dart';
 
 class UserProfileScreenArgs {

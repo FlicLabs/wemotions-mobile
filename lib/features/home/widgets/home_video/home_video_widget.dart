@@ -80,11 +80,11 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
   }
 
   Future<void> initializeVideo() async {
-    home.index = widget.pageIndex;
     await home.initializedVideoPlayer();
     reply.posts = home.posts[0].sublist(1);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      home.index = widget.pageIndex;
       _initializePageIndicator();
     });
   }
@@ -295,10 +295,10 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
               ),
             ),
             width20,
-            Text(
-              "Following",
-              style: AppTextStyle.normalBold.copyWith(color: Colors.white),
-            ),
+            // Text(
+            //   "Following",
+            //   style: AppTextStyle.normalBold.copyWith(color: Colors.white),
+            // ),
           ],
         ),
       ),
@@ -368,7 +368,10 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
       home.videoController(home.index)!.pause();
       reply.onReply=true;
       reply.isPlaying = true;
+      reply.videoController(reply.index)!.play();
+
       home.videoController(home.index)!.seekTo(Duration.zero);
+
     } else if (idx == 0) {
       home.horizontalIndex = 0;
       reply.onReply=false;

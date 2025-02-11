@@ -1,6 +1,7 @@
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/profile/presentation/settings/account/change_password_screen.dart';
 
+import '../../../features/home/widgets/main_video/video_widget.dart';
 import '../../presentation/welcome_screen.dart';
 
 Route<dynamic> getPlatformPageRoute({
@@ -129,6 +130,10 @@ class CustomRouter {
         return AccountInformationScreen.route();
       case ChangePasswordScreen.routeName:
         return ChangePasswordScreen.route();
+
+      case VideoViewPage.routeName:
+        final args = settings.arguments as VideoViewPageArgs;
+        return VideoViewPage.route(args: args);
 
 
       default:

@@ -356,7 +356,10 @@ class ReplyProvider extends ChangeNotifier {
       _index = 0;
       _isPlaying = true;
       await _initController(0).then((_) {
-        _playController(0);
+        if(_onReply){
+          _playController(0);
+        }
+
       });
     }
     if (posts.length > 1) {

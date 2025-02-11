@@ -158,7 +158,7 @@ class DataControlsScreen extends StatelessWidget {
                 AuthButtonWithColor(
                     title: 'Continue',
                     onTap: () async {
-                      // __.deleteAccount(context);
+                      __.deleteAccount(context);
                       HapticFeedback.heavyImpact();
                       nav.currentPage = 0;
                       nav.jumpToPage();
