@@ -378,10 +378,19 @@ class _BottomNavBarState extends State<BottomNavBar>
                       bool permissionsGranted = await _checkAndRequestPermissions(context);
                       if (permissionsGranted) {
                         camera.hasPermission = true;
+                        await availableCameras().then((value) {
+                          camera.localValue = value;
+                          camera.isReply = nav.selectedVideoUploadType == 'Video' ? false : true;
+                          camera.isThroughSingleTap=true;
+                          camera.shouldStartRecording = false;
+                          camera.showCameraScreen = true;
+
+                        });
                       }
                     },
 
                     onLongPress: () async {
+                      if(camera.recordingCompleted) return ;
                       camera.isLongPressed = true;
                       // Store the initial press position
                       camera.pressPosition = null;
@@ -402,6 +411,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                     },
 
                     onLongPressMoveUpdate: (details) {
+                      if(camera.recordingCompleted) return ;
                       if (camera.pressPosition == null) {
                         camera.pressPosition = details.globalPosition;
                       }
@@ -419,6 +429,8 @@ class _BottomNavBarState extends State<BottomNavBar>
                     },
 
                     onLongPressEnd: (details) async {
+                      if(camera.recordingCompleted) return ;
+
                       if (camera.pressPosition != null) {
                         double horizontalDifference = details.globalPosition.dx - camera.pressPosition!.dx;
                         if (horizontalDifference < -20) {
@@ -439,7 +451,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );

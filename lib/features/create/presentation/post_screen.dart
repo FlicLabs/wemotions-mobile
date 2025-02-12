@@ -58,94 +58,101 @@ class _PostScreenState extends State<PostScreen> {
               fontWeight: FontWeight.bold),
         ),
       ),
-      body: Consumer<PostProvider>(
-        builder: (_, __, ___) {
-          if (__.is_token_loading) {
-            return CustomProgressIndicator();
-          } else {
-            return Container(
-              height: cs.height(context),
-              width: cs.width(context),
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Column(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 200,
-                                        height: 320,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          border: Border.all(
-                                            color: Colors.transparent,
+      body: WillPopScope(
+
+        onWillPop: () async{
+          Navigator.of(context).pop();
+          return false;
+        },
+        child: Consumer<PostProvider>(
+          builder: (_, __, ___) {
+            if (__.is_token_loading) {
+              return CustomProgressIndicator();
+            } else {
+              return Container(
+                height: cs.height(context),
+                width: cs.width(context),
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Column(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 200,
+                                          height: 320,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            border: Border.all(
+                                              color: Colors.transparent,
+                                            ),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            child: VideoPlayer(
+                                              __.videoController!,
+                                            ),
                                           ),
                                         ),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          child: VideoPlayer(
-                                            __.videoController!,
+                                        height16,
+                                        Form(
+                                          key: __.formKey,
+                                          child: PostTextFormField(
+                                            controller: __.description,
                                           ),
                                         ),
-                                      ),
-                                      height16,
-                                      Form(
-                                        key: __.formKey,
-                                        child: PostTextFormField(
-                                          controller: __.description,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                              height24,
-                              PostTagTile(),
-                            ],
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                height24,
+                                PostTagTile(),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 20),
-                      child: AuthButtonWithColor(
-                        isGradient: true,
-                        onTap: () {
-                          if (__.formKey.currentState!.validate()) {
-                            // if (mounted) {
-                            //   Navigator.of(context, rootNavigator: true)..pop();
-                            // }
-                            // __.uploadVideo(
-                            //     path: widget.path!.path,
-                            //     isReply: widget.isReply,
-                            //     parent_video_id: widget.parent_video_id);
-                            // nav.currentPage = 0;
-                            // nav.jumpToPage();
-                          }
-                        },
-                        title: 'Upload Video',
-                      ),
-                    )
-                  ],
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 20),
+                        child: AuthButtonWithColor(
+                          isGradient: true,
+                          onTap: () {
+                            if (__.formKey.currentState!.validate()) {
+                              // if (mounted) {
+                              //   Navigator.of(context, rootNavigator: true)..pop();
+                              // }
+                              // __.uploadVideo(
+                              //     path: widget.path!.path,
+                              //     isReply: widget.isReply,
+                              //     parent_video_id: widget.parent_video_id);
+                              // nav.currentPage = 0;
+                              // nav.jumpToPage();
+                            }
+                          },
+                          title: 'Upload Video',
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }
-        },
+              );
+            }
+          },
+        ),
       ),
     );
   }

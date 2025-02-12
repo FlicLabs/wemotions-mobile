@@ -35,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen>
                     pageIndex: 0,
                     isFromFeed: true,
                   ),
-
                 ],
               ],
             ),

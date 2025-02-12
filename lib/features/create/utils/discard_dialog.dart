@@ -43,6 +43,7 @@ class DiscardDialog extends StatelessWidget {
                       style: TextStyle(
                         color: Theme.of(context).focusColor,
                       ),
+                      textScaler: TextScaler.linear(0.8),
                     ),
                   ),
                 ),
@@ -64,6 +65,8 @@ class DiscardDialog extends StatelessWidget {
                     child: Text(
                       'Discard',
                       style: TextStyle(color: Colors.white),
+                      textScaler: TextScaler.linear(0.8),
+
                     ),
                   ),
                 ),

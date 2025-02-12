@@ -1,4 +1,5 @@
 // RecordButton.dart
+import 'package:flutter/material.dart';
 import 'package:socialverse/export.dart';
 
 class RecordButton extends StatefulWidget {
@@ -23,6 +24,9 @@ class _RecordButtonState extends State<RecordButton> {
             if (__ .isVideoRecord) {
               await __.stopRecording();
               __.isRecordingLocked=false;
+            }else if(__.videoController==null){
+              __.shouldStartRecording=true;
+              await __.startRecording();
             }
           },
           child: CircularPercentIndicator(
@@ -63,7 +67,8 @@ class _RecordButtonState extends State<RecordButton> {
                     color: Colors.white,
                   ),
                 ),
-                Container(
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 200),
                   height: 18,
                   width: 18,
                   decoration: BoxDecoration(
