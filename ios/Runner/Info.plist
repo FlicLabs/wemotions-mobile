@@ -56,6 +56,9 @@
 	<string>WeMotions will like to have access to your microphone for recording audio in videos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>WeMotions will like to have access to your photo library for profile photo upload</string>
+	<key>NSUserInterfaceStyle</key>
+   	<string>WeMotions will like to have access to your brightness settings</string>
+
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

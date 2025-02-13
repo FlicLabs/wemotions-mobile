@@ -49,22 +49,116 @@ class FirebaseMessagingService {
     }
   }
 
-  fetchActivity() async {
-    print('${API.endpoint}${API.notification}');
+
+  Future<Response> fetchActivity({int? page=null, int? page_size = null}) async {
+    String url;
+    if(page==null || page_size==null){
+      url='${API.endpoint}${API.notification}';
+    }else{
+      url='${API.endpoint}${API.notification}?page=$page&page_size=$page_size';
+    }
+
+    print(url);
+
     try {
       Response response = await dio.get(
-        '${API.endpoint}${API.notification}',
+        url,
         options: Options(
           headers: {'Flic-Token': token ?? ''},
         ),
       );
+
       //print(response.statusCode);
       // print(response.data);
+
       return response;
+
     } on DioError catch (e) {
+
       print(e.response?.statusCode);
       print(e.response?.data);
-      return (e.response);
+
+      if (e.response?.statusCode == 401) {
+        throw e.response?.data['message'];
+      }
+
+      throw 'Something went wrong';
     }
   }
+
+
+  Future<Response> readNotification(String postId)async{
+    print('${API.endpoint}${API.notification}');
+
+    var data={
+      "notification_id": postId
+    };
+
+    try{
+      Response response = await dio.put(
+        '${API.endpoint}${API.notification}',
+        data: data,
+        options: Options(
+          headers: {'Flic-Token': token ?? ''},
+        ),
+      );
+
+      //print(response.statusCode);
+      // print(response.data);
+
+      return response;
+
+    }on DioError catch(e){
+      print(e.response?.statusCode);
+      print(e.response?.data);
+      if(e.response?.statusCode==403){
+        if(e.response?.data['message']=='Unauthorized access'){
+          throw "You Can't Read this Message";
+        }
+      }else if (e.response?.statusCode == 401) {
+        throw e.response?.data['message'];
+      }
+
+      throw 'Something went wrong';
+    }
+  }
+
+
+  Future<Response> deleteNotification(int postId)async{
+    print('${API.endpoint}${API.notification}');
+
+    var data={
+      "notification_id": postId
+    };
+
+    try{
+      Response response = await dio.delete(
+        '${API.endpoint}${API.notification}',
+        data: data,
+        options: Options(
+          headers: {'Flic-Token': token ?? ''},
+        ),
+      );
+
+      //print(response.statusCode);
+      // print(response.data);
+
+      return response;
+
+    }on DioError catch(e){
+      print(e.response?.statusCode);
+      print(e.response?.data);
+      if(e.response?.statusCode==404){
+        if(e.response?.data['message']=='Unauthorized access'){
+          throw "You Can't Delete this Message";
+        }
+
+      }else if (e.response?.statusCode == 401) {
+        throw e.response?.data['message'];
+      }
+
+      throw 'Something went wrong';
+    }
+  }
+
 }

@@ -19,6 +19,7 @@ class _WeMotionsState extends State<WeMotions> {
     fetchFeed();
     fetchProfile();
     // fetchSubverse();
+    // initNotifications();
     fetchActivity();
   }
 

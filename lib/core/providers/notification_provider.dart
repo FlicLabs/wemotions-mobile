@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:socialverse/core/domain/models/payload_model.dart';
 import 'package:socialverse/export.dart';
 import 'package:dio/dio.dart';
@@ -8,6 +10,8 @@ enum NotificationType { push, local }
 
 class NotificationProvider extends ChangeNotifier {
   final _service = FirebaseMessagingService();
+
+  // final notification = getIt<NotificationProvider>();
 
   OverlayEntry? _overlayEntry;
   Timer? _dismissTimer;
@@ -64,6 +68,7 @@ class NotificationProvider extends ChangeNotifier {
     _dismissTimer?.cancel();
     _dismissTimer = Timer(Duration(seconds: 6), dismiss);
   }
+
 
   toggleFollowing(int index) {
     HapticFeedback.mediumImpact();
@@ -131,12 +136,52 @@ class NotificationProvider extends ChangeNotifier {
   void handleNotification(RemoteMessage message) {}
 
   Future<void> fetchActivity() async {
-    Response response = await _service.fetchActivity();
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final notifications =
-          NotificationModel.fromJson(response.data).notifications;
-      _notifications.addAll(notifications.toList());
-      notifyListeners();
-    } else {}
+    try {
+      Response response = await _service.fetchActivity();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final notifications =
+            NotificationModel
+                .fromJson(response.data)
+                .notifications;
+        _notifications.addAll(notifications.toList());
+        notifyListeners();
+      } else {}
+    }catch (e){
+
+      final errorMessage = e.toString().replaceAll('Exception: ', '');
+
+      this.show(
+        title: errorMessage,
+        type: NotificationType.local,
+      );
+      log('$errorMessage in fetchActivity');
+    }
+  }
+
+  Future<void> deleteActivity({required int postId, bool notifyUser = false}) async{
+    try {
+      Response response = await _service.deleteNotification(postId);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if(notifyUser) {
+
+          this.show(
+            title: response.data['message'],
+            type: NotificationType.local,
+          );
+        }
+
+      } else{}
+    }catch (e){
+
+      final errorMessage = e.toString().replaceAll('Exception: ', '');
+
+      this.show(
+        title: errorMessage,
+        type: NotificationType.local,
+      );
+
+      log(errorMessage);
+
+    }
   }
 }

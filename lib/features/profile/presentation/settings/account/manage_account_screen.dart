@@ -60,14 +60,14 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
               },
               label: 'Change Password',
             ),
-            CustomListTile(
-              onTap: () {
-                // Navigator.of(context).pushNamed(
-                //   AccountInformationScreen.routeName,
-                // );
-              },
-              label: 'Blocked User',
-            ),
+            // CustomListTile(
+            //   onTap: () {
+            //     // Navigator.of(context).pushNamed(
+            //     //   AccountInformationScreen.routeName,
+            //     // );
+            //   },
+            //   label: 'Blocked User',
+            // ),
             CustomListTile(
               onTap: () {
                 Navigator.of(context).pushNamed(

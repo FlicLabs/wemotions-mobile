@@ -24,6 +24,7 @@ class _RecordButtonState extends State<RecordButton> {
             if (__ .isVideoRecord) {
               await __.stopRecording();
               __.isRecordingLocked=false;
+
             }else if(__.videoController==null){
               __.shouldStartRecording=true;
               await __.startRecording();

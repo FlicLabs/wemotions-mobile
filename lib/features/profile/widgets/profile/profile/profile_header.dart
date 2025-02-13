@@ -25,42 +25,42 @@ class ProfileHeader extends StatelessWidget {
           width20,
           GestureDetector(
             onTap: () async {
-              PermissionStatus status = await Permission.camera.request();
-              if (status.isDenied || status.isPermanentlyDenied) {
-                showDialog(
-                  context: context,
-                  builder: (context) => CustomAlertDialog(
-                    title: 'Permission Denied',
-                    action: 'Open Settings',
-                    content: 'Please allow access to camera to record videos',
-                    tap: () {
-                      openAppSettings();
-                    },
-                  ),
-                );
-              } else {
-                PermissionStatus status = await Permission.camera.request();
-                if (status.isDenied || status.isPermanentlyDenied) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => CustomAlertDialog(
-                      title: 'Permission Denied',
-                      action: 'Open Settings',
-                      content: 'Please allow access to camera to record videos',
-                      tap: () {
-                        openAppSettings();
-                      },
-                    ),
-                  );
-                } else {
-                  await availableCameras().then(
-                    (value) => Navigator.of(context).pushNamed(
-                      CameraScreen.routeName,
-                      arguments: CameraScreenArgs(cameras: value,isReply: false),
-                    ),
-                  );
-                }
-              }
+              // PermissionStatus status = await Permission.camera.request();
+              // if (status.isDenied || status.isPermanentlyDenied) {
+              //   showDialog(
+              //     context: context,
+              //     builder: (context) => CustomAlertDialog(
+              //       title: 'Permission Denied',
+              //       action: 'Open Settings',
+              //       content: 'Please allow access to camera to record videos',
+              //       tap: () {
+              //         openAppSettings();
+              //       },
+              //     ),
+              //   );
+              // } else {
+              //   PermissionStatus status = await Permission.camera.request();
+              //   if (status.isDenied || status.isPermanentlyDenied) {
+              //     showDialog(
+              //       context: context,
+              //       builder: (context) => CustomAlertDialog(
+              //         title: 'Permission Denied',
+              //         action: 'Open Settings',
+              //         content: 'Please allow access to camera to record videos',
+              //         tap: () {
+              //           openAppSettings();
+              //         },
+              //       ),
+              //     );
+              //   } else {
+              //     await availableCameras().then(
+              //       (value) => Navigator.of(context).pushNamed(
+              //         CameraScreen.routeName,
+              //         arguments: CameraScreenArgs(cameras: value,isReply: false),
+              //       ),
+              //     );
+              //   }
+              // }
             },
             child: SvgPicture.asset(
               AppAsset.icadd,

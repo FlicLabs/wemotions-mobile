@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/return_code.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 import 'package:socialverse/export.dart';
 
 class CameraProvider extends ChangeNotifier {
@@ -194,6 +195,8 @@ class CameraProvider extends ChangeNotifier {
     }
   }
 
+  double? _originalBrightness;
+
   bool _isVideoRecord = false;
   bool get isVideoRecord => _isVideoRecord;
 
@@ -247,6 +250,17 @@ class CameraProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  bool _isRearCamera = false;
+  bool get isRearCamera => _isRearCamera;
+
+  set isRearCamera(bool value) {
+    if(_isRearCamera!=value){
+      _isRearCamera = value;
+      notifyListeners();
+    }
+  }
+
 
 
   bool _isLongPressed = false;
@@ -386,6 +400,7 @@ class CameraProvider extends ChangeNotifier {
 
       _isCameraFlashOn = false;
 
+
       // Fetch min and max zoom levels
       _minZoomLevel = await _cameraController!.getMinZoomLevel();
       _maxZoomLevel = await _cameraController!.getMaxZoomLevel();
@@ -465,9 +480,6 @@ class CameraProvider extends ChangeNotifier {
 
     progressReset();
 
-    if (_isCameraFlashOn) {
-      await setFlashMode(_isCameraFlashOn); // This will restore appropriate flash mode
-    }
 
     stopRecordingTimer();
 
@@ -481,7 +493,7 @@ class CameraProvider extends ChangeNotifier {
       } catch (e) {
         log('Error stopping video recording: $e');
       }
-      _recordingCompleted = true;
+
     } else {
       try {
         XFile? recordedVideo = await _cameraController!.stopVideoRecording();
@@ -494,7 +506,11 @@ class CameraProvider extends ChangeNotifier {
         log('Error stopping video recording during flip: $e');
       }
     }
+    _recordingCompleted = true;
     _isRecording=false;
+    if (_isCameraFlashOn) {
+      await setFlashMode(_isCameraFlashOn); // This will restore appropriate flash mode
+    }
   }
 
   /// Handles recording progress
@@ -558,7 +574,17 @@ class CameraProvider extends ChangeNotifier {
     // Prevent flip if already in progress
     if (!_isCameraReady || _isCameraFlip) return;
 
+    // turning flash off if in use
+
+
+    if(_isCameraFlashOn) {
+      await toggleFlash();
+
+    }
+
     _isCameraFlip = true;
+
+
 
     try {
       if (_isCameraReady) {
@@ -633,6 +659,7 @@ class CameraProvider extends ChangeNotifier {
 
         try {
           await _cameraController!.initialize();
+          _isRearCamera=!_isRearCamera;
           _isCameraReady = true;
 
           // Fetch min and max zoom levels
@@ -725,6 +752,8 @@ class CameraProvider extends ChangeNotifier {
 
     if(_isRecording) return;
 
+    if(_isCameraFlashOn) await toggleFlash();
+
 
     // Cancel timers first
     _recordingTimer?.cancel();
@@ -757,6 +786,7 @@ class CameraProvider extends ChangeNotifier {
 
     // Comprehensive reset of camera state
     _isCameraReady = false;
+    _isRearCamera = false;
     shouldStartRecording = false;
     _isThroughSingleTap = false;
     _isRecordingLocked = false;
@@ -799,10 +829,16 @@ class CameraProvider extends ChangeNotifier {
       return;
     }
 
+    log('Rear Camera: $_isRearCamera');
+
     try {
       _isCameraFlashOn = !_isCameraFlashOn;
 
-      if (_isVideoRecord || _isRecording) {
+      if(!_isRearCamera){
+        await frontFlash(_isCameraFlashOn);
+      }
+
+      if ((_isRearCamera)) {
         // Use torch mode for video recording
         await _cameraController!.setFlashMode(
             _isCameraFlashOn ? FlashMode.torch : FlashMode.off
@@ -838,6 +874,14 @@ class CameraProvider extends ChangeNotifier {
     if (!_isCameraReady || _cameraController == null) return;
 
     try {
+
+      if(_recordingCompleted && _isCameraFlashOn){
+        // await frontFlash(_isCameraFlashOn);
+        await toggleFlash();
+        notifyListeners();
+        return;
+      }
+
       _isCameraFlashOn = enabled;
 
       if (_isVideoRecord || _isRecording) {
@@ -856,6 +900,22 @@ class CameraProvider extends ChangeNotifier {
       _isCameraFlashOn = false;
       notifyListeners();
     }
+  }
+
+  Future<void> frontFlash(bool isFlashOn) async{
+    if(!isFlashOn) {
+      log("Original Brightness: $_originalBrightness");
+      await ScreenBrightness().setScreenBrightness(_originalBrightness!);
+      return;
+    }
+
+    _originalBrightness = await ScreenBrightness().current;
+
+    await ScreenBrightness().setScreenBrightness(1.0);
+
+    await Future.delayed(Duration(milliseconds: 300));
+
+
   }
 
   @override

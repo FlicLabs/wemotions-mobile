@@ -36,6 +36,7 @@ dependencies:
   line_icons: ^2.0.1
 
   camera: ^0.11.0
+  screen_brightness:
   ffmpeg_kit_flutter: ^6.0.3
 
   lottie: ^2.2.0

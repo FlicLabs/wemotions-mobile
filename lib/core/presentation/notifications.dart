@@ -93,26 +93,27 @@ class ActivityScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               children: NotificationGroup.values.map((group) {
-                final groupTitle =
-                    group == NotificationGroup.today ? "Today" : "Older";
+                final groupTitle = group == NotificationGroup.today ? "Today" : "Older";
                 final notifications = groupedNotifications[group] ?? [];
                 if (notifications.isEmpty) return SizedBox.shrink();
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      groupTitle,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontSize: 18,
-                          ),
-                    ),
-                    const SizedBox(height: 10),
-                    ...notifications.map((notification) {
-                      return _buildNotificationTile(
-                          context, notification, profile, home, user, __);
-                    }).toList(),
-                  ],
+                return Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        groupTitle,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontSize: 18,
+                            ),
+                      ),
+                      const SizedBox(height: 10),
+                      ...notifications.map((notification) {
+                        return _buildNotificationTile(
+                            context, notification, profile, home, user, __);
+                      }).toList(),
+                    ],
+                  ),
                 );
               }).toList(),
             ),
