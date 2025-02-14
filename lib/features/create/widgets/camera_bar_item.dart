@@ -1,9 +1,13 @@
 import 'package:socialverse/export.dart';
 
 class CameraBarItem extends StatelessWidget {
-  const CameraBarItem(
-      {Key? key, required this.onTap, required this.label, required this.icon, required this.iconColor})
-      : super(key: key);
+  const CameraBarItem({
+    Key? key,
+    required this.onTap,
+    required this.label,
+    required this.icon,
+    required this.iconColor,
+  }) : super(key: key);
 
   final VoidCallback onTap;
   final String label;
@@ -12,31 +16,29 @@ class CameraBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CameraProvider>(
-      builder: (_, __, ___) {
-        return Column(
-          children: [
-            InkWell(
-              onTap: onTap,
-              child: Container(
-                decoration: BoxDecoration(
-                ),
-                // padding: const EdgeInsets.all(10),
-                child: SvgPicture.asset(
-                  icon,
-                  height: 25,
-                  color: iconColor,
-                ),
-              ),
+    return Column(
+      children: [
+        InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8), // Adds subtle tap feedback
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 40, minWidth: 40), // Better tap area
+            child: SvgPicture.asset(
+              icon,
+              height: 25,
+              color: iconColor,
             ),
-            height5,
-            Text(
-              label,
-              style: AppTextStyle.normalRegular10.copyWith(color: Colors.white),
-            ),
-          ],
-        );
-      },
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          label,
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.copyWith(color: Colors.white, fontSize: 10),
+        ),
+      ],
     );
   }
 }
