@@ -14,7 +14,7 @@ class NameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
-      builder: (_, __, ___) {
+      builder: (context, authProvider, _) {
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -26,45 +26,33 @@ class NameScreen extends StatelessWidget {
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Form(
-                  key: __.nameFK,
+                  key: authProvider.nameFK,
                   child: Column(
                     children: [
                       AuthTextFormField(
                         keyboardType: TextInputType.name,
                         autofocus: true,
                         hintText: 'First Name',
-                        controller: __.first_name,
-                        validator: (String? v) {
-                          if (v!.isNotEmpty) {
-                            return null;
-                          } else {
-                            return 'Please enter your first name';
-                          }
-                        },
+                        controller: authProvider.first_name,
+                        validator: (String? v) =>
+                            (v == null || v.isEmpty) ? 'Please enter your first name' : null,
                       ),
                       height10,
                       AuthTextFormField(
                         keyboardType: TextInputType.name,
                         hintText: 'Surname',
-                        controller: __.last_name,
-                        validator: (String? v) {
-                          if (v!.isNotEmpty) {
-                            return null;
-                          } else {
-                            return 'Please enter your surname';
-                          }
-                        },
+                        controller: authProvider.last_name,
+                        validator: (String? v) =>
+                            (v == null || v.isEmpty) ? 'Please enter your surname' : null,
                       ),
                       height20,
                       AuthButton(
                         title: 'Continue',
                         onTap: () {
-                          if (__.nameFK.currentState!.validate()) {
-                            Navigator.of(context).pushNamed(
-                              EmailScreen.routeName,
-                            );
+                          if (authProvider.nameFK.currentState!.validate()) {
+                            Navigator.of(context).pushNamed(EmailScreen.routeName);
                           }
                         },
                       ),
@@ -79,3 +67,4 @@ class NameScreen extends StatelessWidget {
     );
   }
 }
+
