@@ -1,32 +1,74 @@
-class Users {
-  Users({
+import 'package:equatable/equatable.dart';
+
+class Users extends Equatable {
+  final bool isFollowing;
+  final String username;
+  final String firstName;
+  final String lastName;
+  final String profilePictureUrl;
+
+  const Users({
     required this.isFollowing,
     required this.username,
     required this.firstName,
     required this.lastName,
     required this.profilePictureUrl,
   });
-  late bool isFollowing;
-  late final String username;
-  late final String firstName;
-  late final String lastName;
-  late final String profilePictureUrl;
 
-  Users.fromJson(Map<String, dynamic> json) {
-    isFollowing = json['is_following'];
-    username = json['username'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    profilePictureUrl = json['profile_picture_url'] ?? '';
+  /// Default empty instance
+  static const empty = Users(
+    isFollowing: false,
+    username: '',
+    firstName: '',
+    lastName: '',
+    profilePictureUrl: '',
+  );
+
+  /// Factory constructor for safer JSON parsing
+  factory Users.fromJson(Map<String, dynamic> json) {
+    return Users(
+      isFollowing: json['is_following'] ?? false,
+      username: json['username'] ?? '',
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      profilePictureUrl: json['profile_picture_url'] ?? '',
+    );
   }
 
+  /// Converts the object to JSON format
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['is_following'] = isFollowing;
-    _data['username'] = username;
-    _data['first_name'] = firstName;
-    _data['last_name'] = lastName;
-    _data['profile_picture_url'] = profilePictureUrl;
-    return _data;
+    return {
+      'is_following': isFollowing,
+      'username': username,
+      'first_name': firstName,
+      'last_name': lastName,
+      'profile_picture_url': profilePictureUrl,
+    };
   }
+
+  /// Allows partial updates without recreating the whole object
+  Users copyWith({
+    bool? isFollowing,
+    String? username,
+    String? firstName,
+    String? lastName,
+    String? profilePictureUrl,
+  }) {
+    return Users(
+      isFollowing: isFollowing ?? this.isFollowing,
+      username: username ?? this.username,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
+    );
+  }
+
+  @override
+  List<Object> get props => [
+        isFollowing,
+        username,
+        firstName,
+        lastName,
+        profilePictureUrl,
+      ];
 }
