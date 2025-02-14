@@ -1,40 +1,47 @@
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
+import 'package:flutter/foundation.dart'; // For debugPrint
 
 class EditSubverseService {
-  Dio dio = new Dio();
+  final Dio _dio = Dio();
 
-  updateDescription(Map data, int id) async {
+  Future<int?> updateDescription(Map<String, dynamic> data, int id) async {
     try {
-      print('${API.endpoint}${API.categories}/$id');
-      Response response = await dio.put(
-        '${API.endpoint}${API.categories}/$id',
+      final String url = '${API.endpoint}${API.categories}/$id';
+      debugPrint('Updating description: $url');
+
+      Response response = await _dio.put(
+        url,
         data: data,
         options: Options(headers: {'Flic-Token': token ?? ''}),
       );
-      // print(response.statusCode);
-      // print(response.data);
       return response.statusCode;
+    } on DioException catch (e) {
+      debugPrint('DioError (updateDescription): ${e.message}');
+      return null;
     } catch (e) {
-      print(e);
-      return (e);
+      debugPrint('Unexpected Error (updateDescription): $e');
+      return null;
     }
   }
 
-  uploadImage(dynamic data, int id) async {
+  Future<int?> uploadImage(dynamic data, int id) async {
     try {
-      print('${API.endpoint}${API.categories}/$id/image');
-      Response response = await dio.post(
-        '${API.endpoint}${API.categories}/$id/image',
+      final String url = '${API.endpoint}${API.categories}/$id/image';
+      debugPrint('Uploading image: $url');
+
+      Response response = await _dio.post(
+        url,
         data: data,
         options: Options(headers: {'Flic-Token': token ?? ''}),
       );
-      // print(response.statusCode);
-      // print(response.data);
       return response.statusCode;
+    } on DioException catch (e) {
+      debugPrint('DioError (uploadImage): ${e.message}');
+      return null;
     } catch (e) {
-      print(e);
-      return (e);
+      debugPrint('Unexpected Error (uploadImage): $e');
+      return null;
     }
   }
 }
