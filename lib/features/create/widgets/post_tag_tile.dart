@@ -7,9 +7,9 @@ class PostTagTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<PostProvider>(
-      builder: (_, __, ___) {
+      builder: (context, postProvider, child) {
         return GestureDetector(
-          onTap: (){
+          onTap: () {
             showModalBottomSheet(
               isScrollControlled: true,
               context: context,
@@ -19,19 +19,16 @@ class PostTagTile extends StatelessWidget {
                   topRight: Radius.circular(30.0),
                 ),
               ),
-              builder: (context) {
-                return TagPeopleWidget();
-              },
+              builder: (_) => const TagPeopleWidget(),
             ).whenComplete(() {
-              __.searched_users.clear();
-              __.searchController.clear();
+              postProvider.searched_users.clear();
+              postProvider.searchController.clear();
             });
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SvgPicture.asset(
                     AppAsset.ictaguser,
@@ -40,7 +37,7 @@ class PostTagTile extends StatelessWidget {
                     color: Theme.of(context).focusColor,
                     fit: BoxFit.cover,
                   ),
-                width5,
+                  const SizedBox(width: 5),
                   Text(
                     'Tag people',
                     style: Theme.of(context).textTheme.displayMedium,
@@ -49,19 +46,18 @@ class PostTagTile extends StatelessWidget {
               ),
               Row(
                 children: [
-                  if(__.selected_users.isNotEmpty)...[
-                    if(__.selected_users.length > 1)...[
-                      Text(__.selected_users.length.toString()+" people")
-                    ]else...[
-                      Text(__.selected_users.first.username)
-                    ]
-                  ],
-                  Icon(
-                        Icons.arrow_forward_ios_rounded
-                            ,
-                      color: Theme.of(context).focusColor,
-                      size: 16,
+                  if (postProvider.selected_users.isNotEmpty)
+                    Text(
+                      postProvider.selected_users.length > 1
+                          ? '${postProvider.selected_users.length} people'
+                          : postProvider.selected_users.first.username,
                     ),
+                  const SizedBox(width: 5),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: Theme.of(context).focusColor,
+                    size: 16,
+                  ),
                 ],
               ),
             ],
