@@ -4,17 +4,19 @@ class DescBar extends StatelessWidget {
   const DescBar({
     Key? key,
     this.onTap,
-    this.controller,
+    required this.controller, // Ensures controller is always passed
     this.onChanged,
+    this.hintText = 'Enter description...', // Default hint text
   }) : super(key: key);
 
   final VoidCallback? onTap;
-  final TextEditingController? controller;
+  final TextEditingController controller;
   final void Function(String)? onChanged;
+  final String hintText;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: cs().height(context) / 5,
       width: cs().width(context) / 1.65,
       child: TextField(
@@ -27,29 +29,17 @@ class DescBar extends StatelessWidget {
         textAlign: TextAlign.start,
         onTap: onTap,
         decoration: textFormFieldDecoration.copyWith(
-          hintText: '',
+          hintText: hintText,
           fillColor: Theme.of(context).hoverColor,
-          hintStyle: AppTextStyle.displaySmall.copyWith(
-            color: Theme.of(context).indicatorColor,
-          ),
-          errorBorder: OutlineInputBorder(
+          hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).hintColor,
+              ),
+          border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: Colors.transparent),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: Colors.transparent),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: Colors.transparent),
-          ),
-          disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: Colors.transparent),
+            borderSide: BorderSide.none,
           ),
         ),
-        style: Theme.of(context).textTheme.displayMedium,
+        style: Theme.of(context).textTheme.bodyMedium,
         onChanged: onChanged,
       ),
     );
