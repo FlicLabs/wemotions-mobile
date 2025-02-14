@@ -14,9 +14,11 @@ class PostTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: cs().height(context) / 5,
-      width: cs().width(context),
+    final size = MediaQuery.of(context).size;
+
+    return SizedBox(
+      height: size.height / 5,
+      width: size.width,
       child: TextFormField(
         expands: true,
         maxLines: null,
@@ -32,44 +34,28 @@ class PostTextFormField extends StatelessWidget {
           hintStyle: AppTextStyle.displaySmall.copyWith(
             color: Colors.grey.shade500,
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFF7C7C7C)),
-          ),
-          disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFF7C7C7C)),
-          ),
-          // Error style
-          // errorStyle: TextStyle(
-          //     color: Colors.transparent, // Hide default error message
-          //     fontSize: 0,
-          //     height: 0// Set font size to 0 to hide
-          // ),
-          errorStyle:
-              Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 12,color: Colors.red),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFA858F4)),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.red.shade600),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.red.shade600),
-          ),
+          enabledBorder: _borderStyle(const Color(0xFF7C7C7C)),
+          disabledBorder: _borderStyle(const Color(0xFF7C7C7C)),
+          focusedBorder: _borderStyle(const Color(0xFFA858F4)),
+          errorBorder: _borderStyle(Colors.red.shade600),
+          focusedErrorBorder: _borderStyle(Colors.red.shade600),
+          errorStyle: Theme.of(context)
+              .textTheme
+              .displayMedium
+              ?.copyWith(fontSize: 12, color: Colors.red),
         ),
-        // style: Theme.of(context).textTheme.displayMedium,
         onChanged: onChanged,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'Please enter a caption';
-          }
-          return null;
-        },
+        validator: (value) => (value == null || value.trim().isEmpty)
+            ? 'Please enter a caption'
+            : null,
       ),
+    );
+  }
+
+  OutlineInputBorder _borderStyle(Color color) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: color),
     );
   }
 }
