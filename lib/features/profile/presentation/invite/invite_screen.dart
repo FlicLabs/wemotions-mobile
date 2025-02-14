@@ -10,7 +10,7 @@ class InviteScreen extends StatelessWidget {
   static Route route() {
     return CupertinoPageRoute(
       settings: const RouteSettings(name: routeName),
-      builder: (context) => InviteScreen(),
+      builder: (context) => const InviteScreen(),
     );
   }
 
@@ -20,10 +20,9 @@ class InviteScreen extends StatelessWidget {
     final notification = Provider.of<NotificationProvider>(context);
 
     final filteredContacts = invite.contacts
-        .where((contact) =>
-            contact.displayName != null &&
-            contact.displayName!.trim().isNotEmpty)
+        .where((contact) => contact.displayName?.trim().isNotEmpty ?? false)
         .toList();
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -35,8 +34,8 @@ class InviteScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              width: cs().width(context),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
               height: 100,
               child: ListView(
                 shrinkWrap: true,
@@ -44,97 +43,45 @@ class InviteScreen extends StatelessWidget {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       width20,
-                      ShareToItem(
-                        label: 'Email',
-                        color: Theme.of(context).hintColor,
-                        icon: UniconsLine.fast_mail,
-                        onTap: () async {
-                          HapticFeedback.mediumImpact();
-                          launchUrl(
-                            Uri(
-                              scheme: 'mailto',
-                              queryParameters: {
-                                '': '',
-                                'body': invite_text + invite.link,
-                              },
-                            ),
-                          );
-                        },
-                      ),
+                      _buildShareItem(context, 'Email', Theme.of(context).hintColor, UniconsLine.fast_mail, () {
+                        HapticFeedback.mediumImpact();
+                        launchUrl(Uri(
+                          scheme: 'mailto',
+                          queryParameters: {'body': invite_text + invite.link},
+                        ));
+                      }),
                       width20,
-                      ShareToItem(
-                        label: 'SMS',
-                        color: Colors.green,
-                        icon: UniconsLine.comment_message,
-                        onTap: () async {
-                          HapticFeedback.mediumImpact();
-                          Uri sms = Uri(
-                            scheme: 'sms',
-                            queryParameters: {
-                              '': '',
-                              'body': invite_text + invite.link
-                            },
-                          );
-                          launchUrl(
-                            Uri.parse(sms.toString().replaceAll('+', '%20')),
-                          );
-                        },
-                      ),
+                      _buildShareItem(context, 'SMS', Colors.green, UniconsLine.comment_message, () {
+                        HapticFeedback.mediumImpact();
+                        Uri sms = Uri(
+                          scheme: 'sms',
+                          queryParameters: {'body': invite_text + invite.link},
+                        );
+                        launchUrl(Uri.parse(sms.toString().replaceAll('+', '%20')));
+                      }),
                       width20,
-                      ShareToItem(
-                        label: 'Copy link',
-                        color: Colors.yellow,
-                        icon: UniconsLine.link,
-                        onTap: () {
-                          Clipboard.setData(
-                            ClipboardData(text: invite.link),
-                          ).then((_) {
-                            notification.show(
-                              title: 'Link copied!',
-                              type: NotificationType.local,
-                            );
-                          });
-                        },
-                      ),
+                      _buildShareItem(context, 'Copy link', Colors.yellow, UniconsLine.link, () {
+                        Clipboard.setData(ClipboardData(text: invite.link)).then((_) {
+                          notification.show(title: 'Link copied!', type: NotificationType.local);
+                        });
+                      }),
                       width20,
-                      ShareToItem(
-                        label: 'WhatsApp',
-                        color: Colors.green.shade700,
-                        icon: LineIcons.whatSApp,
-                        onTap: () {
-                          HapticFeedback.mediumImpact();
-                          launchUrl(
-                            Uri.parse(whatsapp_invite + invite.link),
-                            mode: LaunchMode.externalNonBrowserApplication,
-                          );
-                        },
-                      ),
+                      _buildShareItem(context, 'WhatsApp', Colors.green.shade700, LineIcons.whatSApp, () {
+                        HapticFeedback.mediumImpact();
+                        launchUrl(Uri.parse(whatsapp_invite + invite.link), mode: LaunchMode.externalNonBrowserApplication);
+                      }),
                       width20,
-                      ShareToItem(
-                        label: 'Telegram',
-                        color: Colors.blue.shade700,
-                        icon: LineIcons.telegram,
-                        onTap: () {
-                          HapticFeedback.mediumImpact();
-                          launchUrl(
-                            Uri.parse(telegram_1 + invite.link + invite_text),
-                            mode: LaunchMode.externalNonBrowserApplication,
-                          );
-                        },
-                      ),
+                      _buildShareItem(context, 'Telegram', Colors.blue.shade700, LineIcons.telegram, () {
+                        HapticFeedback.mediumImpact();
+                        launchUrl(Uri.parse(telegram_1 + invite.link + invite_text), mode: LaunchMode.externalNonBrowserApplication);
+                      }),
                       width20,
-                      ShareToItem(
-                        label: 'More',
-                        color: Colors.red,
-                        icon: LineIcons.verticalEllipsis,
-                        onTap: () {
-                          HapticFeedback.mediumImpact();
-                          Share.share(invite_text + invite.link);
-                        },
-                      ),
+                      _buildShareItem(context, 'More', Colors.red, LineIcons.verticalEllipsis, () {
+                        HapticFeedback.mediumImpact();
+                        Share.share(invite_text + invite.link);
+                      }),
                       width20,
                     ],
                   ),
@@ -143,34 +90,34 @@ class InviteScreen extends StatelessWidget {
             ),
             ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-                bottom: 40,
-              ),
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               itemCount: filteredContacts.length,
               itemBuilder: (context, index) {
                 final contact = filteredContacts[index];
                 final displayName = contact.displayName ?? '';
 
-                print('First Name: $displayName');
-
                 return InviteItem(
                   index: index,
                   imageUrl: 'contact.avatar',
-                  telephone: contact.phones!.isNotEmpty
-                      ? contact.phones![0].value
-                      : '',
+                  telephone: contact.phones?.isNotEmpty == true ? contact.phones![0].value : '',
                   firstName: displayName,
-                  // lastName: lastName,
                 );
               },
-            )
+            ),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildShareItem(BuildContext context, String label, Color color, IconData icon, VoidCallback onTap) {
+    return ShareToItem(
+      label: label,
+      color: color,
+      icon: icon,
+      onTap: onTap,
+    );
+  }
 }
+
