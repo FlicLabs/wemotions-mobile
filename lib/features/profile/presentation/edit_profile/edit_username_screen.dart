@@ -10,6 +10,7 @@ class EditUsernameScreenArgs {
 
 class EditUsernameScreen extends StatelessWidget {
   static const String routeName = '/edit-username';
+  
   const EditUsernameScreen({
     Key? key,
     required this.username,
@@ -29,9 +30,9 @@ class EditUsernameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<EditProfileProvider>(
-      builder: (_, __, ___) {
-        final profile = Provider.of<ProfileProvider>(context);
-        String updatedUsername = username;
+      builder: (_, provider, ___) {
+        final profile = Provider.of<ProfileProvider>(context, listen: false);
+
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -40,23 +41,28 @@ class EditUsernameScreen extends StatelessWidget {
               textAlign: TextAlign.start,
             ),
             actions: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  right: 20,
-                  top: 20,
+              if (!provider.loading)
+                Padding(
+                  padding: const EdgeInsets.only(right: 20, top: 20),
+                  child: SaveButton(
+                    onTap: () async {
+                      if (provider.username.text.trim().isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Username cannot be empty')),
+                        );
+                        return;
+                      }
+                      final response = await provider.updateUsername(context);
+                      if (response == 200 || response == 201) {
+                        await profile.fetchProfile(
+                          username: prefs_username ?? '',
+                          forceRefresh: true,
+                        );
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
                 ),
-                child: SaveButton(
-                  onTap: () async {
-                    final response = await __.updateUsername(context);
-                    if (response == 200 || response == 201) {
-                      await profile.fetchProfile(
-                        username: prefs_username!,
-                        forceRefresh: true,
-                      );
-                    }
-                  },
-                ),
-              )
             ],
           ),
           body: SingleChildScrollView(
@@ -65,35 +71,27 @@ class EditUsernameScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ProfileAlignedText(
-                    title: 'Username',
-                  ),
+                  ProfileAlignedText(title: 'Username'),
                   height5,
                   ProfileTextFormField(
-                    controller: __.username,
-                    hintText: 'First Name',
+                    controller: provider.username,
+                    hintText: 'Username', // Fixed hint text
                     autofocus: true,
                     enabled: true,
                     onChanged: (val) {
-                      updatedUsername = val;
-                      if (username == updatedUsername) {
-                        __.edited = false;
-                      } else {
-                        __.edited = true;
-                      }
+                      provider.edited = username.trim() != val.trim();
                     },
                   ),
                   height20,
                   Text(
-                    'Your username ${username} cannot be changed at the moment, this feature will be available soon.',
+                    'Your username cannot be changed at the moment. This feature will be available soon.',
                     style: Theme.of(context)
                         .textTheme
                         .displaySmall!
                         .copyWith(fontSize: 15),
                   ),
-                  height20,
-                  height20,
-                  if (__.loading) ...[
+                  height40,
+                  if (provider.loading)
                     Center(
                       child: SizedBox(
                         height: 50,
@@ -101,7 +99,6 @@ class EditUsernameScreen extends StatelessWidget {
                         child: CustomProgressIndicator(),
                       ),
                     ),
-                  ],
                 ],
               ),
             ),
@@ -111,3 +108,4 @@ class EditUsernameScreen extends StatelessWidget {
     );
   }
 }
+
