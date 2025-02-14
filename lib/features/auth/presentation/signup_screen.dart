@@ -1,4 +1,7 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:socialverse/export.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -16,7 +19,7 @@ class SignUpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final node = FocusScope.of(context);
     return Consumer<AuthProvider>(
-      builder: (_, __, ___) {
+      builder: (_, authProvider, ___) {
         return Scaffold(
           body: Container(
             height: MediaQuery.of(context).size.height,
@@ -29,15 +32,15 @@ class SignUpScreen extends StatelessWidget {
                       Expanded(
                         child: SingleChildScrollView(
                           child: Padding(
-                            padding: EdgeInsets.only(left: 20, right: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 20),
                             child: Form(
-                              key: __.signUpFormKey,
+                              key: authProvider.signUpFormKey,
                               child: Column(
                                 children: [
                                   Image.asset(
                                     AppAsset.icon,
                                     height: 180,
-                                    width: cs().width(context) / 2,
+                                    width: MediaQuery.of(context).size.width / 2,
                                   ),
                                   height10,
                                   Text(
@@ -60,225 +63,18 @@ class SignUpScreen extends StatelessWidget {
                                     ),
                                   ),
                                   height15,
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            AuthAlignedText(
-                                                title: 'First Name'),
-                                            height5,
-                                            TextFormField(
-                                              controller: __.first_name,
-                                              keyboardType: TextInputType.name,
-                                              onFieldSubmitted: (_) =>
-                                                  node.unfocus(),
-                                              decoration:
-                                                  textFormFieldDecoration
-                                                      .copyWith(
-                                                hintText: 'First Name',
-                                                fillColor: Colors.white,
-                                              ),
-                                              style: TextStyle(
-                                                fontFamily: 'sofia',
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black,
-                                              ),
-                                              // validator: (String? v) {
-                                              //   if (v!.isValidName) {
-                                              //     return null;
-                                              //   } else {
-                                              //     return 'Please enter your first name';
-                                              //   }
-                                              // },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      width20,
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            AuthAlignedText(title: 'Last Name'),
-                                            height5,
-                                            TextFormField(
-                                              controller: __.last_name,
-                                              keyboardType: TextInputType.name,
-                                              onFieldSubmitted: (_) =>
-                                                  node.unfocus(),
-                                              decoration:
-                                                  textFormFieldDecoration
-                                                      .copyWith(
-                                                hintText: 'Last Name',
-                                                fillColor: Colors.white,
-                                              ),
-                                              style: TextStyle(
-                                                fontFamily: 'sofia',
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black,
-                                              ),
-                                              // validator: (String? v) {
-                                              //   if (v!.isValidName) {
-                                              //     return null;
-                                              //   } else {
-                                              //     return 'Please enter your last name';
-                                              //   }
-                                              // },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  _buildNameFields(authProvider, node),
                                   height15,
-                                  AuthAlignedText(title: 'Username'),
-                                  height5,
-                                  TextFormField(
-                                    controller: __.username,
-                                    keyboardType: TextInputType.name,
-                                    onFieldSubmitted: (_) => node.unfocus(),
-                                    maxLength: 30,
-                                    decoration:
-                                        textFormFieldDecoration.copyWith(
-                                      hintText: 'Username',
-                                      counterStyle:
-                                          TextStyle(color: Colors.white),
-                                      fillColor: Colors.white,
-                                      prefixIcon: Padding(
-                                        padding: const EdgeInsets.all(14),
-                                        child: SvgPicture.asset(
-                                          AppAsset.icuser,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                    style: TextStyle(
-                                      fontFamily: 'sofia',
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black,
-                                    ),
-                                    validator: (String? v) {
-                                      // TODO: Reduce regex strictness for usernames
-                                      if (v!.isValidUserName) {
-                                        return null;
-                                      } else if (v.isEmpty) {
-                                        return 'Please enter your username';
-                                      } else {
-                                        return 'Invalid username: only letters, numbers, and underscores allowed';
-                                      }
-                                    },
-                                  ),
+                                  _buildUsernameField(authProvider, node),
                                   height15,
-                                  AuthAlignedText(title: 'Email'),
-                                  height5,
-                                  TextFormField(
-                                    controller: __.email,
-                                    keyboardType: TextInputType.emailAddress,
-                                    onFieldSubmitted: (_) => node.unfocus(),
-                                    decoration:
-                                        textFormFieldDecoration.copyWith(
-                                      hintText: 'Email',
-                                      fillColor: Colors.white,
-                                      prefixIcon: Padding(
-                                        padding: const EdgeInsets.all(14),
-                                        child: SvgPicture.asset(
-                                          AppAsset.icemail,
-                                        ),
-                                      ),
-                                    ),
-                                    style: TextStyle(
-                                      fontFamily: 'sofia',
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black,
-                                    ),
-                                    validator: (String? v) {
-                                      if (v!.isValidEmail) {
-                                        return null;
-                                      } else {
-                                        return 'Please enter your email';
-                                      }
-                                    },
-                                  ),
+                                  _buildEmailField(authProvider, node),
                                   height15,
-                                  AuthAlignedText(title: 'Password'),
-                                  height5,
-                                  TextFormField(
-                                    controller: __.password,
-                                    obscureText: __.obscureText,
-                                    keyboardType: TextInputType.visiblePassword,
-                                    onFieldSubmitted: (_) => node.unfocus(),
-                                    decoration:
-                                        textFormFieldDecoration.copyWith(
-                                      hintText: 'Password',
-                                      fillColor: Colors.white,
-                                      prefixIcon: Padding(
-                                        padding: const EdgeInsets.all(14),
-                                        child: SvgPicture.asset(
-                                          AppAsset.icprivacy,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      suffixIcon: GestureDetector(
-                                        onTap: () {
-                                          __.obscureText = !__.obscureText;
-                                        },
-                                        child: AuthObscureIcon(),
-                                      ),
-                                    ),
-                                    style: TextStyle(
-                                      fontFamily: 'sofia',
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black,
-                                    ),
-                                    validator: (String? v) {
-                                      if (v!.isValidPassword) {
-                                        return null;
-                                      } else {
-                                        return 'Please enter your password';
-                                      }
-                                    },
-                                  ),
+                                  _buildPasswordField(authProvider, node),
                                   Terms(),
-                                  if (__.registeredAuthStatus ==
-                                      AuthStatus.Registering) ...[
-                                    SizedBox(
-                                      height: 45,
-                                      width: 45,
-                                      child: CustomProgressIndicator(
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  ],
-                                  if (__.registeredAuthStatus !=
-                                      AuthStatus.Registering) ...[
-                                    CustomTextButton(
-                                      buttonColor: __.checkValue
-                                          ? Colors.white
-                                          : Colors.grey,
-                                      onTap: __.checkValue
-                                          ? () async {
-                                              log('tap');
-                                              if (__.signUpFormKey.currentState!
-                                                  .validate()) {
-                                                await __.register(
-                                                  firstName: __.first_name.text,
-                                                  lastName: __.last_name.text,
-                                                  username: __.username.text,
-                                                  password:
-                                                      'auth.password.text',
-                                                  email: __.email.text,
-                                                );
-                                              }
-                                            }
-                                          : null,
-                                      title: 'Sign Up',
-                                    ),
-                                  ],
+                                  height15,
+                                  authProvider.registeredAuthStatus == AuthStatus.Registering
+                                      ? CustomProgressIndicator(color: Colors.white)
+                                      : _buildSignUpButton(authProvider),
                                   height20,
                                 ],
                               ),
@@ -288,25 +84,150 @@ class SignUpScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Positioned(
-                    top: Platform.isAndroid ? 5 : 0,
-                    left: 15,
-                    child: SafeArea(
-                      child: CustomIconButton(
-                        icon: Icons.arrow_back_ios_new_rounded,
-                        borderRadius: 12,
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                  ),
+                  _buildBackButton(context),
                 ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildNameFields(AuthProvider authProvider, FocusScopeNode node) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            children: [
+              AuthAlignedText(title: 'First Name'),
+              height5,
+              _buildTextField(authProvider.first_name, 'First Name', node),
+            ],
+          ),
+        ),
+        width20,
+        Expanded(
+          child: Column(
+            children: [
+              AuthAlignedText(title: 'Last Name'),
+              height5,
+              _buildTextField(authProvider.last_name, 'Last Name', node),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUsernameField(AuthProvider authProvider, FocusScopeNode node) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AuthAlignedText(title: 'Username'),
+        height5,
+        TextFormField(
+          controller: authProvider.username,
+          keyboardType: TextInputType.name,
+          onFieldSubmitted: (_) => node.unfocus(),
+          maxLength: 30,
+          decoration: textFormFieldDecoration.copyWith(
+            hintText: 'Username',
+            counterStyle: TextStyle(color: Colors.white),
+            fillColor: Colors.white,
+            prefixIcon: Padding(
+              padding: const EdgeInsets.all(14),
+              child: SvgPicture.asset(AppAsset.icuser, color: Colors.black),
+            ),
+          ),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: Colors.black),
+          validator: (v) => v!.isValidUserName ? null : 'Invalid username',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmailField(AuthProvider authProvider, FocusScopeNode node) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AuthAlignedText(title: 'Email'),
+        height5,
+        _buildTextField(authProvider.email, 'Email', node, AppAsset.icemail),
+      ],
+    );
+  }
+
+  Widget _buildPasswordField(AuthProvider authProvider, FocusScopeNode node) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AuthAlignedText(title: 'Password'),
+        height5,
+        TextFormField(
+          controller: authProvider.password,
+          obscureText: authProvider.obscureText,
+          keyboardType: TextInputType.visiblePassword,
+          onFieldSubmitted: (_) => node.unfocus(),
+          decoration: textFormFieldDecoration.copyWith(
+            hintText: 'Password',
+            fillColor: Colors.white,
+            prefixIcon: Padding(
+              padding: const EdgeInsets.all(14),
+              child: SvgPicture.asset(AppAsset.icprivacy, color: Colors.black),
+            ),
+            suffixIcon: GestureDetector(
+              onTap: () {
+                authProvider.togglePasswordVisibility();
+              },
+              child: AuthObscureIcon(),
+            ),
+          ),
+          validator: (v) => v!.isValidPassword ? null : 'Invalid password',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String hint, FocusScopeNode node, [String? icon]) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: TextInputType.text,
+      onFieldSubmitted: (_) => node.unfocus(),
+      decoration: textFormFieldDecoration.copyWith(
+        hintText: hint,
+        fillColor: Colors.white,
+        prefixIcon: icon != null ? Padding(
+          padding: const EdgeInsets.all(14),
+          child: SvgPicture.asset(icon),
+        ) : null,
+      ),
+    );
+  }
+
+  Widget _buildSignUpButton(AuthProvider authProvider) {
+    return CustomTextButton(
+      buttonColor: authProvider.checkValue ? Colors.white : Colors.grey,
+      onTap: authProvider.checkValue ? () async {
+        if (authProvider.signUpFormKey.currentState!.validate()) {
+          await authProvider.register();
+        }
+      } : null,
+      title: 'Sign Up',
+    );
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+    return Positioned(
+      top: 5,
+      left: 15,
+      child: SafeArea(
+        child: CustomIconButton(
+          icon: Icons.arrow_back_ios_new_rounded,
+          borderRadius: 12,
+          onTap: () => Navigator.pop(context),
+        ),
+      ),
     );
   }
 }
