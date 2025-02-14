@@ -6,32 +6,39 @@ class CircularButton extends StatelessWidget {
     required this.onTap,
     this.onLongPress,
     this.onLongPressEnd,
+    this.color, 
+    this.icon = Icons.arrow_forward_ios_rounded, 
+    this.iconSize = 17, 
   }) : super(key: key);
 
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
   final void Function(LongPressEndDetails)? onLongPressEnd;
+  final Color? color;
+  final IconData icon;
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: GestureDetector(
-        onTap: onTap,
-        onLongPress: onLongPress,
-        onLongPressEnd: onLongPressEnd,
+    return GestureDetector(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      onLongPressEnd: onLongPressEnd,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
         child: Align(
           alignment: Alignment.centerRight,
           child: Container(
             height: 32,
             width: 32,
-            decoration: BoxDecoration(shape: BoxShape.circle,
-              color: Color(0xFFA858F4),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color ?? Theme.of(context).colorScheme.primary,
             ),
-            child: const Icon(
-              Icons.arrow_forward_ios_rounded,
+            child: Icon(
+              icon,
               color: Colors.white,
-              size: 17,
+              size: iconSize,
             ),
           ),
         ),
