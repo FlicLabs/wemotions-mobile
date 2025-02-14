@@ -14,8 +14,9 @@ class EmailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notification = getIt<NotificationProvider>();
+
     return Consumer<AuthProvider>(
-      builder: (_, __, ___) {
+      builder: (context, authProvider, _) {
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -27,58 +28,54 @@ class EmailScreen extends StatelessWidget {
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Form(
-                  key: __.emailFK,
+                  key: authProvider.emailFK,
                   child: Column(
                     children: [
                       AuthTextFormField(
                         keyboardType: TextInputType.emailAddress,
                         hintText: 'Email',
-                        controller: __.email,
+                        controller: authProvider.email,
                         validator: (String? v) {
-                          if (v!.isValidEmail) {
-                            return null;
-                          } else {
+                          if (v == null || v.isEmpty) {
+                            return 'Email is required';
+                          } else if (!v.isValidEmail) {
                             return 'Please enter a valid email';
                           }
+                          return null;
                         },
                       ),
                       height10,
                       Terms(),
                       height10,
-                      if (__.registeredAuthStatus ==
-                          AuthStatus.Registering) ...[
-                        SizedBox(
-                          height: 45,
-                          width: 45,
-                          child: CustomProgressIndicator(
-                            color: Colors.white,
-                          ),
-                        )
-                      ],
-                      if (__.registeredAuthStatus !=
-                          AuthStatus.Registering) ...[
-                        AuthButton(
-                          onTap: __.checkValue
-                              ? () async {
-                                  if (__.emailFK.currentState!.validate()) {
-                                    await __.register(
-                                      firstName: __.first_name.text.trim(),
-                                      lastName: __.last_name.text.trim(),
-                                      username: __.username.text.trim(),
-                                      password: __.password.text.trim(),
-                                      email: __.email.text.trim(),
-                                    );
-                                  }
-                                }
-                              : () => notification.show(
-                                    title: 'Please agree to the terms',
-                                    type: NotificationType.local,
-                                  ),
-                          title: 'Sign Up',
-                        ),
-                      ],
+                      authProvider.registeredAuthStatus == AuthStatus.Registering
+                          ? const SizedBox(
+                              height: 45,
+                              width: 45,
+                              child: CustomProgressIndicator(color: Colors.white),
+                            )
+                          : AuthButton(
+                              onTap: authProvider.checkValue &&
+                                      authProvider.registeredAuthStatus != AuthStatus.Registering
+                                  ? () async {
+                                      if (authProvider.emailFK.currentState!.validate()) {
+                                        await authProvider.register(
+                                          firstName: authProvider.first_name.text.trim(),
+                                          lastName: authProvider.last_name.text.trim(),
+                                          username: authProvider.username.text.trim(),
+                                          password: authProvider.password.text.trim(),
+                                          email: authProvider.email.text.trim(),
+                                        );
+                                      }
+                                    }
+                                  : () => notification.show(
+                                        title: 'Please agree to the terms',
+                                        type: NotificationType.local,
+                                      ),
+                              title: 'Sign Up',
+                              isDisabled: authProvider.registeredAuthStatus == AuthStatus.Registering,
+                            ),
                     ],
                   ),
                 ),
