@@ -1,22 +1,24 @@
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
+import 'package:flutter/foundation.dart'; // For debugPrint
 
 class CreateSubverseService {
-  Dio dio = new Dio();
+  final Dio _dio = Dio();
 
-  createSubverse(Map data) async {
+  Future<int?> createSubverse(Map<String, dynamic> data) async {
     try {
-      Response response = await dio.post(
+      Response response = await _dio.post(
         '${API.endpoint}${API.categories}',
         data: data,
         options: Options(headers: {'Flic-Token': token ?? ''}),
       );
-      // print(response.statusCode);
-      // print(response.data);
       return response.statusCode;
+    } on DioException catch (e) {
+      debugPrint('DioError: ${e.message}'); // Better debugging
+      return null;
     } catch (e) {
-      print(e);
-      return (e);
+      debugPrint('Unexpected Error: $e');
+      return null;
     }
   }
 }
