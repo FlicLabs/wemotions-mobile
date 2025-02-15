@@ -5,65 +5,35 @@ class MainVideoProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<VideoProvider>(
-      builder: (_, __, ___) {
-        final Duration duration = __.videoController(__.index)!.value.duration;
+    return Selector<VideoProvider, VideoPlayerController?>(
+      selector: (_, provider) => provider.videoController(provider.index),
+      builder: (_, videoController, __) {
+        if (videoController == null || !videoController.value.isInitialized) {
+          return const SizedBox.shrink();
+        }
+
+        final videoValue = videoController.value;
+        final duration = videoValue.duration;
+
+        // Hide the progress bar for very short videos.
+        if (duration <= const Duration(seconds: 20)) {
+          return const SizedBox.shrink();
+        }
+
         return Positioned(
           bottom: -1,
           child: SizedBox(
             height: 10,
             width: MediaQuery.of(context).size.width,
-            child: duration > Duration(seconds: 20)
-                ? Stack(
-                    children: [
-                      VideoProgressIndicator(
-                        __.videoController(__.index)!,
-                        allowScrubbing: true,
-                        colors: VideoProgressColors(
-                          bufferedColor: Colors.white,
-                          backgroundColor: Colors.white,
-                          playedColor: Theme.of(context).hintColor,
-                        ),
-                      ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(top: 3.8),
-                      //   child: SliderTheme(
-                      //     data: SliderTheme.of(context).copyWith(
-                      //       overlayShape: SliderComponentShape.noOverlay,
-                      //       activeTrackColor: Theme.of(context).hintColor,
-                      //       inactiveTrackColor: Colors.transparent,
-                      //       thumbColor: Theme.of(context).hintColor,
-                      //       trackShape: RectangularSliderTrackShape(),
-                      //       thumbShape:
-                      //           RoundSliderThumbShape(enabledThumbRadius: 5.0),
-                      //     ),
-                      //     child: Slider(
-                      //       value: __
-                      //           .videoController(__.index)!
-                      //           .value
-                      //           .position
-                      //           .inMilliseconds
-                      //           .toDouble(),
-                      //       onChanged: (double value) {
-                      //         __.videoController(__.index)!.seekTo(
-                      //             Duration(milliseconds: value.toInt()));
-                      //       },
-                      //       min: 0.0,
-                      //       max: __
-                      //           .videoController(__.index)!
-                      //           .value
-                      //           .duration
-                      //           .inMilliseconds
-                      //           .toDouble(),
-                      //       activeColor: Colors.transparent,
-                      //       inactiveColor: Colors.transparent,
-                      //       thumbColor: Theme.of(context).hintColor,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  )
-                : shrink,
+            child: VideoProgressIndicator(
+              videoController,
+              allowScrubbing: true,
+              colors: VideoProgressColors(
+                bufferedColor: Colors.white,
+                backgroundColor: Colors.white,
+                playedColor: Theme.of(context).hintColor,
+              ),
+            ),
           ),
         );
       },
