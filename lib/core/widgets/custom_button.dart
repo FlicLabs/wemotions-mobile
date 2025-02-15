@@ -1,81 +1,39 @@
-import 'package:socialverse/export.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomIconButton extends StatelessWidget {
   final VoidCallback onTap;
-  final double? padding;
-  final double? borderRadius;
+  final double padding;
+  final double borderRadius;
   final Color? buttonColor;
   final Color? iconColor;
-  final IconData icon;
-  final double? iconHeight;
-  final Widget? child;
-  CustomIconButton({
+  final double iconSize;
+  final Widget icon;
+
+  const CustomIconButton({
     Key? key,
     required this.icon,
     required this.onTap,
-    this.borderRadius = 0,
+    this.borderRadius = 8.0,
     this.buttonColor,
     this.iconColor,
-    this.iconHeight,
-    this.padding,
-    this.child,
+    this.iconSize = 20.0,
+    this.padding = 12.0,
   }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(padding ?? 14),
-        decoration: BoxDecoration(
-          color: buttonColor ?? Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(borderRadius ?? 12),
-        ),
-        child: child ??
-            Icon(
-              icon,
-              size: iconHeight ?? 18,
-              color: iconColor ?? Colors.white,
-            ),
-      ),
-    );
-  }
-}
-
-class SVGButton extends StatelessWidget {
-  final VoidCallback onTap;
-  final double? padding;
-  final double? borderRadius;
-  final Color? buttonColor;
-  final Color? iconColor;
-  final String icon;
-  final double? iconHeight;
-  SVGButton(
-      {Key? key,
-      required this.icon,
-      required this.onTap,
-      this.borderRadius = 0,
-      this.buttonColor,
-      this.iconColor,
-      this.iconHeight,
-      this.padding})
-      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(borderRadius),
+      splashColor: Colors.white.withOpacity(0.1),
       child: Container(
-        padding: EdgeInsets.all(padding ?? 14),
+        padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
-          color: buttonColor ?? Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(borderRadius ?? 12),
+          color: buttonColor ?? Theme.of(context).primaryColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(borderRadius),
         ),
-        child: SvgPicture.asset(
-          icon,
-          height: iconHeight ?? 18,
-          color: iconColor ?? Colors.white,
-        ),
+        child: icon,
       ),
     );
   }
@@ -88,8 +46,9 @@ class CustomTextButton extends StatelessWidget {
   final double? width;
   final Color? buttonColor;
   final Color? textColor;
-  final double? radius;
-  final double? fontSize;
+  final double borderRadius;
+  final double fontSize;
+
   const CustomTextButton({
     Key? key,
     required this.title,
@@ -97,33 +56,34 @@ class CustomTextButton extends StatelessWidget {
     this.height,
     this.width,
     this.buttonColor,
-    this.radius,
     this.textColor,
-    this.fontSize,
+    this.borderRadius = 10.0,
+    this.fontSize = 16.0,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      style: TextButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+    return SizedBox(
+      width: width ?? MediaQuery.of(context).size.width * 0.9,
+      height: height ?? 50,
+      child: TextButton(
+        style: TextButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          foregroundColor: textColor ?? Theme.of(context).primaryColor,
+          backgroundColor: buttonColor ?? Theme.of(context).primaryColor.withOpacity(0.1),
         ),
-        foregroundColor: Colors.white,
-        backgroundColor: buttonColor ?? Colors.white,
-        fixedSize: Size(width ?? MediaQuery.of(context).size.width, 50),
-        alignment: Alignment.center,
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontWeight: FontWeight.w400,
-          color: textColor ?? Colors.black,
-          fontFamily: 'sofia',
-          fontSize: fontSize ?? 16,
+        onPressed: onTap,
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: fontSize,
+            fontWeight: FontWeight.w500,
+            color: textColor ?? Theme.of(context).primaryColor,
+          ),
         ),
       ),
-      onPressed: onTap,
     );
   }
 }
@@ -133,12 +93,10 @@ class TransparentButton extends StatelessWidget {
   final VoidCallback? onTap;
   final double? height;
   final double? width;
-  final String? image;
-  final BorderRadiusGeometry? radius;
-  final Color? color;
+  final BorderRadiusGeometry borderRadius;
+  final Color? borderColor;
   final Color? textColor;
   final Gradient? gradient;
-  final bool isBorder;
 
   const TransparentButton({
     Key? key,
@@ -146,93 +104,38 @@ class TransparentButton extends StatelessWidget {
     required this.onTap,
     this.height,
     this.width,
-    this.image,
-    this.radius,
-    this.color,
-    this.textColor,
-    this.gradient,
-    this.isBorder = true,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        height: height ?? 50,
-        width: width ?? cs().width(context),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: color ?? Theme.of(context).indicatorColor,
-          borderRadius: BorderRadius.circular(10),
-          gradient: gradient ?? null,
-          border: isBorder
-              ? Border.all(
-                  width: 1,
-                  color: Theme.of(context).indicatorColor,
-                )
-              : null,
-        ),
-        child: Center(
-          child: Text(
-            title,
-            style: AppTextStyle.bodyMedium
-                .copyWith(color: Theme.of(context).primaryColor),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class CustomTransparentButton extends StatelessWidget {
-  final String title;
-  final VoidCallback? onTap;
-  final double? height;
-  final double? width;
-  final String? image;
-  final BorderRadiusGeometry? radius;
-  final Color? color;
-  final Color? borderColor;
-  final Color? textColor;
-
-  const CustomTransparentButton({
-    Key? key,
-    required this.title,
-    required this.onTap,
-    this.height,
-    this.width,
-    this.image,
-    this.radius,
-    this.color,
+    this.borderRadius = const BorderRadius.all(Radius.circular(10.0)),
     this.borderColor,
     this.textColor,
+    this.gradient,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
+      borderRadius: borderRadius,
+      splashColor: Colors.white.withOpacity(0.2),
       child: Container(
         height: height ?? 50,
-        width: width ?? cs().width(context),
+        width: width ?? MediaQuery.of(context).size.width * 0.9,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: color ?? Theme.of(context).primaryColor,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: borderRadius,
+          gradient: gradient,
           border: Border.all(
             width: 1,
-            color: borderColor ?? Theme.of(context).indicatorColor,
+            color: borderColor ?? Theme.of(context).primaryColor.withOpacity(0.5),
           ),
         ),
-        child: Center(
-          child: Text(
-            title,
-            style: AppTextStyle.bodyLarge
-                .copyWith(color: textColor ?? Theme.of(context).indicatorColor),
-            textAlign: TextAlign.center,
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: textColor ?? Theme.of(context).primaryColor,
           ),
+          textAlign: TextAlign.center,
         ),
       ),
     );
