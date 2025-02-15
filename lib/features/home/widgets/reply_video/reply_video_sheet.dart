@@ -9,34 +9,34 @@ class ReplyActionSheet extends StatelessWidget {
     this.isCallback,
     this.isFromFeed,
     this.isFromSubverse,
-    required this.current_index,
-    required this.category_name,
-    this.category_desc,
-    required this.category_count,
-    required this.category_id,
-    required this.category_photo,
+    required this.currentIndex,
+    required this.categoryName,
+    this.categoryDesc,
+    required this.categoryCount,
+    required this.categoryId,
+    required this.categoryPhoto,
     this.isSubscribedRequired,
     required this.title,
-    required this.video_link,
+    required this.videoLink,
     this.isFromProfile,
-    this.video_id,
+    this.videoId,
   }) : super(key: key);
 
   final bool isUser;
   final bool? isCallback;
   final bool? isFromFeed;
   final bool? isFromSubverse;
-  final int current_index;
-  final String category_name;
-  final String? category_desc;
-  final int category_count;
-  final int category_id;
-  final String category_photo;
+  final int currentIndex;
+  final String categoryName;
+  final String? categoryDesc;
+  final int categoryCount;
+  final int categoryId;
+  final String categoryPhoto;
   final bool? isSubscribedRequired;
   final String title;
-  final String video_link;
+  final String videoLink;
   final bool? isFromProfile;
-  final int? video_id;
+  final int? videoId;
 
   @override
   Widget build(BuildContext context) {
@@ -44,13 +44,9 @@ class ReplyActionSheet extends StatelessWidget {
     final home = Provider.of<HomeProvider>(context);
     final profile = Provider.of<ProfileProvider>(context);
     final notification = getIt<NotificationProvider>();
-    bool isAdmin = isFromFeed == true ||
-        isFromSubverse == true &&
-            (prefs_username == 'afrobeezy' || prefs_username == 'jack');
 
-    print(
-      'isAdmin: $isAdmin, isFromSubverse: $isFromSubverse, isFromProfile: $isFromProfile',
-    );
+    bool isAdmin = (isFromFeed == true || isFromSubverse == true) &&
+        (prefs_username == 'afrobeezy' || prefs_username == 'jack');
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -62,115 +58,143 @@ class ReplyActionSheet extends StatelessWidget {
         color: Theme.of(context).canvasColor,
       ),
       child: SizedBox(
-        // height: 200,
         width: cs().width(context),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (isFromFeed == true) ...[
-              ActionSheetItem(
-                icon: Icons.speed,
-                label: 'Set video Speed',
-                onTap: () {
-                  HapticFeedback.mediumImpact();
-                  Navigator.pop(context);
-                  showModalBottomSheet(
-                    context: context,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
-                      ),
-                    ),
-                    builder: (context) {
-                      return PlaybackSheet();
-                    },
-                  );
-                },
-              ),
-              height20,
-            ],
-            ActionSheetItem(
-              svg: AppAsset.iccopy_link,
-              label: 'Copy link',
-              onTap: () async {
-                await Clipboard.setData(ClipboardData(text: video_link));
-                Navigator.of(context).pop();
-              },
-            ),
-            height20,
-            ActionSheetItem(
-              svg: AppAsset.icdownload,
-              label: 'Download',
-              onTap: () {
-                HapticFeedback.mediumImpact();
-                video.saveVideo(
-                  videoUrl: video_link,
-                  title: title,
-                );
-                Navigator.of(context).pop();
-              },
-            ),
-            height20,
-            // if (isUser == true && isFromFeed == true) height20,
-            if (isUser == true && isFromFeed == true) ...[
-              ActionSheetItem(
-                svg: AppAsset.icreport,
-                label: 'Report',
-                onTap: () async {
-                  HapticFeedback.mediumImpact();
-                  int index = current_index + 1;
-                  Navigator.pop(context);
-                  home.createIsolate(token: token);
-                  home.animateToPage(index);
-                  await home.removeController(current_index);
-                  List<List<Posts>> post_list = home.posts;
-                  post_list.removeAt(current_index);
-                  home.posts = post_list;
-                  notification.show(
-                    title: 'Post has been reported',
-                    type: NotificationType.local,
-                  );
-                },
-              ),
-              height20,
-            ],
-
-            // Profile
-            if (isFromProfile == true) ...[
-              ActionSheetItem(
-                icon: Icons.delete_outline,
-                label: 'Delete',
-                onTap: () async {
-                  HapticFeedback.mediumImpact();
-                  final response = await home.deletePost(id: video_id!);
-                  if (response == 200 || response == 201) {
-                    List<Posts> post_list = profile.posts;
-                    post_list.removeAt(current_index);
-                    profile.posts = post_list;
-                    profile.fetchProfile(username: prefs_username!);
-                    Navigator.of(context, rootNavigator: true)
-                      ..pop()
-                      ..pop();
-                    notification.show(
-                      title: 'Post has been deleted',
-                      type: NotificationType.local,
-                    );
-                  } else {
-                    Navigator.pop(context);
-                    notification.show(
-                      title: 'Something went wrong',
-                      type: NotificationType.local,
-                    );
-                  }
-                },
-              ),
-            ],
+            if (isFromFeed == true) _buildPlaybackSpeedItem(context),
+            _buildCopyLinkItem(),
+            _buildDownloadItem(video),
+            if (isUser && isFromFeed == true) _buildReportItem(home, notification),
+            if (isFromProfile == true) _buildDeleteItem(home, profile, notification),
           ],
         ),
       ),
     );
   }
+
+  /// **Playback Speed Option**
+  Widget _buildPlaybackSpeedItem(BuildContext context) {
+    return Column(
+      children: [
+        ActionSheetItem(
+          icon: Icons.speed,
+          label: 'Set video Speed',
+          onTap: () {
+            HapticFeedback.mediumImpact();
+            Navigator.pop(context);
+            showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
+                ),
+              ),
+              builder: (context) => PlaybackSheet(),
+            );
+          },
+        ),
+        height20,
+      ],
+    );
+  }
+
+  /// **Copy Link Option**
+  Widget _buildCopyLinkItem() {
+    return Column(
+      children: [
+        ActionSheetItem(
+          svg: AppAsset.iccopy_link,
+          label: 'Copy link',
+          onTap: () async {
+            await Clipboard.setData(ClipboardData(text: videoLink));
+            Navigator.of(context).pop();
+          },
+        ),
+        height20,
+      ],
+    );
+  }
+
+  /// **Download Option**
+  Widget _buildDownloadItem(VideoProvider video) {
+    return Column(
+      children: [
+        ActionSheetItem(
+          svg: AppAsset.icdownload,
+          label: 'Download',
+          onTap: () {
+            HapticFeedback.mediumImpact();
+            video.saveVideo(videoUrl: videoLink, title: title);
+            Navigator.of(context).pop();
+          },
+        ),
+        height20,
+      ],
+    );
+  }
+
+  /// **Report Option**
+  Widget _buildReportItem(HomeProvider home, NotificationProvider notification) {
+    return Column(
+      children: [
+        ActionSheetItem(
+          svg: AppAsset.icreport,
+          label: 'Report',
+          onTap: () async {
+            HapticFeedback.mediumImpact();
+            int nextIndex = currentIndex + 1;
+            Navigator.pop(context);
+            home.createIsolate(token: token);
+            home.animateToPage(nextIndex);
+
+            /// Ensure safe removal without modifying provider state directly
+            home.posts = List.from(home.posts)..removeAt(currentIndex);
+
+            notification.show(
+              title: 'Post has been reported',
+              type: NotificationType.local,
+            );
+          },
+        ),
+        height20,
+      ],
+    );
+  }
+
+  /// **Delete Option for Profile**
+  Widget _buildDeleteItem(HomeProvider home, ProfileProvider profile, NotificationProvider notification) {
+    return ActionSheetItem(
+      icon: Icons.delete_outline,
+      label: 'Delete',
+      onTap: () async {
+        HapticFeedback.mediumImpact();
+        final response = await home.deletePost(id: videoId!);
+        if (response == 200 || response == 201) {
+          /// Ensure safe list update
+          profile.posts = List.from(profile.posts)..removeAt(currentIndex);
+          profile.fetchProfile(username: prefs_username!);
+
+          /// Close all modal dialogs
+          Navigator.of(context, rootNavigator: true)
+            ..pop()
+            ..pop();
+
+          notification.show(
+            title: 'Post has been deleted',
+            type: NotificationType.local,
+          );
+        } else {
+          Navigator.pop(context);
+          notification.show(
+            title: 'Something went wrong',
+            type: NotificationType.local,
+          );
+        }
+      },
+    );
+  }
 }
+
