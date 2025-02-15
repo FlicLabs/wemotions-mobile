@@ -22,7 +22,6 @@ class SideBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final VideoProvider video = Provider.of<VideoProvider>(context);
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,
@@ -30,14 +29,12 @@ class SideBarItem extends StatelessWidget {
       onTapDown: onTapDown,
       child: Column(
         children: [
-          Container(
-            child: icon,
-            decoration: BoxDecoration(color: Colors.transparent),
-          ),
-          height2,
+          icon,
+          const SizedBox(height: 2), // Instead of height2 for clarity
           text,
         ],
       ),
     );
   }
 }
+
