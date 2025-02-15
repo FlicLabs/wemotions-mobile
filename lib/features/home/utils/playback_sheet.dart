@@ -1,11 +1,14 @@
 import 'package:socialverse/export.dart';
 
 class PlaybackSheet extends StatelessWidget {
+  const PlaybackSheet({Key? key}) : super(key: key);
+
+  static const List<double> _items = [0.5, 1.0, 1.5, 2.0];
+
   @override
   Widget build(BuildContext context) {
-    List<double> _items = [0.5, 1.0, 1.5, 2.0];
     return Consumer<HomeProvider>(
-      builder: (_, __, ___) {
+      builder: (_, homeProvider, __) {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           decoration: BoxDecoration(
@@ -18,32 +21,31 @@ class PlaybackSheet extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              for (int i = 0; i < _items.length; i++)
-                ListTile(
+              ..._items.map(
+                (speed) => ListTile(
                   contentPadding: EdgeInsets.zero,
                   minVerticalPadding: 0,
                   title: Text(
-                    _items[i] == 1.0 ? 'Normal' : '${_items[i]}x',
+                    speed == 1.0 ? 'Normal' : '${speed}x',
                     style: Theme.of(context)
                         .textTheme
                         .bodyMedium!
                         .copyWith(fontSize: 15),
                   ),
-                  trailing: Radio(
-                    value: _items[i],
+                  trailing: Radio<double>(
+                    value: speed,
                     activeColor: Theme.of(context).indicatorColor,
-                    groupValue: __.playback_speed,
+                    groupValue: homeProvider.playback_speed,
                     onChanged: (value) {
-                      HapticFeedback.mediumImpact();
-                      __.playback_speed = value!;
-                      __.setPlaybackSpeed(__.playback_speed);
-
-                      navKey.currentState!
-                        ..pop()
-                        ..pop();
+                      if (value != null) {
+                        HapticFeedback.mediumImpact();
+                        homeProvider.setPlaybackSpeed(value);
+                        navKey.currentState?.pop();
+                      }
                     },
                   ),
                 ),
+              ),
               height20,
             ],
           ),
@@ -52,3 +54,4 @@ class PlaybackSheet extends StatelessWidget {
     );
   }
 }
+
