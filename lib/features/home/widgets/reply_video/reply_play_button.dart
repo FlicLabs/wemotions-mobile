@@ -5,20 +5,21 @@ class ReplyPlayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ReplyProvider>(
-      builder: (_, __, ___) {
-        return __.videoController(__.index)!.value.isInitialized
-            ? __.videoController(__.index)!.value.isPlaying
-                ? shrink
-                : Center(
-                    child: Icon(
-                      Icons.play_arrow_rounded,
-                      color: Colors.white.withOpacity(0.4),
-                      size: 65,
-                    ),
-                  )
-            : shrink;
-      },
-    );
+    final replyProvider = context.watch<ReplyProvider>();
+    final controller = replyProvider.videoController(replyProvider.index);
+
+    if (controller == null || !controller.value.isInitialized) {
+      return shrink;
+    }
+
+    return controller.value.isPlaying
+        ? shrink
+        : Center(
+            child: Icon(
+              Icons.play_arrow_rounded,
+              color: Colors.white.withOpacity(0.4),
+              size: 65,
+            ),
+          );
   }
 }
