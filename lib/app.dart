@@ -11,71 +11,72 @@ class _WeMotionsState extends State<WeMotions> {
   @override
   void initState() {
     super.initState();
-    fetchFeed();
-    fetchProfile();
-    fetchSubverse();
-    fetchActivity();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    await Future.wait([
+      fetchFeed(),
+      fetchProfile(),
+      fetchSubverse(),
+      fetchActivity(),
+    ]);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Move the theme provider dependency here
     print(
-        'the theme provider data is: ${Provider.of<ThemeProvider>(context).getTheme()}');
+        'Theme Provider: ${context.read<ThemeProvider>().getTheme()}');
   }
 
-  fetchFeed() async {
-    final home = Provider.of<HomeProvider>(context, listen: false);
-    final reply = Provider.of<ReplyProvider>(context, listen: false);
+  Future<void> fetchFeed() async {
+    final home = context.read<HomeProvider>();
+    final reply = context.read<ReplyProvider>();
 
     await home.createIsolate(token: token);
     await home.getVotings();
+
     home.fetchingReplies = true;
-    await home.createReplyIsolate(0, token: token);
-    reply.posts = home.posts[0].sublist(1);
-    if (home.posts.length > 1) {
-      await home.createReplyIsolate(1, token: token);
-    }
-    if (home.posts.length > 2) {
-      await home.createReplyIsolate(2, token: token);
-    }
+    if (home.posts.isNotEmpty) {
+      await home.createReplyIsolate(0, token: token);
+      reply.posts = home.posts[0].sublist(1);
 
-    // reply.posts = home.posts[0].sublist(1);
-  }
-
-  fetchProfile() async {
-    if (prefs_username == null || prefs_username != '') {
-      final profile = Provider.of<ProfileProvider>(context, listen: false);
-      await profile.fetchProfile(username: prefs_username!);
+      for (int i = 1; i < home.posts.length; i++) {
+        await home.createReplyIsolate(i, token: token);
+      }
     }
   }
 
-  fetchSubverse() async {
-    final subverse = Provider.of<SearchProvider>(context, listen: false);
-    if (logged_in!) {
-      await subverse.getSubversePosts();
+  Future<void> fetchProfile() async {
+    if (prefs_username?.isNotEmpty == true) {
+      await context.read<ProfileProvider>().fetchProfile(username: prefs_username!);
     }
   }
 
-  fetchActivity() async {
-    if (logged_in!) {
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .fetchActivity();
+  Future<void> fetchSubverse() async {
+    if (logged_in ?? false) {
+      await context.read<SearchProvider>().getSubversePosts();
     }
   }
 
-  initNotifications() {
-    Provider.of<NotificationProvider>(context, listen: false).initialize();
+  Future<void> fetchActivity() async {
+    if (logged_in ?? false) {
+      await context.read<NotificationProvider>().fetchActivity();
+    }
   }
 
+  void initNotifications() {
+    context.read<NotificationProvider>().initialize();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeProvider>(context);
     return Consumer<ThemeProvider>(
-      builder: (_, __, ___) {
+      builder: (_, themeProvider, __) {
         return MaterialApp(
-          themeMode: __.selectedThemeMode,
-          theme: theme.getTheme(),
+          themeMode: themeProvider.selectedThemeMode,
+          theme: themeProvider.getTheme(),
           darkTheme: Constants.darkTheme,
           navigatorKey: navKey,
           scaffoldMessengerKey: rootKey,
@@ -83,12 +84,10 @@ class _WeMotionsState extends State<WeMotions> {
           debugShowCheckedModeBanner: false,
           onGenerateRoute: CustomRouter.onGenerateRoute,
           initialRoute: BottomNavBar.routeName,
-          // onboard == false
-          //     ? WelcomeScreen.routeName
-          //     : BottomNavBar.routeName,
-          routes: {BottomNavBar.routeName: (context) => BottomNavBar()},
+          routes: {BottomNavBar.routeName: (context) => const BottomNavBar()},
         );
       },
     );
   }
 }
+
