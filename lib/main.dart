@@ -8,70 +8,67 @@ Future<void> _backgroundHandler(RemoteMessage message) async {
 final rootKey = GlobalKey<ScaffoldMessengerState>();
 final navKey = GlobalKey<NavigatorState>();
 
-String? prefs_username;
-String? prefs_email;
-String? pincode;
-String? token;
-bool? logged_in;
+late SharedPreferences prefs;
+
+String? prefsUsername, prefsEmail, pincode, token, prefsAddress, prefsNetwork;
+bool? loggedIn, onboard, gcMember, isFirstExit;
 ThemeMode? themeMode;
-bool? onboard;
-bool? gc_member;
-bool? isFirstExit;
-int subverse_id = 2;
-int group_id = 1;
-String? prefs_address;
-String? prefs_network;
-SharedPreferences? prefs;
+int subverseId = 2;
+int groupId = 1;
 
 const String appGroupId = 'group.vible';
 const String iOSWidgetName = 'VibleWidgets';
 const String androidWidgetName = 'VibleWidgets';
 
 ThemeMode getThemeMode(String themeModeString) {
-  switch (themeModeString) {
-    case 'ThemeMode.light':
-      return ThemeMode.light;
-    case 'ThemeMode.dark':
-      return ThemeMode.dark;
-    case 'ThemeMode.system':
-      return ThemeMode.system;
-    default:
-      return ThemeMode.system;
-  }
+  return {
+    'ThemeMode.light': ThemeMode.light,
+    'ThemeMode.dark': ThemeMode.dark,
+    'ThemeMode.system': ThemeMode.system,
+  }[themeModeString] ?? ThemeMode.system;
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
+  try {
+    await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(_backgroundHandler);
+  } catch (e) {
+    print("Firebase initialization failed: $e");
+  }
 
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
 
-  FirebaseMessaging.onBackgroundMessage(_backgroundHandler);
   HomeWidget.setAppGroupId(appGroupId);
-
   prefs = await SharedPreferences.getInstance();
-  prefs_username = prefs?.getString('username') ?? '';
-  prefs_email = prefs?.getString('email') ?? '';
-  pincode = prefs?.getString('pincode') ?? '';
-  onboard = prefs?.getBool('onboard') ?? false;
-  isFirstExit = prefs?.getBool('exit') ?? false;
-  token = prefs?.getString('token') ?? '';  // Removed unnecessary await
-  logged_in = prefs?.getBool('logged_in') ?? false;
-  gc_member = prefs?.getBool('gc_member') ?? false;
 
+  _loadPreferences();
   NetworkDio.setDynamicHeader(endPoint: API.endpoint);
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
 
+  bool isDarkMode = themeMode == ThemeMode.dark;
+  runApp(MyApp(isDarkMode: isDarkMode));
+}
+
+void _loadPreferences() {
+  prefsUsername = prefs.getString('username') ?? '';
+  prefsEmail = prefs.getString('email') ?? '';
+  pincode = prefs.getString('pincode') ?? '';
+  onboard = prefs.getBool('onboard') ?? false;
+  isFirstExit = prefs.getBool('exit') ?? false;
+  token = prefs.getString('token') ?? '';
+  loggedIn = prefs.getBool('logged_in') ?? false;
+  gcMember = prefs.getBool('gc_member') ?? false;
+
   String mode = prefs.getString('themeMode') ?? 'ThemeMode.system';
   themeMode = getThemeMode(mode);
-  bool isDarkMode = mode == 'ThemeMode.dark';
-
-  runApp(MyApp(isDarkMode: isDarkMode));
 }
 
 class MyApp extends StatelessWidget {
@@ -92,30 +89,33 @@ class MyApp extends StatelessWidget {
   }
 
   List<ChangeNotifierProvider> _getProviders() {
-    return [
-      ChangeNotifierProvider(create: (_) => AuthProvider()),
-      ChangeNotifierProvider(create: (_) => HomeProvider()),
-      ChangeNotifierProvider(create: (_) => SearchProvider()),
-      ChangeNotifierProvider(create: (_) => VideoProvider()),
-      ChangeNotifierProvider(create: (_) => CommentProvider()),
-      ChangeNotifierProvider(create: (_) => CameraProvider()),
-      ChangeNotifierProvider(create: (_) => PostProvider()),
-      ChangeNotifierProvider(create: (_) => SettingsProvider()),
-      ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
-      ChangeNotifierProvider(create: (_) => ProfileProvider()),
-      ChangeNotifierProvider(create: (_) => UserProfileProvider()),
-      ChangeNotifierProvider(create: (_) => BottomNavBarProvider()),
-      ChangeNotifierProvider(create: (_) => ReportProvider()),
-      ChangeNotifierProvider(create: (_) => CreateSubverseProvider()),
-      ChangeNotifierProvider(create: (_) => EditSubverseProvider()),
-      ChangeNotifierProvider(create: (_) => EditProfileProvider()),
-      ChangeNotifierProvider(create: (_) => AccountProvider()),
-      ChangeNotifierProvider(create: (_) => InviteProvider()),
-      ChangeNotifierProvider(create: (_) => QrCodeProvider()),
-      ChangeNotifierProvider(create: (_) => ExitProvider()),
-      ChangeNotifierProvider(create: (_) => NotificationProvider()),
-      ChangeNotifierProvider(create: (_) => ReplyProvider()),
+    final providerList = [
+      AuthProvider(),
+      HomeProvider(),
+      SearchProvider(),
+      VideoProvider(),
+      CommentProvider(),
+      CameraProvider(),
+      PostProvider(),
+      SettingsProvider(),
+      SubscriptionProvider(),
+      ProfileProvider(),
+      UserProfileProvider(),
+      BottomNavBarProvider(),
+      ReportProvider(),
+      CreateSubverseProvider(),
+      EditSubverseProvider(),
+      EditProfileProvider(),
+      AccountProvider(),
+      InviteProvider(),
+      QrCodeProvider(),
+      ExitProvider(),
+      NotificationProvider(),
+      ReplyProvider(),
     ];
+
+    return providerList.map((provider) => ChangeNotifierProvider(create: (_) => provider)).toList();
   }
 }
+
 
