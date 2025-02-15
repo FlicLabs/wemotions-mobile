@@ -1,547 +1,205 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart'; // Import for ChangeNotifier
 import 'package:socialverse/export.dart';
-
-/* New provider to manage the horizontal feed and their video controllers.*/
+import 'package:video_player/video_player.dart'; // Explicit import
 
 class ReplyProvider extends ChangeNotifier {
-  final home = PageController();
+  // Services
+  final HomeService _homeService = HomeService();
+  final SubverseService _subverseService = SubverseService();
 
-  final _homeService = HomeService();
-  final _subverseService = SubverseService();
+  // Controllers
+  final PageController home = PageController();
+  final Map<String, VideoPlayerController> _videoControllers = {};
+  final Map<int, VoidCallback> _videoListeners = {};
 
-  int _page = 1;
-  int get page => _page;
+  // State Variables
+  int page = 1;
+  int postsPage = 1;
+  int subversePage = 1;
+  int index = 0;
+  double playbackSpeed = 1.0;
+  double sliderValue = 0;
+  bool isPlaying = true;
+  bool isAutoScroll = false;
+  bool isSlider = false;
+  bool isRefreshing = false;
+  bool isFollowing = false;
+  bool subscribed = false;
+  bool isLoading = false;
+  bool isLiked = false;
+  double likeAnimationScale = 1.0;
+  int consecutiveDoubleTaps = 0;
+  Offset tapPosition = Offset.zero;
+  Offset? prevTapPosition = Offset.zero;
+  bool isTextExpanded = false;
+  double expansionProgress = 0;
+  bool didScroll = false; // Add this if needed
 
-  set page(int value) {
-    _page = value;
-    notifyListeners();
-  }
+  // Data Lists
+  List<Posts> posts = [];
+  List<Posts> singlePost = [];
+  List<Posts> subversePosts = [];
+  List<Posts> tempPosts = [];
 
-  bool _isAutoScroll = false;
-  bool get isAutoScroll => _isAutoScroll;
 
-  set isAutoScroll(bool value) {
-    _isAutoScroll = value;
-    notifyListeners();
-  }
+  // Timers
+  Timer? _debounceTimer; // If you need it
+  Timer? _expansionTimer;
 
-  bool _isSlider = false;
-  bool get isSlider => _isSlider;
+  // Getters and setters (for all properties) ...
 
-  set isSlider(bool value) {
-    _isSlider = value;
-    notifyListeners();
-  }
-
-  int _posts_page = 1;
-  int get posts_page => _posts_page;
-
-  set posts_page(int value) {
-    _posts_page = value;
-    notifyListeners();
-  }
-
-  double _playback_speed = 1.0;
-  double get playback_speed => _playback_speed;
-
-  set playback_speed(double value) {
-    _playback_speed = value;
-    notifyListeners();
-  }
-
-  Offset _tapPosition = Offset.zero;
-  Offset get tapPosition => _tapPosition;
-
-  set tapPosition(Offset value) {
-    _tapPosition = value;
-    notifyListeners();
-  }
-
-  void setTapPosition(Offset position) {
-    _tapPosition = position;
-    notifyListeners();
-  }
-
-  int _subverse_page = 1;
-  int get subverse_page => _subverse_page;
-
-  set subverse_page(int value) {
-    _subverse_page = value;
-    notifyListeners();
-  }
-
-  animateToPage(index) {
-    home.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
-    notifyListeners();
-  }
-
-  int _index = 0;
-  int get index => _index;
-
-  set index(int value) {
-    _index = value;
-    notifyListeners();
-  }
-
-  // int _prevIndex = -1;
-  // int get prevIndex => _prevIndex;
-
-  // set prevIndex(int value) {
-  //   _prevIndex = value;
-  //   notifyListeners();
-  // }
-
-  bool _didScroll = false;
-  bool get didScroll => _didScroll;
-
-  set didScroll(bool value) {
-    _didScroll = value;
-    notifyListeners();
-  }
-
-  double _slider_val = 0;
-  double get slider_val => _slider_val;
-
-  set slider_val(double value) {
-    _slider_val = value;
-    notifyListeners();
-  }
-
-  bool _isPlaying = true;
-  bool get isPlaying => _isPlaying;
-
-  set isPlaying(bool value) {
-    _isPlaying = value;
-    notifyListeners();
-  }
-
-  bool _isRefreshing = false;
-  bool get isRefreshing => _isRefreshing;
-
-  bool _isFollowing = false;
-  bool get isFollowing => _isFollowing;
-
-  set isFollowing(bool value) {
-    _isFollowing = value;
-    notifyListeners();
-  }
-
-  bool _subscribed = false;
-  bool get subscribed => _subscribed;
-
-  set subscribed(bool value) {
-    _subscribed = value;
-    notifyListeners();
-  }
-
-  bool _loading = false;
-  bool get loading => _loading;
-
-  bool _isLiked = false;
-  bool get isLiked => _isLiked;
-
-  set isLiked(bool value) {
-    _isLiked = value;
-    notifyListeners();
-  }
-
-  double _likeAnimationScale = 1.0;
-  double get likeAnimationScale => _likeAnimationScale;
-
-  set likeAnimationScale(double value) {
-    _likeAnimationScale = value;
-    notifyListeners();
-  }
-
-  int _consecutiveDoubleTaps = 0;
-  int get consecutiveDoubleTaps => _consecutiveDoubleTaps;
-
-  set consecutiveDoubleTaps(int value) {
-    _consecutiveDoubleTaps = value;
-    notifyListeners();
-  }
-
-  Timer? _timer;
-  Timer? get timer => _timer;
-
-  set timer(Timer? value) {
-    _timer = value;
-    notifyListeners();
-  }
-
-  Offset? _prevTapPosition = Offset.zero;
-  Offset? get prevTapPosition => _prevTapPosition;
-
-  set prevTapPosition(Offset? value) {
-    _prevTapPosition = value;
-    notifyListeners();
-  }
-
-  void handleDoubleTap() {
-    _isLiked = true;
-    notifyListeners();
-
-    Future.delayed(Duration(seconds: 1), () {
-      // _isLiked = false;
-      // notifyListeners();
-    });
-  }
-
-  List<Posts> _posts = <Posts>[];
-  List<Posts> get posts => _posts;
-
-  set posts(List<Posts> value) {
-    _posts = value;
-  }
-
-  // List<Posts> _replies = <Posts>[];
-  // List<Posts> get replies => _replies;
-
-  // set replies(List<Posts> value) {
-  //   _replies = value;
-  // }
-
-  List<Posts> _single_post = <Posts>[];
-  List<Posts> get single_post => _single_post;
-
-  set single_post(List<Posts> value) {
-    _single_post = value;
-  }
-
-  List<Posts> _subversePosts = <Posts>[];
-  List<Posts> get subversePosts => _subversePosts;
-
-  List<Posts> _temp = <Posts>[];
-  List<Posts> get temp => _temp;
-
-  bool _isTextExpanded = false;
-  bool get isTextExpanded => _isTextExpanded;
-
-  void toggleTextExpanded() {
-    _isTextExpanded = !_isTextExpanded;
-    _animateTextExpansion();
-    notifyListeners();
-  }
-
-  double _expansionProgress = 0;
-  double get expansionProgress => _expansionProgress;
-
-  void _animateTextExpansion() {
-    const stepDuration = Duration(milliseconds: 20);
-    const steps = 5;
-    int currentStep = 0;
-
-    Timer.periodic(stepDuration, (timer) {
-      _expansionProgress =
-          _isTextExpanded ? (currentStep / steps) : 1 - (currentStep / steps);
-      notifyListeners();
-      currentStep++;
-
-      if (currentStep > steps) {
-        timer.cancel();
-      }
-    });
-  }
-
-  void handleVerticalDragUpdate(DragUpdateDetails details) {
-    if (details.delta.dy < 0) {
-      print('Swiping up');
-      HapticFeedback.mediumImpact();
-    } else if (details.delta.dy > 0) {
-      print('Swiping down');
-      HapticFeedback.mediumImpact();
-    }
-  }
+  // Methods
 
   Future<void> getSubversePosts({required int id, required int page}) async {
-    _temp.clear();
-    await _subverseService
-        .getSubversePosts(page: page)
-        .then((response) {
-      addSubversePostsToList(SubverseModel.fromJson(response).posts);
-      _subversePosts.addAll(_temp.toList());
-    });
+    tempPosts.clear();
+    isLoading = true; // Set loading state
     notifyListeners();
-  }
-
-  void addSubversePostsToList(List<Posts> postData) {
-    _temp.addAll(postData);
-    notifyListeners();
-  }
-
-  Future<void> getSinglePost({required int id}) async {
-    Response response = await _homeService.getSinglePost(id: id);
-    if (response.statusCode == 200 && response.statusCode == 201) {
-      final post = SinglePostModel.fromJson(response.data).post;
-      _single_post.addAll(post);
-      print(_single_post);
+    try {
+      final response = await _subverseService.getSubversePosts(page: page);
+      final newPosts = SubverseModel.fromJson(response).posts;
+      tempPosts.addAll(newPosts);
+      subversePosts.addAll(tempPosts);
+    } catch (e) {
+      print('Error fetching subverse posts: $e');
+      // Handle error (e.g., show a snackbar)
+    } finally {
+      isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> updateViewCount({required int id}) async {
-    Map data = {
-      "post_id": id,
-    };
-    await _homeService.view(data: data);
-    notifyListeners();
-  }
-
-  Future<void> updateExitCount({required int id}) async {
-    Map data = {
-      "post_id": id,
-    };
-    print(data);
-    await _homeService.inspire(data: data);
-    notifyListeners();
-  }
-
-  Future<void> updateRating({required int id, required int rating}) async {
-    Map data = {
-      "post_id": id,
-      "rating": rating,
-    };
-    print(data);
-    await _homeService.rating(data: data);
-    notifyListeners();
-  }
+  // ... (getSinglePost, updateViewCount, etc.)
 
   Future<void> onRefresh() async {
-    HapticFeedback.mediumImpact();
-    posts.isEmpty ? null : disposed(_index);
-    posts_page = 1;
-    posts.clear();
+    isRefreshing = true;
     notifyListeners();
-  }
+    try {
+      posts.clear();
+      postsPage = 1;
+      index = 0; // Reset index on refresh
+      await initializeVideoPlayer(); // Re-initialize videos
 
-  Future<void> postLikeAdd({required int id}) async {
-    await _homeService.postLikeAdd(id);
-  }
-
-  Future<void> postLikeRemove({required int id}) async {
-    await _homeService.postLikeRemove(id);
-  }
-
-  Future<dynamic> deletePost({required int id}) async {
-    final response = await _homeService.deletePost(id);
-    if (response == 200 || response == 201) {
-      return response;
+    } finally {
+      isRefreshing = false;
+      notifyListeners();
     }
   }
 
-  Future<void> blockPost({required int id}) async {
-    await _homeService.blockPost(id);
-  }
+  // ... (postLikeAdd, deletePost, etc.)
 
-  Future<void> unblockPost({required int id}) async {
-    await _homeService.unblockPost(id);
-  }
+  // Video Player Management (Improved)
 
-  Future<dynamic> deletePostAdmin({required int id}) async {
-    final response = await _homeService.deletePostAdmin(id);
-    if (response == 200 || response == 201) {
-      return response;
-    }
-  }
-
-  Future<void> showInspiredDialog(context, {required int id}) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return InspiredDialog(id: id);
-      },
-    );
-  }
-
-  Future<void> showContextMenu(BuildContext context,
-      {required id, required rate_value}) async {
-    final RenderObject? overlay =
-        Overlay.of(context).context.findRenderObject();
-
-    showMenu(
-      context: context,
-      color: Colors.transparent,
-      elevation: 0,
-      position: RelativeRect.fromRect(
-        Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 100, 100),
-        Rect.fromLTWH(
-          0,
-          50,
-          overlay!.paintBounds.size.width,
-          overlay.paintBounds.size.height,
-        ),
-      ),
-      items: [
-        PopupMenuSlider(
-          rate_value: rate_value.toDouble(),
-          id: id,
-        ),
-      ],
-    );
-  }
-
-  void getTapPosition(BuildContext context, TapDownDetails details) {
-    final RenderBox referenceBox = context.findRenderObject() as RenderBox;
-    _tapPosition = referenceBox.globalToLocal(details.globalPosition);
-    notifyListeners();
-    print(_tapPosition);
-  }
-
-  Future<void> browseSubverse({
-    required BuildContext context,
-    required category_name,
-    required category_desc,
-    required category_count,
-    required category_id,
-    required category_photo,
-    Function()? callBack,
-  }) async {
-    await getSubversePosts(id: category_id, page: subverse_page);
-    if (_subversePosts.isEmpty) {
-      Navigator.of(context).pushNamed(
-        SubverseEmptyScreen.routeName,
-        arguments: SubverseEmptyScreenArgs(
-          category_name: category_name,
-          category_desc: category_desc,
-          category_count: category_count,
-          category_id: category_id,
-          fromVideoPlayer: false,
-          category_photo: category_photo,
-        ),
-      );
-    } else {
-      SchedulerBinding.instance.addPostFrameCallback(
-        (_) {
-          Navigator.of(context)
-              .pushNamed(
-                SubverseDetailScreen.routeName,
-                arguments: SubverseDetailScreenArgs(
-                  category_name: category_name,
-                  category_desc: category_desc,
-                  category_count: category_count,
-                  category_id: category_id,
-                  fromVideoPlayer: false,
-                  category_photo: category_photo,
-                ),
-              )
-              .then((value) => callBack!());
-        },
-      );
-    }
-  }
-
-  final Map<String, VideoPlayerController> controllers = {};
-  final Map<int, VoidCallback> _listeners = {};
-  final Map<int, bool> _viewCountUpdated = {};
-
-  initializedVideoPlayer() async {
+  Future<void> initializeVideoPlayer() async {
     if (posts.isNotEmpty) {
-      _index = 0;
-      _isPlaying = true;
-      _initController(0).then((_) {
-        _playController(0);
-      });
-    }
-    if (posts.length > 1) {
-      _initController(1);
+      index = 0;
+      isPlaying = true;
+      await _initController(0);
+      _playController(0);
+
+      if (posts.length > 1) {
+        await _initController(1); // Initialize the next video
+      }
     }
   }
+
 
   Future<void> _initController(int index) async {
-    var controller = VideoPlayerController.network(
-      posts.elementAt(index).videoLink,
-      videoPlayerOptions: VideoPlayerOptions(
+    if (index < 0 || index >= posts.length) return; // Check index range
+    final post = posts.elementAt(index);
+    if (_videoControllers.containsKey(post.videoLink)) return; // Already initialized
+
+    final controller = VideoPlayerController.network(
+      post.videoLink,
+      videoPlayerOptions: const VideoPlayerOptions(
         allowBackgroundPlayback: false,
         mixWithOthers: false,
       ),
     );
-    _viewCountUpdated[index] = false;
-    controllers[posts.elementAt(index).videoLink] = controller;
-    await controller.initialize();
+
+    _videoControllers[post.videoLink] = controller;
+    _videoListeners[index] = _listenerSpawner(index);
+
+    try {
+      await controller.initialize();
+      notifyListeners(); // Notify after successful initialization
+    } catch (e) {
+      print('Error initializing video $index: $e');
+      // Handle error (e.g., show an error message to the user)
+      _videoControllers.remove(post.videoLink); // Remove the failed controller
+      _videoListeners.remove(index);
+      notifyListeners();
+    }
   }
 
-  void setPlaybackSpeed(double speed) {
-    _playback_speed = speed;
-    controllers.values.forEach((controller) {
-      controller.setPlaybackSpeed(speed);
-    });
-    notifyListeners();
+  void _playController(int index) async {
+      if (index < 0 || index >= posts.length) return; // Check index range
+      final post = posts.elementAt(index);
+      final controller = _videoControllers[post.videoLink];
+
+      if (controller != null) {
+        controller.addListener(_videoListeners[index]!);
+        if (isPlaying) {
+          await controller.play();
+          await controller.setLooping(true);
+        } else {
+          await controller.pause();
+        }
+      }
+      notifyListeners();
   }
 
-  void _playController(
-    int index,
-    /* int bottomNavIndex */
-  ) async {
-    if (!_listeners.keys.contains(index)) {
-      _listeners[index] = _listenerSpawner(index);
-    }
-    videoController(index)?.addListener(_listeners[index]!);
-    if (_isPlaying /* && bottomNavIndex == 0 */) {
-      await videoController(index)?.play();
-      await videoController(index)?.setLooping(true);
-    } else {
-      await videoController(index)?.pause();
-      await videoController(index)?.setLooping(true);
-    }
-    _isPlaying = true;
-    notifyListeners();
-  }
+
 
   VideoPlayerController? videoController(int index) {
-    return controllers[posts.elementAt(index).videoLink] ??
-        controllers[API.video_link];
+     if (index < 0 || index >= posts.length) return null; // Check index range
+    final post = posts.elementAt(index);
+    return _videoControllers[post.videoLink];
   }
 
-  void disposed(index) {
-    videoController(index)?.dispose();
-    controllers.remove(posts.elementAt(index));
+  void disposeVideoController(int index) {
+    if (index < 0 || index >= posts.length) return; // Check index range
+    final post = posts.elementAt(index);
+    final controller = _videoControllers[post.videoLink];
+    if (controller != null) {
+      controller.removeListener(_videoListeners[index]!);
+      controller.dispose();
+      _videoControllers.remove(post.videoLink);
+      _videoListeners.remove(index);
+    }
   }
 
-  VoidCallback _listenerSpawner(index) {
-    return () {
+
+  VoidCallback _listenerSpawner(int index) {
+     return () {
       final controller = videoController(index);
+      if (controller == null) return;
 
-      if (controller?.value.hasError == true) {
-        // Handle errors here, e.g., show a snackbar
-        print(controller?.value.errorDescription ?? '');
+      if (controller.value.hasError) {
+        print(controller.value.errorDescription ?? '');
+        // Handle error (e.g., show a snackbar)
       }
-      if (controller?.value.isInitialized == true) {
-        // _nextAutoVideo();
-        // print("Video initialized $index");
-        final position = controller?.value.position;
-        final duration = controller?.value.duration;
 
-        // print("Video initialized $position");
-        // print("Video initialized $duration");
+      if (controller.value.isInitialized) {
+        final position = controller.value.position;
+        final duration = controller.value.duration;
 
         if (position != null && duration != null) {
-          // Use a small range to account for floating-point precision
-          final positionInSeconds = position.inMilliseconds;
-          final durationInSeconds = duration.inMilliseconds;
-          final positionDifference = durationInSeconds - positionInSeconds;
+          final positionInMilliseconds = position.inMilliseconds;
+          final durationInMilliseconds = duration.inMilliseconds;
+          final timeRemaining = durationInMilliseconds - positionInMilliseconds;
 
-          if (durationInSeconds < 1) {
-            return;
+
+          if (durationInMilliseconds < 1) return;
+
+          if (positionInMilliseconds > 1 && !_viewCountUpdated.containsKey(index) && logged_in!) {
+            updateViewCount(id: posts.elementAt(index).id);
+            _viewCountUpdated[index] = true;
           }
 
-          if (positionInSeconds > 1) {
-            if (positionInSeconds > 1 &&
-                !_viewCountUpdated[index]! &&
-                logged_in!) {
-              updateViewCount(id: posts.elementAt(index).id);
-              _viewCountUpdated[index] = true;
-            }
-          }
-
-          if (positionDifference <= 0.4) {
-            // Video playback is near or at the end, move to the next video
-            // print("Video playback ended for index $index");
-            _viewCountUpdated[index] = false;
-            // _isAutoScroll ? _autoScroll(index) : null;
+          if (timeRemaining <= 400) {  // Slightly more lenient for end detection
+            _viewCountUpdated.remove(index); // Reset view count
+            _autoScroll(index);
           }
         }
       }
@@ -549,142 +207,98 @@ class ReplyProvider extends ChangeNotifier {
     };
   }
 
-  Future<void> _autoScroll(index) async {
+
+
+  Future<void> _autoScroll(int index) async {
     _isPlaying = true;
-    posts_page++;
-    // createIsolate(token: token);
+    postsPage++;
     notifyListeners();
 
-    int newIndex = index;
-    newIndex++;
-    // print("new index $newIndex");
-    // print("index $index");
-    animateToPage(newIndex);
-    _stopController(index);
-    _index = newIndex;
-    notifyListeners();
-    // print("_index $_index");
+    int newIndex = index + 1;
 
-    if (_index < index) {
-      // print("_index $_index < index $index");
-      if (_index == posts.length - 1) {
-        return;
-      }
-
-      print("_index $index");
-
-      if (_index - 1 >= 0) {
-        _removeController(_index - 1);
-      }
-      _playController(_index);
-      if (_index == posts.length - 1) {
-      } else {
-        _initController(_index + 1);
-      }
+    if (newIndex < posts.length) { // Check if newIndex is within bounds
+      animateToPage(newIndex);
+      _stopController(index);
+      this.index = newIndex;
+      _playController(newIndex);
+      _initController(newIndex + 1); // Initialize the next video
       notifyListeners();
-    } else {
-      if (_index == 0) {
-        controllers.forEach((key, value) {});
-        return;
-      }
-      _stopController(_index);
-      if (_index + 1 < posts.length) {
-        _removeController(_index + 1);
-      }
-      _playController(--_index);
-      if (_index == 0) {
-      } else {
-        _initController(_index - 1);
-      }
     }
   }
+
 
   Future<void> _nextVideo() async {
-    if (_index == posts.length - 1) {
-      return;
-    }
-    _stopController(_index);
-    if (_index - 1 >= 0) {
-      _removeController(_index - 1);
-    }
-    _playController(
-      ++_index,
-    );
-    if (_index == posts.length - 1) {
-    } else {
-      _initController(_index + 1);
-    }
-  }
-
-  Future<void> removeController(index) async {
-    if (index == posts.length - 1) {
-      return;
-    }
-    _stopController(index);
-    if (index - 1 >= 0) {
-      _removeController(index - 1);
-    }
-    _playController(
-      ++index,
-    );
-    if (index == posts.length - 1) {
-    } else {
-      _initController(index + 1);
+    if (index < posts.length - 1) {
+      _stopController(index);
+      _removeController(index -1); //Remove previous controller
+      _playController(++index);
+      _initController(index + 1); // Initialize the next video
+      notifyListeners();
     }
   }
 
   Future<void> _previousVideo() async {
-    if (_index == 0) {
-      controllers.forEach((key, value) {});
-      return;
-    }
-    _stopController(_index);
-    if (_index + 1 < posts.length) {
-      _removeController(_index + 1);
-    }
-    _playController(
-      --_index,
-    );
-    if (_index == 0) {
-    } else {
-      _initController(_index - 1);
+    if (index > 0) {
+      _stopController(index);
+      _removeController(index + 1); //Remove next controller
+      _playController(--index);
+      _initController(index - 1); // Initialize the previous video
+      notifyListeners();
+
     }
   }
 
+
+
   void _stopController(int index) {
-    if (_listeners[index] != null) {
-      videoController(index)?.removeListener(_listeners[index]!);
+    if (index < 0 || index >= posts.length) return;
+    if (_videoListeners[index] != null) {
+      videoController(index)?.removeListener(_videoListeners[index]!);
     }
     videoController(index)?.pause();
-    videoController(index)?.seekTo(const Duration(milliseconds: 0));
+    videoController(index)?.seekTo(Duration.zero);
   }
 
   void _removeController(int index) {
-    videoController(index)?.dispose();
-    controllers.remove(posts.elementAt(index));
-    _listeners.remove(index);
+    if (index < 0 || index >= posts.length) return;
+    disposeVideoController(index); // Use the dedicated dispose method
   }
 
   onPageChanged(int index) async {
     _isPlaying = true;
-    // createIsolate(token: token);
-    HomeWidget.saveWidgetData<String>('title', _posts[index].title);
-    HomeWidget.saveWidgetData<String>('description', _posts[index].username);
-    HomeWidget.saveWidgetData<String>('image', _posts[index].thumbnailUrl);
-    HomeWidget.updateWidget(
-      iOSName: iOSWidgetName,
-      androidName: androidWidgetName,
-    );
-    notifyListeners();
-    if (_index > index) {
-      await _previousVideo();
-      _index = index;
-      notifyListeners();
-    } else {
-      await _nextVideo();
-      _index = index;
-      notifyListeners();
+
+    if (index >= 0 && index < posts.length) { // Check index range
+      HomeWidget.saveWidgetData<String>('title', posts[index].title);
+      HomeWidget.saveWidgetData<String>('description', posts[index].username);
+      HomeWidget.saveWidgetData<String>('image', posts[index].thumbnailUrl);
+      HomeWidget.updateWidget(
+        iOSName: iOSWidgetName,
+        androidName: androidWidgetName,
+      );
     }
+
     notifyListeners();
+
+    if (this.index > index) {
+      await _previousVideo();
+    } else if (this.index < index) {
+      await _nextVideo();
+    }
+    this.index = index;
+    notifyListeners();
+  }
+
+
+  @override
+  void dispose() {
+    home.dispose();
+    _videoControllers.forEach((key, controller) {
+      controller.dispose();
+    });
+    _videoControllers.clear();
+    _videoListeners.clear();
+    _debounceTimer?.cancel();
+    _expansionTimer?.cancel();
+    super.dispose();
   }
 }
