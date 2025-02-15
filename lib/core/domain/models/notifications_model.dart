@@ -1,4 +1,14 @@
 class Notifications {
+  final int id;
+  final User user;
+  final Actor actor;
+  final String actionType;
+  final String? hasSeen;
+  final String content;
+  final String? targetId;
+  final String contentAvatarUrl;
+  final String createdAt;
+
   Notifications({
     required this.id,
     required this.user,
@@ -11,44 +21,42 @@ class Notifications {
     required this.createdAt,
   });
 
-  late final int id;
-  late final User user;
-  late final Actor actor;
-  late final String actionType;
-  late final String? hasSeen;
-  late final String content;
-  late final String? targetId;
-  late final String contentAvatarUrl;
-  late final String createdAt;
-
-  Notifications.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        user = User.fromJson(json['user']),
-        actor = Actor.fromJson(json['actor']),
-        actionType = json['action_type'],
-        hasSeen = json['has_seen'],
-        content = json['content'],
-        targetId = json['target_id'],
-        contentAvatarUrl = json['content_avatar_url'],
-        createdAt = json['created_at'];
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {
-      'id': id,
-      'user': user.toJson(),
-      'actor': actor.toJson(),
-      'action_type': actionType,
-      'has_seen': hasSeen,
-      'content': content,
-      'target_id': targetId,
-      'content_avatar_url': contentAvatarUrl,
-      'created_at': createdAt,
-    };
-    return data;
+  factory Notifications.fromJson(Map<String, dynamic> json) {
+    return Notifications(
+      id: json['id'] as int,
+      user: User.fromJson(json['user']),
+      actor: Actor.fromJson(json['actor']),
+      actionType: json['action_type'] as String,
+      hasSeen: json['has_seen'] as String?,
+      content: json['content'] as String,
+      targetId: json['target_id'] as String?,
+      contentAvatarUrl: json['content_avatar_url'] as String,
+      createdAt: json['created_at'] as String,
+    );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'user': user.toJson(),
+        'actor': actor.toJson(),
+        'action_type': actionType,
+        'has_seen': hasSeen,
+        'content': content,
+        'target_id': targetId,
+        'content_avatar_url': contentAvatarUrl,
+        'created_at': createdAt,
+      };
 }
 
 class User {
+  final int id;
+  final String username;
+  final String firstName;
+  final String lastName;
+  final String name;
+  final String profileUrl;
+  final bool? isFollowing;
+
   User({
     required this.id,
     required this.username,
@@ -59,38 +67,38 @@ class User {
     this.isFollowing,
   });
 
-  late final int id;
-  late final String username;
-  late final String firstName;
-  late final String lastName;
-  late final String name;
-  late final String profileUrl;
-  late final bool? isFollowing;
-
-  User.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        username = json['username'],
-        firstName = json['first_name'],
-        lastName = json['last_name'],
-        name = json['name'],
-        profileUrl = json['profile_url'],
-        isFollowing = json['is_following'];
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {
-      'id': id,
-      'username': username,
-      'first_name': firstName,
-      'last_name': lastName,
-      'name': name,
-      'profile_url': profileUrl,
-      'is_following': isFollowing,
-    };
-    return data;
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'] as int,
+      username: json['username'] as String,
+      firstName: json['first_name'] as String,
+      lastName: json['last_name'] as String,
+      name: json['name'] as String,
+      profileUrl: json['profile_url'] as String,
+      isFollowing: json['is_following'] as bool?,
+    );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'username': username,
+        'first_name': firstName,
+        'last_name': lastName,
+        'name': name,
+        'profile_url': profileUrl,
+        'is_following': isFollowing,
+      };
 }
 
 class Actor {
+  final int id;
+  final String username;
+  final String firstName;
+  final String lastName;
+  final String name;
+  final String profileUrl;
+  final bool? isFollowing;
+
   Actor({
     required this.id,
     required this.username,
@@ -101,33 +109,25 @@ class Actor {
     this.isFollowing,
   });
 
-  late final int id;
-  late final String username;
-  late final String firstName;
-  late final String lastName;
-  late final String name;
-  late final String profileUrl;
-  late bool? isFollowing;
-
-  Actor.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        username = json['username'],
-        firstName = json['first_name'],
-        lastName = json['last_name'],
-        name = json['name'],
-        profileUrl = json['profile_url'],
-        isFollowing = json['is_following'];
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {
-      'id': id,
-      'username': username,
-      'first_name': firstName,
-      'last_name': lastName,
-      'name': name,
-      'profile_url': profileUrl,
-      'is_following': isFollowing,
-    };
-    return data;
+  factory Actor.fromJson(Map<String, dynamic> json) {
+    return Actor(
+      id: json['id'] as int,
+      username: json['username'] as String,
+      firstName: json['first_name'] as String,
+      lastName: json['last_name'] as String,
+      name: json['name'] as String,
+      profileUrl: json['profile_url'] as String,
+      isFollowing: json['is_following'] as bool?,
+    );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'username': username,
+        'first_name': firstName,
+        'last_name': lastName,
+        'name': name,
+        'profile_url': profileUrl,
+        'is_following': isFollowing,
+      };
 }
