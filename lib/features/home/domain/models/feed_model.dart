@@ -7,25 +7,27 @@ class FeedModel {
     required this.pageSize,
     required this.posts,
   });
-  late final int page;
-  late final int maxPageSize;
-  late final int pageSize;
-  late final List<Posts> posts;
 
-  FeedModel.fromJson(Map<String, dynamic> json) {
-    page = json['page'];
-    pageSize = json['page_size'];
-    posts = List.from(json['posts']).map((e) => Posts.fromJson(e)).toList();
+  final int page;
+  final int maxPageSize;
+  final int pageSize;
+  final List<Posts> posts;
+
+  factory FeedModel.fromJson(Map<String, dynamic> json) {
+    return FeedModel(
+      page: json['page'] as int,
+      maxPageSize: json['max_page_size'] as int,
+      pageSize: json['page_size'] as int,
+      posts: (json['posts'] as List<dynamic>).map((e) => Posts.fromJson(e)).toList(),
+    );
   }
 
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['page'] = page;
-    _data['max_page_size'] = maxPageSize;
-    _data['page_size'] = pageSize;
-    _data['posts'] = posts.map((e) => e.toJson()).toList();
-    return _data;
-  }
+  Map<String, dynamic> toJson() => {
+        'page': page,
+        'max_page_size': maxPageSize,
+        'page_size': pageSize,
+        'posts': posts.map((e) => e.toJson()).toList(),
+      };
 }
 
 class ReplyModel {
@@ -34,21 +36,23 @@ class ReplyModel {
     required this.message,
     required this.post,
   });
-  late final String status;
-  late final String message;
-  late final List<Posts> post;
 
-  ReplyModel.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    message = json['message'];
-    post = List.from(json['post']).map((e) => Posts.fromJson(e)).toList();
+  final String status;
+  final String message;
+  final List<Posts> post;
+
+  factory ReplyModel.fromJson(Map<String, dynamic> json) {
+    return ReplyModel(
+      status: json['status'] as String,
+      message: json['message'] as String,
+      post: (json['post'] as List<dynamic>).map((e) => Posts.fromJson(e)).toList(),
+    );
   }
 
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['status'] = status;
-    _data['message'] = message;
-    _data['post'] = post.map((e) => e.toJson()).toList();
-    return _data;
-  }
+  Map<String, dynamic> toJson() => {
+        'status': status,
+        'message': message,
+        'post': post.map((e) => e.toJson()).toList(),
+      };
 }
+
