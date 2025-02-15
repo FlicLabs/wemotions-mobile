@@ -8,61 +8,43 @@ class CameraModeSelector extends StatelessWidget {
 
   final BottomNavBarProvider nav;
 
+  void _onModeSelected(String mode) {
+    HapticFeedback.mediumImpact();
+    nav.selectedVideoUploadType = mode;
+  }
+
+  Widget _buildModeText(BuildContext context, String mode, double fontSize) {
+    return GestureDetector(
+      onTap: () => _onModeSelected(mode),
+      child: Text(
+        mode,
+        style: TextStyle(
+          color: nav.selectedVideoUploadType == mode
+              ? Theme.of(context).focusColor
+              : const Color(0xFF7C7C7C),
+          fontSize: fontSize,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 24,
-          height: 47,
-        ),
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: GestureDetector(
-                  onTap: () {
-                    HapticFeedback.mediumImpact();
-                    nav.selectedVideoUploadType = "Video";
-                  },
-                  child: Text(
-                    "Video",
-                    style: TextStyle(
-                        color: nav.selectedVideoUploadType == "Video"
-                            ? Theme.of(context).focusColor
-                            : const Color(0xFF7C7C7C),
-                        fontSize: nav.currentPage == 0 ? 38 : 13.5),
-                  ),
-                ),
-              ),
-              if (nav.currentPage == 0)
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: GestureDetector(
-                    onTap: () {
-                      HapticFeedback.mediumImpact();
-                      nav.selectedVideoUploadType = "Reply";
-                    },
-                    child: Text(
-                      "Reply",
-                      style: TextStyle(
-                          color: nav.selectedVideoUploadType == "Reply"
-                              ? Theme.of(context).focusColor
-                              : const Color(0xFF7C7C7C),
-                          fontSize: 38),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ],
+    final bool isHomeScreen = nav.currentPage == 0;
+
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildModeText(context, "Video", isHomeScreen ? 38 : 13.5),
+          if (isHomeScreen) ...[
+            const SizedBox(width: 20),
+            _buildModeText(context, "Reply", 38),
+          ],
+        ],
+      ),
     );
   }
 }
