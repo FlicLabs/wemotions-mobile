@@ -14,58 +14,79 @@ class LastPageGradient extends StatelessWidget {
   Widget build(BuildContext context) {
     final home = Provider.of<HomeProvider>(context);
     final search = Provider.of<SearchProvider>(context);
+    final size = MediaQuery.of(context).size;
+
     return Positioned.fill(
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.white.withOpacity(0.2),
+              Colors.black.withOpacity(0.7),
+              Colors.black.withOpacity(0.8),
+              Colors.black.withOpacity(0.9),
               Colors.black,
-              Colors.black,
-              Colors.black,
-              Colors.black,
-              Colors.black,
-              Colors.black,
-              Colors.black,
-              Colors.black,
-              Colors.black,
-              Colors.black,
-              Colors.purple.withOpacity(0.2),
+              Colors.purple.withOpacity(0.3),
             ],
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.only(left: 40, right: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (isInit) ...[
-                AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: child,
+                AnimatedOpacity(
+                  opacity: 1.0,
+                  duration: const Duration(milliseconds: 500),
+                  child: SizedBox(
+                    width: size.width * 0.5,
+                    height: size.height * 0.2,
+                    child: FittedBox(
+                      fit: BoxFit.cover,
+                      child: child,
+                    ),
                   ),
                 ),
               ],
-              height60,
-              height20,
-              Text('You have watched all videos',
-                  style: AppTextStyle.normalBold18),
-              height20,
-              TransparentButton(
-                onTap: () async {
+              const SizedBox(height: 40),
+
+              // Finished Watching Text
+              Text(
+                'You have watched all videos',
+                style: AppTextStyle.normalBold18.copyWith(
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+
+              // Share Button
+              ElevatedButton(
+                onPressed: () async {
                   Share.share('link');
                 },
-                title: 'Share',
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 40, vertical: 12),
+                ),
+                child: const Text(
+                  'Share',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
               ),
-              height10,
-              TransparentButton(
-                onTap: () async {
+              const SizedBox(height: 10),
+
+              // Post Button
+              ElevatedButton(
+                onPressed: () async {
                   if (home.videoController(home.index)!.value.isPlaying) {
                     await home.videoController(home.index)!.pause();
                   }
@@ -77,7 +98,7 @@ class LastPageGradient extends StatelessWidget {
                         title: 'Permission Denied',
                         action: 'Open Settings',
                         content:
-                            'Please allow access to camera to record videos',
+                            'Please allow access to the camera to record videos',
                         tap: () {
                           openAppSettings();
                         },
@@ -87,12 +108,26 @@ class LastPageGradient extends StatelessWidget {
                     await availableCameras().then(
                       (value) => Navigator.of(context).pushNamed(
                         CameraScreen.routeName,
-                        arguments: CameraScreenArgs(cameras: value,isReply: false),
+                        arguments: CameraScreenArgs(
+                          cameras: value,
+                          isReply: false,
+                        ),
                       ),
                     );
                   }
                 },
-                title: 'Post',
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 40, vertical: 12),
+                ),
+                child: const Text(
+                  'Post',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
               ),
             ],
           ),
@@ -101,3 +136,4 @@ class LastPageGradient extends StatelessWidget {
     );
   }
 }
+
