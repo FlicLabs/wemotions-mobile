@@ -2,59 +2,49 @@ import 'package:intl/intl.dart';
 
 extension DateStringExtensions on String {
   String toCustomTimeString() {
-    final DateFormat formatterWithMicroseconds =
-        DateFormat('yyyy-MM-dd HH:mm:ss.SSSSSS');
-    final DateFormat formatterWithoutMicroseconds =
-        DateFormat('yyyy-MM-dd HH:mm:ss');
-    DateTime dateTime;
+    final List<DateFormat> dateFormats = [
+      DateFormat('yyyy-MM-dd HH:mm:ss.SSSSSS'), // With microseconds
+      DateFormat('yyyy-MM-dd HH:mm:ss'),        // Without microseconds
+      DateFormat("yyyy-MM-dd'T'HH:mm:ss"),      // ISO 8601 without timezone
+      DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),   // ISO 8601 with UTC timezone
+    ];
+    
+    DateTime? dateTime;
 
-    try {
-      // Try parsing with microseconds first
-      dateTime = formatterWithMicroseconds.parse(this);
-    } catch (e) {
+    for (var format in dateFormats) {
       try {
-        // If parsing with microseconds fails, try without microseconds
-        dateTime = formatterWithoutMicroseconds.parse(this);
-      } catch (e) {
-        // If both parsing attempts fail, return "Invalid date"
-        return "Invalid date";
-      }
+        dateTime = format.parse(this, true).toLocal();
+        break; // Stop if parsing is successful
+      } catch (_) {}
     }
+
+    if (dateTime == null) return "Invalid date";
 
     DateTime now = DateTime.now();
-    final difference = now.difference(dateTime).inDays;
+    final int difference = now.difference(dateTime).inDays;
 
-    if (difference == 0) {
-      // If it's today, return the actual time
-      return DateFormat('HH:mm').format(dateTime);
-    } else if (difference == 1) {
-      // If it's yesterday, return "Yesterday"
-      return "Yesterday";
-    } else if (difference < 7) {
-      // If it's within the last week, return the day of the week
-      return DateFormat.EEEE().format(dateTime); // Name of the day
-    } else {
-      // Older than a week, return in MM/dd format
-      return DateFormat('MM/dd').format(dateTime);
-    }
+    return switch (difference) {
+      0 => DateFormat('HH:mm').format(dateTime), // Today → Show time
+      1 => "Yesterday",                          // Yesterday → Show "Yesterday"
+      _ when difference < 7 => DateFormat.EEEE().format(dateTime), // Past week → Show day name
+      _ => DateFormat('MM/dd').format(dateTime)  // Older than a week → Show "MM/dd"
+    };
   }
 }
 
 String formatDate(String dateString) {
-  // Assuming the date string is in the format 'yyyy-MM-ddTHH:mm:ss'
-  final DateTime date = DateTime.parse(dateString);
+  try {
+    final DateTime date = DateTime.parse(dateString).toLocal();
+    final int difference = DateTime.now().difference(date).inDays;
 
-  final now = DateTime.now();
-  final difference = now.difference(date).inDays;
-
-  if (difference == 0) {
-    return 'Today';
-  } else if (difference == 1) {
-    return 'Yesterday';
-  } else if (difference < 7) {
-    return DateFormat.EEEE()
-        .format(date); // Return the day of the week (e.g., "Tuesday")
-  } else {
-    return DateFormat('MM/dd').format(date); // Return the date in MM/dd format
+    return switch (difference) {
+      0 => "Today",
+      1 => "Yesterday",
+      _ when difference < 7 => DateFormat.EEEE().format(date), // Within a week → Show day name
+      _ => DateFormat('MM/dd').format(date)  // Older → Show MM/dd
+    };
+  } catch (e) {
+    return "Invalid date";
   }
 }
+
