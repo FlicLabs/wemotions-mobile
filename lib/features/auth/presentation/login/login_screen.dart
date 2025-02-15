@@ -15,293 +15,205 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isKeyboardShowing = MediaQuery.of(context).viewInsets.vertical > 0;
     final profile = Provider.of<ProfileProvider>(context);
-    return Consumer<AuthProvider>(builder: (_, __, ___) {
-      return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(80),
-          child: Padding(
-            padding: const EdgeInsets.only(right: 20, left: 5),
-            child: AppBar(
-              toolbarHeight: 80,
-              centerTitle: true,
-              leading: GestureDetector(
-                onTap: () {
-                  FocusScope.of(context).unfocus();
-                  __.emailError = null;
-                  __.passwordError = null;
-                  Navigator.pop(context);
-                },
-                child: Icon(
-                  Icons.arrow_back,
-                  size: 24,
-                ),
-              ),
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        __.emailError = null;
-                        __.passwordError = null;
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, SignUpScreen.routeName);
-                      },
-                      child: Text(
-                        'Sign up',
-                        style: AppTextStyle.normalRegular14.copyWith(
-                            color: Theme.of(context).primaryColorDark),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+    
+    return Consumer<AuthProvider>(
+      builder: (_, auth, __) {
+        return Scaffold(
+          appBar: AppBar(
+            toolbarHeight: 80,
+            centerTitle: true,
+            leading: IconButton(
+              onPressed: () {
+                FocusScope.of(context).unfocus();
+                auth.emailError = null;
+                auth.passwordError = null;
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back, size: 28, color: Colors.black87),
+              splashRadius: 24,
             ),
-          ),
-        ),
-        body: WillPopScope(
-          onWillPop: () async => false,
-          child: Container(
-            height: cs().height(context),
-            width: cs().width(context),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 24, right: 24),
-                        child: Form(
-                          key: __.loginFormKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Login",
-                                style: AppTextStyle.normalSemiBold28Black
-                                    .copyWith(
-                                        color: Theme.of(context).focusColor),
-                              ),
-                              height8,
-                              Text(
-                                "Login to join the conversation and connect with your community",
-                                style: AppTextStyle.subheadlineMedium.copyWith(
-                                    color: Theme.of(context).primaryColorDark),
-                              ),
-                              height24,
-                              Text(
-                                "Email or username",
-                                style: AppTextStyle.labelMedium.copyWith(
-                                    color: Theme.of(context).indicatorColor),
-                              ),
-                              height8,
-                              AuthTextFormField(
-                                keyboardType: TextInputType.emailAddress,
-                                hintText: 'Bryan_Reichert15@hotmail.com ',
-                                controller: __.email,
-                                validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    __.emailError =
-                                        'Please enter your email or username';
-                                    return ''; // Return empty to suppress default error message
-                                  }
-                                  __.emailError = null;
-                                  return null; // No error
-                                },
-                              ),
-                              // Display error message if exists
-                              if (__.emailError != null) ...[
-                                height8,
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Icon(
-                                      Icons.error_outline_rounded,
-                                      color: Colors.red.shade600,
-                                      size: 20,
-                                    ),
-                                    width5,
-                                    Center(
-                                      child: Text(
-                                        __.emailError!,
-                                        style: TextStyle(
-                                            color: Colors.red.shade600),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                              height20,
-                              Text("Password"),
-                              height8,
-                              AuthTextFormField(
-                                maxLines: 1,
-                                keyboardType: TextInputType.visiblePassword,
-                                hintText: '*********',
-                                obscureText: __.obscureText,
-                                controller: __.password,
-                                onChanged: (value) {
-                                  __.incorrectPassword = false;
-                                },
-                                suffixIcon: GestureDetector(
-                                  onTap: () {
-                                    __.obscureText = !__.obscureText;
-                                  },
-                                  child: AuthObscureIcon(),
-                                ),
-                                validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    __.passwordError =
-                                        'Please enter your password';
-                                    return ''; // Return empty to suppress default error message
-                                  } else {
-                                    if (__.incorrectPassword == true) {
-                                      __.passwordError =
-                                          'Credentials don\'t match';
-                                      return '';
-                                    }
-                                    __.passwordError = null;
-                                    return null; // No error
-                                  }
-                                },
-                              ),
-                              if (__.passwordError != null) ...[
-                                height8,
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Icon(
-                                      Icons.error_outline_rounded,
-                                      color: Colors.red.shade600,
-                                      size: 20,
-                                    ),
-                                    width5,
-                                    Center(
-                                      child: Text(
-                                        __.passwordError!,
-                                        style: TextStyle(
-                                            color: Colors.red.shade600),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                              height10,
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                      context, ForgotPasswordScreen.routeName);
-                                },
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    'Forgot Password?',
-                                    style: TextStyle(
-                                        color:
-                                            Theme.of(context).primaryColorDark),
-                                  ),
-                                ),
-                              ),
-                              // height20,
-                              // Row(
-                              //   children: [
-                              //     Expanded(
-                              //       child: Divider(
-                              //         color: Colors.grey.shade400,
-                              //       ),
-                              //     ),
-                              //     width20,
-                              //     Text(
-                              //       'OR',
-                              //       style: TextStyle(
-                              //         fontSize: 18,
-                              //         fontWeight: FontWeight.w200,
-                              //         color: Theme.of(context).indicatorColor,
-                              //         fontFamily: 'sofia',
-                              //       ),
-                              //     ),
-                              //     width20,
-                              //     Expanded(
-                              //       child: Divider(
-                              //         color: Colors.grey.shade400,
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                              // height20,
-                              // if (Platform.isIOS) ...[
-                              //   SocialButton(
-                              //     title: 'Sign in with Apple',
-                              //     icon: Icons.apple,
-                              //     onTap: () async {
-                              //       await __.signInWithApple();
-                              //       profile.fetchProfile(
-                              //           username: prefs_username!);
-                              //     },
-                              //   )
-                              // ],
-                              // if (Platform.isAndroid) ...[
-                              //   SocialButton(
-                              //     title: 'Sign in with Google',
-                              //     icon: UniconsLine.google,
-                              //     onTap: () async {
-                              //       await __.signInWithGoogle();
-                              //       profile.fetchProfile(
-                              //         username: prefs_username!,
-                              //       );
-                              //     },
-                              //   )
-                              // ]
-                            ],
-                          ),
-                        ),
-                      ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: TextButton(
+                  onPressed: () {
+                    auth.emailError = null;
+                    auth.passwordError = null;
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, SignUpScreen.routeName);
+                  },
+                  child: Text(
+                    'Sign Up',
+                    style: AppTextStyle.normalRegular14.copyWith(
+                      color: Theme.of(context).primaryColorDark,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  // isKeyboardShowing ? shrink : LoginNav()
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: 24, right: 24, top: 32, bottom: 32),
-                    child: Column(
-                      children: [
-                        if (__.loggedInAuthStatus ==
-                            AuthStatus.Authenticating) ...[
-                          SizedBox(
-                            height: 45,
-                            width: 45,
-                            child: CustomProgressIndicator(),
-                          )
-                        ],
-                        if (__.loggedInAuthStatus !=
-                            AuthStatus.Authenticating) ...[
-                          AuthButtonWithColor(
-                            onTap: () async {
-                              if (__.loginFormKey.currentState!.validate()) {
-                                await __.login(
-                                  email: __.email.text,
-                                  password: __.password.text,
-                                );
-                                profile.fetchProfile(
-                                  username: prefs_username!,
-                                );
+                ),
+              ),
+            ],
+          ),
+          body: WillPopScope(
+            onWillPop: () async => false,
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Login",
+                      style: AppTextStyle.normalSemiBold28Black.copyWith(
+                        color: Theme.of(context).focusColor,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Join the conversation and connect with your community",
+                      style: AppTextStyle.subheadlineMedium.copyWith(
+                        color: Theme.of(context).primaryColorDark,
+                      ),
+                    ),
+                    SizedBox(height: 24),
+                    Form(
+                      key: auth.loginFormKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTextLabel("Email or Username"),
+                          AuthTextFormField(
+                            keyboardType: TextInputType.emailAddress,
+                            hintText: 'Enter your email or username',
+                            controller: auth.email,
+                          ),
+                          if (auth.emailError != null) _buildErrorMessage(auth.emailError!),
+                          SizedBox(height: 20),
+
+                          _buildTextLabel("Password"),
+                          AuthTextFormField(
+                            maxLines: 1,
+                            keyboardType: TextInputType.visiblePassword,
+                            hintText: '*********',
+                            obscureText: auth.obscureText,
+                            controller: auth.password,
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                auth.obscureText = !auth.obscureText;
+                              },
+                              child: AnimatedSwitcher(
+                                duration: Duration(milliseconds: 300),
+                                child: auth.obscureText
+                                    ? Icon(Icons.visibility_off, key: ValueKey(1))
+                                    : Icon(Icons.visibility, key: ValueKey(2)),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                auth.passwordError = 'Please enter your password';
+                                return '';
+                              } else {
+                                if (auth.incorrectPassword == true) {
+                                  auth.passwordError = 'Credentials don\'t match';
+                                  return '';
+                                }
+                                auth.passwordError = null;
+                                return null;
                               }
                             },
-                            isGradient: __.email.text.isNotEmpty &&
-                                __.password.text.isNotEmpty,
-                            title: 'Continue',
+                          ),
+                          if (auth.passwordError != null) _buildErrorMessage(auth.passwordError!),
+                          SizedBox(height: 10),
+
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, ForgotPasswordScreen.routeName);
+                              },
+                              child: Text(
+                                'Forgot Password?',
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColorDark,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: isKeyboardShowing ? 10 : 40),
+
+                    // Login Button with Loading Indicator
+                    AuthButtonWithColor(
+                      onTap: () async {
+                        if (auth.loginFormKey.currentState!.validate()) {
+                          auth.setLoading(true);
+                          await auth.login(
+                            email: auth.email.text,
+                            password: auth.password.text,
+                          );
+                          profile.fetchProfile(username: prefs_username!);
+                          auth.setLoading(false);
+                        }
+                      },
+                      isGradient: auth.email.text.isNotEmpty && auth.password.text.isNotEmpty,
+                      title: auth.isLoading ? null : 'Continue',
+                      child: auth.isLoading
+                          ? SizedBox(height: 24, width: 24, child: CircularProgressIndicator())
+                          : null,
+                    ),
+                    SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 32),
+                  ],
+                ),
               ),
             ),
           ),
+        );
+      },
+    );
+  }
+
+  /// Label for input fields
+  Widget _buildTextLabel(String text) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8),
+      child: Text(
+        text,
+        style: AppTextStyle.labelMedium.copyWith(
+          color: Colors.black87,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
         ),
-      );
-    });
+      ),
+    );
+  }
+
+  /// Error Message Widget
+  Widget _buildErrorMessage(String error) {
+    return Padding(
+      padding: EdgeInsets.only(top: 8),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.red.shade100,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.error_outline_rounded, color: Colors.red.shade600, size: 20),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                error,
+                style: TextStyle(color: Colors.red.shade800, fontSize: 14),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
