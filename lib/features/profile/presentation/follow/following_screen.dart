@@ -1,28 +1,20 @@
-
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/profile/widgets/profile/profile/following_item.dart';
 
 class FollowingScreenArgs {
   final String username;
 
-  const FollowingScreenArgs({
-    required this.username,
-  });
+  const FollowingScreenArgs({required this.username});
 }
 
 class FollowingScreen extends StatefulWidget {
   static const String routeName = '/following';
-  const FollowingScreen({
-    Key? key,
-    required this.username,
-  }) : super(key: key);
+  const FollowingScreen({Key? key, required this.username}) : super(key: key);
 
   static Route route({required FollowingScreenArgs args}) {
     return CupertinoPageRoute(
       settings: const RouteSettings(name: routeName),
-      builder: (context) => FollowingScreen(
-        username: args.username,
-      ),
+      builder: (context) => FollowingScreen(username: args.username),
     );
   }
 
@@ -33,22 +25,21 @@ class FollowingScreen extends StatefulWidget {
 }
 
 class _FollowingScreenState extends State<FollowingScreen> {
-  fetchData() async {
-    Provider.of<ProfileProvider>(context, listen: false).getFollowing(
-      username: widget.username,
-    );
-  }
-
   @override
   void initState() {
-    fetchData();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => fetchData());
+  }
+
+  void fetchData() {
+    Provider.of<ProfileProvider>(context, listen: false)
+        .getFollowing(username: widget.username);
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ProfileProvider>(
-      builder: (_, __, ___) {
+      builder: (context, profileProvider, child) {
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -58,16 +49,17 @@ class _FollowingScreenState extends State<FollowingScreen> {
             ),
           ),
           body: ListView.builder(
-            padding: EdgeInsets.only(top: 20),
-            itemCount: __.following.length,
+            padding: const EdgeInsets.only(top: 20),
+            itemCount: profileProvider.following.length,
             itemBuilder: (context, index) {
+              final followingUser = profileProvider.following[index];
               return FollowingItem(
                 index: index,
-                imageUrl: __.following[index].profilePictureUrl,
-                username: __.following[index].username,
-                firstName: __.following[index].firstName,
-                lastName: __.following[index].lastName,
-                isFollowing: __.following[index].isFollowing,
+                imageUrl: followingUser.profilePictureUrl,
+                username: followingUser.username,
+                firstName: followingUser.firstName,
+                lastName: followingUser.lastName,
+                isFollowing: followingUser.isFollowing,
               );
             },
           ),
@@ -76,3 +68,4 @@ class _FollowingScreenState extends State<FollowingScreen> {
     );
   }
 }
+

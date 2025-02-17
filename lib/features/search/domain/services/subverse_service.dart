@@ -1,108 +1,104 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:socialverse/export.dart';
+import 'package:flutter/foundation.dart'; // For debugPrint
 
 class SubverseService {
-  Dio dio = new Dio();
+  final Dio _dio = Dio();
 
-  getSpheres({required int page, bool? forceRefresh}) async {
+  Options getHeaders() {
+    return Options(headers: {'Flic-Token': token ?? ''});
+  }
+
+  Future<Response?> getSpheres({required int page, bool forceRefresh = false}) async {
+    final String url = '${API.endpoint}${API.categories}?page=$page';
+    debugPrint('Fetching spheres: $url');
+
     try {
-      Response response = await dio.get(
-        '${API.endpoint}${API.categories}?page=$page',
+      Response response = await _dio.get(
+        url,
         options: buildCacheOptions(
           Duration(days: 1),
           forceRefresh: forceRefresh,
-          options: Options(headers: {'Flic-Token': token ?? ''}),
+          options: getHeaders(),
         ),
       );
-      // print(response.data);
       return response;
-    } catch (e) {
-      print(e);
-      return e;
+    } on DioException catch (e) {
+      debugPrint('DioError (getSpheres): ${e.message}');
+      return null;
     }
   }
 
-  getSubversePosts({required int page}) async {
-    print('${API.endpoint}${API.all_posts}?sort=REPLY_COUNT&page=$page');
+  Future<Response?> getSubversePosts({required int page}) async {
+    final String url = '${API.endpoint}${API.all_posts}?sort=REPLY_COUNT&page=$page';
+    debugPrint('Fetching subverse posts: $url');
+
     try {
-      Response response = await dio.get(
-        '${API.endpoint}${API.all_posts}?sort=REPLY_COUNT&page=$page',
-        options: Options(headers: {'Flic-Token': token ?? ''}),
-      );
-      // print(response.data);
-      print(response.statusCode);
+      Response response = await _dio.get(url, options: getHeaders());
       return response;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.data);
-      return e.response;
+    } on DioException catch (e) {
+      debugPrint('DioError (getSubversePosts): ${e.message}');
+      return null;
     }
   }
 
-  getPostsByExitCount({required int id, required int page}) async {
-    print('${API.endpoint}${API.all_posts}?sort=ONLINE_USER&page=$page');
+  Future<Response?> getPostsByExitCount({required int id, required int page}) async {
+    final String url = '${API.endpoint}${API.all_posts}?sort=ONLINE_USER&page=$page';
+    debugPrint('Fetching posts by exit count: $url');
+
     try {
-      Response response = await dio.get(
-        '${API.endpoint}${API.all_posts}?sort=ONLINE_USER&page=$page',
-        options: Options(headers: {'Flic-Token': token ?? ''}),
-      );
-      // print(response.data);
-      print(response.statusCode);
+      Response response = await _dio.get(url, options: getHeaders());
       return response;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.data);
-      return e.response;
+    } on DioException catch (e) {
+      debugPrint('DioError (getPostsByExitCount): ${e.message}');
+      return null;
     }
   }
 
-  getPostsByViewCount({required int id, required int page}) async {
-    print('${API.endpoint}${API.subverse}/$id/posts/viewCount?page=$page');
+  Future<Response?> getPostsByViewCount({required int id, required int page}) async {
+    final String url = '${API.endpoint}${API.subverse}/$id/posts/viewCount?page=$page';
+    debugPrint('Fetching posts by view count: $url');
+
     try {
-      Response response = await dio.get(
-        '${API.endpoint}${API.subverse}/$id/posts/viewCount?page=$page',
-        options: Options(headers: {'Flic-Token': token ?? ''}),
-      );
-      // print(response.data);
-      print(response.statusCode);
+      Response response = await _dio.get(url, options: getHeaders());
       return response;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.data);
-      return e.response;
+    } on DioException catch (e) {
+      debugPrint('DioError (getPostsByViewCount): ${e.message}');
+      return null;
     }
   }
 
-  getSubverseInfo({required int id}) async {
+  Future<Response?> getSubverseInfo({required int id}) async {
+    final String url = '${API.endpoint}${API.categories}/$id';
+    debugPrint('Fetching subverse info: $url');
+
     try {
-      Response response = await dio.get(
-        '${API.endpoint}${API.categories}/$id',
+      Response response = await _dio.get(
+        url,
         options: buildCacheOptions(
           Duration(days: 1),
           forceRefresh: true,
-          options: Options(headers: {'Flic-Token': token ?? ''}),
+          options: getHeaders(),
         ),
       );
-      // print(response.data);
       return response;
-    } catch (e) {
-      print(e);
-      return e;
+    } on DioException catch (e) {
+      debugPrint('DioError (getSubverseInfo): ${e.message}');
+      return null;
     }
   }
 
-  search({required String query, required String type}) async {
+  Future<Response?> search({required String query, required String type}) async {
+    final String url = '${API.endpoint}${API.search}?type=$type&query=$query';
+    debugPrint('Performing search: $url');
+
     try {
-      Response response = await dio.get(
-        '${API.endpoint}${API.search}?type=$type&query=$query',
-        options: Options(headers: {'Flic-Token': token ?? ''}),
-      );
-      // print(response.data);
+      Response response = await _dio.get(url, options: getHeaders());
       return response;
-    } catch (e) {
-      print(e);
-      return e;
+    } on DioException catch (e) {
+      debugPrint('DioError (search): ${e.message}');
+      return null;
     }
   }
 }

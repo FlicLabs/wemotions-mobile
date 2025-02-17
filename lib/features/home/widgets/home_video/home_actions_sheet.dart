@@ -44,134 +44,149 @@ class ActionSheet extends StatelessWidget {
     final home = Provider.of<HomeProvider>(context);
     final profile = Provider.of<ProfileProvider>(context);
     final notification = getIt<NotificationProvider>();
-    bool isAdmin = isFromFeed == true ||
-        isFromSubverse == true &&
-            (prefs_username == 'afrobeezy' || prefs_username == 'jack');
-
-    print(
-      'isAdmin: $isAdmin, isFromSubverse: $isFromSubverse, isFromProfile: $isFromProfile',
-    );
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+          topLeft: Radius.circular(25.0),
+          topRight: Radius.circular(25.0),
         ),
         color: Theme.of(context).canvasColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            spreadRadius: 3,
+          )
+        ],
       ),
-      child: SizedBox(
-        // height: 200,
-        width: cs().width(context),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (isFromFeed == true) ...[
-              ActionSheetItem(
-                icon: Icons.speed,
-                label: 'Set video Speed',
-                onTap: () {
-                  HapticFeedback.mediumImpact();
-                  Navigator.pop(context);
-                  showModalBottomSheet(
-                    context: context,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
-                      ),
-                    ),
-                    builder: (context) {
-                      return PlaybackSheet();
-                    },
-                  );
-                  
-                },
-              ),
-              height20,
-            ],
-            ActionSheetItem(
-              svg: AppAsset.iccopy_link,
-              label: 'Copy link',
-              onTap: () async {
-                await Clipboard.setData(ClipboardData(text: video_link));
-                Navigator.of(context).pop();
-              },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Handle Bar for UX
+          Container(
+            width: 40,
+            height: 5,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade400,
+              borderRadius: BorderRadius.circular(10),
             ),
-            height20,
-            ActionSheetItem(
-              svg: AppAsset.icdownload,
-              label: 'Download',
-              onTap: () {
-                HapticFeedback.mediumImpact();
-                video.saveVideo(
-                  videoUrl: video_link,
-                  title: title,
-                );
-                Navigator.of(context).pop();
-              },
-            ),
-            height20,
-            // if (isUser == true && isFromFeed == true) height20,
-            if (isUser == true && isFromFeed == true) ...[
-              ActionSheetItem(
-                svg: AppAsset.icreport,
-                label: 'Report',
-                onTap: () async {
-                  HapticFeedback.mediumImpact();
-                  int index = current_index + 1;
-                  Navigator.pop(context);
-                  home.createIsolate(token: token);
-                  home.animateToPage(index);
-                  await home.removeController(current_index);
-                  List<List<Posts>> post_list = home.posts;
-                  post_list.removeAt(current_index);
-                  home.posts = post_list;
-                  notification.show(
-                    title: 'Post has been reported',
-                    type: NotificationType.local,
-                  );
-                },
-              ),
-              height20,
-            ],
+          ),
+          const SizedBox(height: 15),
 
-            // Profile
-            if (isFromProfile == true) ...[
-              ActionSheetItem(
-                icon: Icons.delete_outline,
-                label: 'Delete',
-                onTap: () async {
-                  HapticFeedback.mediumImpact();
-                  final response = await home.deletePost(id: video_id!);
-                  if (response == 200 || response == 201) {
-                    List<Posts> post_list = profile.posts;
-                    post_list.removeAt(current_index);
-                    profile.posts = post_list;
-                    profile.fetchProfile(username: prefs_username!);
-                    Navigator.of(context, rootNavigator: true)
-                      ..pop()
-                      ..pop();
-                    notification.show(
-                      title: 'Post has been deleted',
-                      type: NotificationType.local,
-                    );
-                  } else {
-                    Navigator.pop(context);
-                    notification.show(
-                      title: 'Something went wrong',
-                      type: NotificationType.local,
-                    );
-                  }
-                },
-              ),
-            ],
+          if (isFromFeed == true) ...[
+            _buildActionItem(
+              context,
+              icon: Icons.speed,
+              label: 'Set Video Speed',
+              onTap: () {
+                HapticFeedback.lightImpact();
+                Navigator.pop(context);
+                showModalBottomSheet(
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.0),
+                      topRight: Radius.circular(30.0),
+                    ),
+                  ),
+                  builder: (context) => PlaybackSheet(),
+                );
+              },
+            ),
           ],
-        ),
+
+          _buildActionItem(
+            context,
+            svg: AppAsset.iccopy_link,
+            label: 'Copy Link',
+            onTap: () async {
+              await Clipboard.setData(ClipboardData(text: video_link));
+              Navigator.of(context).pop();
+              notification.show(title: 'Link copied!', type: NotificationType.local);
+            },
+          ),
+
+          _buildActionItem(
+            context,
+            svg: AppAsset.icdownload,
+            label: 'Download Video',
+            onTap: () {
+              HapticFeedback.lightImpact();
+              video.saveVideo(videoUrl: video_link, title: title);
+              Navigator.of(context).pop();
+              notification.show(title: 'Download started!', type: NotificationType.local);
+            },
+          ),
+
+          if (isUser == true && isFromFeed == true) ...[
+            _buildActionItem(
+              context,
+              svg: AppAsset.icreport,
+              label: 'Report Video',
+              color: Colors.redAccent,
+              onTap: () async {
+                HapticFeedback.mediumImpact();
+                Navigator.pop(context);
+                home.createIsolate(token: token);
+                home.animateToPage(current_index + 1);
+                await home.removeController(current_index);
+                home.posts.removeAt(current_index);
+                notification.show(title: 'Post reported.', type: NotificationType.local);
+              },
+            ),
+          ],
+
+          if (isFromProfile == true) ...[
+            _buildActionItem(
+              context,
+              icon: Icons.delete_outline,
+              label: 'Delete Video',
+              color: Colors.red,
+              onTap: () async {
+                HapticFeedback.mediumImpact();
+                final response = await home.deletePost(id: video_id!);
+                if (response == 200 || response == 201) {
+                  profile.posts.removeAt(current_index);
+                  profile.fetchProfile(username: prefs_username!);
+                  Navigator.of(context, rootNavigator: true)..pop()..pop();
+                  notification.show(title: 'Post deleted.', type: NotificationType.local);
+                } else {
+                  Navigator.pop(context);
+                  notification.show(title: 'Something went wrong.', type: NotificationType.local);
+                }
+              },
+            ),
+          ],
+
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionItem(
+    BuildContext context, {
+    IconData? icon,
+    String? svg,
+    required String label,
+    required VoidCallback onTap,
+    Color? color,
+  }) {
+    return ListTile(
+      onTap: onTap,
+      leading: svg != null
+          ? SvgPicture.asset(svg, height: 24, width: 24, color: color ?? Theme.of(context).iconTheme.color)
+          : Icon(icon, color: color ?? Theme.of(context).iconTheme.color),
+      title: Text(
+        label,
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 16),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
       ),
     );
   }
 }
+

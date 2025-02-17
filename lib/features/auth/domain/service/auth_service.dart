@@ -1,70 +1,62 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart'; // For debugPrint
 import 'package:socialverse/export.dart';
 
 class AuthService {
-  Dio dio = new Dio();
+  final Dio dio;
 
-  login(Map data) async {
-    try {
-      Response response = await dio.post(
-        '${API.endpoint}${API.login}',
-        data: data,
-      );
-      print(response.data);
-      print(response.statusCode);
-      return response;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.statusMessage);
-      return e;
-    }
+  AuthService({Dio? dio}) : dio = dio ?? Dio(); // Inject Dio for testability
+
+  Future<Response> login(Map<String, dynamic> data) async {
+    return _handleRequest(
+      () => dio.post('${API.endpoint}${API.login}', data: data),
+    );
   }
 
-  signUp(Map data) async {
-    try {
-      Response response = await dio.post(
-        '${API.endpoint}${API.signup}',
-        data: data,
-      );
-      print(response.data);
-      return response;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.statusMessage);
-      return e;
-    }
+  Future<Response> signUp(Map<String, dynamic> data) async {
+    return _handleRequest(
+      () => dio.post('${API.endpoint}${API.signup}', data: data),
+    );
   }
 
-  oauth(Map data) async {
-    print('${API.endpoint}${API.oauth}');
-    try {
-      Response response = await dio.post(
-        '${API.endpoint}${API.oauth}',
-        data: data,
-      );
-      print(response.data);
-      print(response.statusCode);
-      return response;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.statusMessage);
-      return e;
-    }
+  Future<Response> oauth(Map<String, dynamic> data) async {
+    return _handleRequest(
+      () => dio.post('${API.endpoint}${API.oauth}', data: data),
+    );
   }
 
-  reset(Map data) async {
+  Future<Response> reset(Map<String, dynamic> data) async {
+    return _handleRequest(
+      () => dio.post('${API.endpoint}${API.reset}', data: data),
+    );
+  }
+
+  /// Handles API requests with proper error handling
+  Future<Response> _handleRequest(Future<Response> Function() request) async {
     try {
-      Response response = await dio.post(
-        '${API.endpoint}${API.reset}',
-        data: data,
-      );
-      print(response.data);
-      print(response.statusCode);
+      final Response response = await request();
+      if (kDebugMode) {
+        debugPrint('Response: ${response.data}');
+      }
       return response;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.statusMessage);
-      return e;
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode ?? 500;
+      final message = e.response?.statusMessage ?? 'Unknown error';
+
+      debugPrint('Error $statusCode: $message');
+
+      throw AuthException(statusCode, message);
     }
   }
+}
+
+/// Custom Exception for Authentication Errors
+class AuthException implements Exception {
+  final int statusCode;
+  final String message;
+
+  AuthException(this.statusCode, this.message);
+
+  @override
+  String toString() => 'AuthException ($statusCode): $message';
 }

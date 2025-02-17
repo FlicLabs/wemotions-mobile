@@ -31,10 +31,7 @@ class NotificationProvider extends ChangeNotifier {
     String? chat_type,
     required NotificationType type,
   }) {
-    if (_overlayEntry != null) {
-      // Prevent duplicate notifications
-      return;
-    }
+    dismiss(); // Ensure no duplicate notifications
 
     _overlayEntry = OverlayEntry(
       builder: (context) => OverlayNotification(
@@ -50,15 +47,17 @@ class NotificationProvider extends ChangeNotifier {
     );
 
     navKey.currentState?.overlay?.insert(_overlayEntry!);
-    // Start a timer to automatically dismiss the notification
     _startDismissTimer();
   }
 
   void dismiss() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-    _dismissTimer?.cancel();
-    print("OverlayEntry dismissed and removed");
+    try {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+      _dismissTimer?.cancel();
+    } catch (e) {
+      print("Error dismissing notification: $e");
+    }
   }
 
   void _startDismissTimer() {
@@ -66,14 +65,12 @@ class NotificationProvider extends ChangeNotifier {
     _dismissTimer = Timer(Duration(seconds: 6), dismiss);
   }
 
-  toggleFollowing(int index) {
+  void toggleFollowing(int index) {
     HapticFeedback.mediumImpact();
-    if (_notifications[index].actor != null) {
-      if (_notifications[index].actor.isFollowing != null) {
-        _notifications[index].actor.isFollowing =
-            !_notifications[index].actor.isFollowing!;
-        notifyListeners();
-      }
+    final actor = _notifications[index].actor;
+    if (actor?.isFollowing != null) {
+      actor!.isFollowing = !actor.isFollowing!;
+      notifyListeners();
     }
   }
 
@@ -82,12 +79,6 @@ class NotificationProvider extends ChangeNotifier {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        // Handle the incoming message when the app is in the foreground.
-        print('Handling a foreground message ${message.notification?.body}');
-        print('Handling a foreground message ${message.notification?.title}');
-        print('Handling a foreground message ${message.data['type']}');
-        print('Handling a message opened app ${json.encode(message.toMap())}');
-
         final String jsonString = json.encode(message.toMap());
         final Map<String, dynamic> responseData = json.decode(jsonString);
         PayloadModel payload = PayloadModel.fromJson(responseData);
@@ -106,38 +97,27 @@ class NotificationProvider extends ChangeNotifier {
       });
 
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        // Handle the incoming message when the user taps on the notification.
-        print('Handling a message opened app ${message.notification?.body}');
-        print('Handling a message opened app ${message.notification?.title}');
-        print('Handling a message opened app ${message.toMap()}');
-
-        // final String jsonString = json.encode(message.toMap());
-        // final Map<String, dynamic> responseData = json.decode(jsonString);
-        // PayloadModel payload = PayloadModel.fromJson(responseData);
-
-        // if (message.data['type'] == 'privateChat') {
-        //   navKey.currentState!.pushNamed(ChatScreen.routeName);
-        // }
+        print('User tapped on the notification');
       });
     }
   }
 
   Future<void> getToken() async {
-    final deviceToken = await _service.getToken();
-    _deviceToken = deviceToken;
-    print('${_deviceToken}');
+    _deviceToken = await _service.getToken();
+    print('Device Token: $_deviceToken');
     notifyListeners();
   }
 
-  void handleNotification(RemoteMessage message) {}
-
   Future<void> fetchActivity() async {
-    Response response = await _service.fetchActivity();
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final notifications =
-          NotificationModel.fromJson(response.data).notifications;
-      _notifications.addAll(notifications.toList());
-      notifyListeners();
-    } else {}
+    try {
+      Response response = await _service.fetchActivity();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _notifications = NotificationModel.fromJson(response.data).notifications;
+        notifyListeners();
+      }
+    } catch (e) {
+      print("Error fetching notifications: $e");
+    }
   }
 }
+

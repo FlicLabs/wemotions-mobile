@@ -1,88 +1,106 @@
-class API {
-  static String endpoint = 'https://api.wemotions.app/';
-  static String testnet = '${API.endpoint}testnet/';
-  static String mainnet = '${API.endpoint}mainnet/';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-  static String video_link =
+class API {
+  static const String endpoint = 'https://api.wemotions.app/';
+  static const String testnet = '${endpoint}testnet/';
+  static const String mainnet = '${endpoint}mainnet/';
+
+  static const String videoLink =
       'https://cdn-assets.socialverseapp.com/videos/SocialverseMobileAppLanding_1170x2532.mp4';
 
-  static String socket = 'ws://api.socialverseapp.com/websocket?token=';
+  static const String socket = 'wss://api.socialverseapp.com/websocket?token=';
 
-  //User
-  static String user = 'user';
-  static String signup = 'user/create';
-  static String login = 'user/login';
-  static String logout = 'user/logout';
-  static String block_list = 'user/block-list';
-  static String suggested = 'users/active';
-  static String logoutEverywhere = 'user/logout-everywhere';
-  static String oauth = 'auth/firebase';
-  static String reset = 'auth/credentials/reset/start';
-  static String notification = 'user/notification';
+  /// User Endpoints
+  static class UserAPI {
+    static const String user = 'user';
+    static const String signup = 'user/create';
+    static const String login = 'user/login';
+    static const String logout = 'user/logout';
+    static const String blockList = 'user/block-list';
+    static const String suggested = 'users/active';
+    static const String logoutEverywhere = 'user/logout-everywhere';
+    static const String oauth = 'auth/firebase';
+    static const String resetPassword = 'auth/credentials/reset/start';
+    static const String notification = 'user/notification';
+  }
 
-  //Profile
-  static String profile = 'profile';
-  static String updateProfile = 'profile/update';
-  static String updateUsername = 'user/username';
-  static String block = 'profile/block';
-  static String unblock = 'profile/unblock';
-  static String follow = 'profile/follow';
-  static String unfollow = 'profile/unfollow';
-  static String following = 'profile/following';
-  static String followers = 'profile/followers';
-  static String active = 'users/active';
-  static String device_token = 'user/device-token';
+  /// Profile Endpoints
+  static class ProfileAPI {
+    static const String profile = 'profile';
+    static const String updateProfile = 'profile/update';
+    static const String updateUsername = 'user/username';
+    static const String block = 'profile/block';
+    static const String unblock = 'profile/unblock';
+    static const String follow = 'profile/follow';
+    static const String unfollow = 'profile/unfollow';
+    static const String following = 'profile/following';
+    static const String followers = 'profile/followers';
+    static const String active = 'users/active';
+    static const String deviceToken = 'user/device-token';
+  }
 
-  //Feed
-  static String feed = 'feed';
+  /// Feed Endpoints
+  static class FeedAPI {
+    static const String feed = 'feed';
+  }
 
-  //Posts
-  static String posts = 'posts';
-  static String all_posts = 'posts/fetch/all';
-  static String createPost = 'posts/add';
-  static String uploadToken = 'posts/generate-upload-url';
-  static String view = 'post/view';
-  static String rating = 'post/rating';
-  static String inspire = 'inspire';
-  static String bookmarks = 'bookmarks';
-  static String comments = 'comments';
+  /// Post Endpoints
+  static class PostAPI {
+    static const String posts = 'posts';
+    static const String allPosts = 'posts/fetch/all';
+    static const String createPost = 'posts/add';
+    static const String uploadToken = 'posts/generate-upload-url';
+    static const String view = 'post/view';
+    static const String rating = 'post/rating';
+    static const String inspire = 'inspire';
+    static const String bookmarks = 'bookmarks';
+    static const String comments = 'comments';
+  }
 
-  //Search
-  static String search = 'search';
+  /// Search Endpoints
+  static class SearchAPI {
+    static const String search = 'search';
+  }
 
-  //Subverses
-  static String categories = 'categories';
-  static String subverse = 'subverse';
-  static String crateSphere = 'categories/add';
-  static String product = 'product';
-  static String subscription = 'subscription';
+  /// Subverses Endpoints
+  static class SubverseAPI {
+    static const String categories = 'categories';
+    static const String subverse = 'subverse';
+    static const String createSphere = 'categories/add';
+    static const String product = 'product';
+    static const String subscription = 'subscription';
+  }
 
-  //Chat
-  static String messages = 'chat/message';
-  static String join = 'chat/add/member';
-  static String members = 'chat/group/members';
+  /// Chat Endpoints
+  static class ChatAPI {
+    static const String messages = 'chat/message';
+    static const String join = 'chat/add/member';
+    static const String members = 'chat/group/members';
+  }
 
-  // Keys
-  // static String stripe_key = dotenv.env['STRIPE_KEY']!;
-  // static String api_key = dotenv.env['API_KEY']!;
-  // static String zx_key = dotenv.env['ZxKEY']!;
+  /// Wallet Endpoints
+  static class WalletAPI {
+    static const String create = 'wallet/create';
+    static const String balance = 'wallet/balance';
+    static const String export = 'wallet/export';
+    static const String address = 'wallet/get_by_address';
+    static const String tokens = 'tokens';
+    static const String activity = 'activity';
+    static const String transferToken = 'transfer-tokens';
+    static const String tokenList = 'tokens/balances';
+    static const String swapQuote = 'swap/quote';
+    static const String swapTokenList = 'swap/tokens/list';
+    static const String searchToken = 'swap/token/get_by_contract_address';
+    static const String sendTransaction = 'swap/send/transaction';
+    static const String nft = 'nfts/list';
+    static const String nftCollect = 'nfts/wallet/collections';
+  }
 
-  // WalletKit
-  static String create = 'wallet/create';
-  static String balance = 'wallet/balance';
-  static String export = 'wallet/export';
-  static String address = 'wallet/get_by_address';
-  static String tokens = 'tokens';
-  static String activity = 'activity';
-  static String transfer_token = 'transfer-tokens';
-  static String token_list = 'tokens/balances';
-  static String swap_quote = 'swap/quote';
-  static String swap_token = 'swap/tokens/list';
-  static String search_token = 'swap/token/get_by_contract_address';
-  static String send_transaction = 'swap/send/transaction';
-  static String nft = 'nfts/list';
-  static String nft_collect = 'nfts/wallet/collections';
+  /// Merchant ID
+  static const String merchantId = 'merchant.com.socialverse';
 
-  //Merchant ID
-  static String merchant_id = 'merchant.com.socialverse';
+  /// API Keys (Ensure `.env` is loaded first)
+  static final String stripeKey = dotenv.env['STRIPE_KEY'] ?? '';
+  static final String apiKey = dotenv.env['API_KEY'] ?? '';
+  static final String zxKey = dotenv.env['ZxKEY'] ?? '';
 }

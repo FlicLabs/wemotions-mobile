@@ -1,35 +1,26 @@
 // RecordButton.dart
 import 'package:socialverse/export.dart';
 
-class RecordButton extends StatefulWidget {
+class RecordButton extends StatelessWidget {
   const RecordButton({Key? key}) : super(key: key);
-
-  @override
-  State<RecordButton> createState() => _RecordButtonState();
-}
-
-class _RecordButtonState extends State<RecordButton> {
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CameraProvider>(
-      builder: (_, __, ___) {
+      builder: (_, cameraProvider, __) {
         return GestureDetector(
           onTap: () async {
-            if (__ .isVideoRecord) {
-              await __.stopRecording();
+            if (cameraProvider.isVideoRecord) {
+              await cameraProvider.stopRecording();
             }
           },
           child: CircularPercentIndicator(
             radius: 35,
             lineWidth: 4.0,
-            backgroundColor:
-                __.isRecordStart ? Colors.white : Theme.of(context).hintColor,
-            percent: __.recordPercentage,
+            backgroundColor: cameraProvider.isRecordStart
+                ? Colors.white
+                : Theme.of(context).hintColor,
+            percent: cameraProvider.recordPercentage,
             progressColor: const Color(0xFFA858F4),
             animation: true,
             addAutomaticKeepAlive: true,
@@ -38,44 +29,55 @@ class _RecordButtonState extends State<RecordButton> {
             center: Stack(
               alignment: Alignment.center,
               children: [
-                Container(
-                  height: 86,
-                  width: 86,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        Colors.transparent,
-                        Colors.white10,
-                        Colors.white12,
-                        Colors.white38,
-                      ],
-                      stops: [0.5, 0.6, 0.7, 1.0],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 48,
-                  width: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                ),
-                Container(
-                  height: 18,
-                  width: 18,
-                  decoration: BoxDecoration(
-                    shape:
-                        __.isRecordStart ? BoxShape.circle : BoxShape.rectangle,
-                    color: Theme.of(context).hintColor,
-                  ),
-                ),
+                _buildOuterRing(),
+                _buildInnerCircle(),
+                _buildRecordingIndicator(cameraProvider.isRecordStart, context),
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildOuterRing() {
+    return Container(
+      height: 86,
+      width: 86,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [
+            Colors.transparent,
+            Colors.white10,
+            Colors.white12,
+            Colors.white38,
+          ],
+          stops: [0.5, 0.6, 0.7, 1.0],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInnerCircle() {
+    return Container(
+      height: 48,
+      width: 48,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Widget _buildRecordingIndicator(bool isRecording, BuildContext context) {
+    return Container(
+      height: 18,
+      width: 18,
+      decoration: BoxDecoration(
+        shape: isRecording ? BoxShape.circle : BoxShape.rectangle,
+        color: Theme.of(context).hintColor,
+      ),
     );
   }
 }

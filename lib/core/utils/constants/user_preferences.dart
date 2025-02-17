@@ -1,102 +1,102 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialverse/features/auth/domain/models/user.dart';
-import 'package:socialverse/main.dart';
 
 class UserPreferences {
-  Future<dynamic> saveUser({
-    required balance,
-    required username,
-    required email,
-    required first_name,
-    required last_name,
-    required token,
-    required grid_view,
-    required logged_in,
-    required profile_picture,
-    // required gc_member,
-  }) async {
-    prefs!.setInt("balance", balance);
-    prefs!.setString("username", username);
-    prefs!.setString("email", email);
-    prefs!.setString("first_name", first_name);
-    prefs!.setString("last_name", last_name);
-    prefs!.setString("token", token);
-    prefs!.setBool("grid_view", grid_view);
-    prefs!.setBool("logged_in", logged_in);
-    prefs!.setString("profile_picture", profile_picture);
-    return;
+  static SharedPreferences? prefs;
+
+  /// Initializes SharedPreferences (must be called before using `UserPreferences`)
+  static Future<void> init() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
+  /// Save user details to local storage
+  Future<void> saveUser({
+    required int balance,
+    required String username,
+    required String email,
+    required String firstName,
+    required String lastName,
+    required String token,
+    required bool gridView,
+    required bool loggedIn,
+    required String profilePicture,
+  }) async {
+    await prefs?.setInt("balance", balance);
+    await prefs?.setString("username", username);
+    await prefs?.setString("email", email);
+    await prefs?.setString("first_name", firstName);
+    await prefs?.setString("last_name", lastName);
+    await prefs?.setString("token", token);
+    await prefs?.setBool("grid_view", gridView);
+    await prefs?.setBool("logged_in", loggedIn);
+    await prefs?.setString("profile_picture", profilePicture);
+  }
+
+  /// Save wallet details
   Future<void> saveWallet({
     required String id,
     required String createdAt,
     required String network,
     required String name,
     required String address,
-    required bool wallet_created,
+    required bool walletCreated,
   }) async {
-    prefs!.setString("id", id);
-    prefs!.setString("createdAt", createdAt);
-    prefs!.setString("network", network);
-    prefs!.setString("address", address);
-    prefs!.setBool("wallet_created", wallet_created);
-    return;
+    await prefs?.setString("id", id);
+    await prefs?.setString("createdAt", createdAt);
+    await prefs?.setString("network", network);
+    await prefs?.setString("address", address);
+    await prefs?.setBool("wallet_created", walletCreated);
   }
 
-  Future<dynamic> saveUploadToken({
-    required url,
-    required hash,
+  /// Save upload token
+  Future<void> saveUploadToken({
+    required String url,
+    required String hash,
   }) async {
-    prefs!.setString("url", url);
-    prefs!.setString("hash", hash);
-
-    return;
+    await prefs?.setString("url", url);
+    await prefs?.setString("hash", hash);
   }
 
-  Future<User> getUser() async {
-    int balance = prefs!.getInt("balance")!;
-    String token = prefs!.getString("token")!;
-    String status = prefs!.getString("status")!;
-    String username = prefs!.getString("username")!;
-    String email = prefs!.getString("email")!;
-    String firstName = prefs!.getString("firstName")!;
-    String lastName = prefs!.getString("lastName")!;
-    // String profilePictureUrl = prefs.getString("profilePictureUrl")!;
+  /// Retrieve user data
+  Future<User?> getUser() async {
+    if (prefs == null) return null;
 
     return User(
-      balance: balance,
-      token: token,
-      status: status,
-      username: username,
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      // profilePictureUrl: profilePictureUrl,
+      balance: prefs?.getInt("balance") ?? 0,
+      token: prefs?.getString("token") ?? "",
+      status: prefs?.getString("status") ?? "",
+      username: prefs?.getString("username") ?? "",
+      email: prefs?.getString("email") ?? "",
+      firstName: prefs?.getString("first_name") ?? "",
+      lastName: prefs?.getString("last_name") ?? "",
     );
   }
 
-  void removeUser() async {
-    prefs!.remove("balance");
-    prefs!.remove("token");
-    prefs!.remove("status");
-    prefs!.remove("username");
-    prefs!.remove("email");
-    prefs!.remove("firstName");
-    prefs!.remove("lastName");
-    prefs!.remove("profilePictureUrl");
-    prefs!.remove("logged_in");
+  /// Remove user data
+  Future<void> removeUser() async {
+    await prefs?.remove("balance");
+    await prefs?.remove("token");
+    await prefs?.remove("status");
+    await prefs?.remove("username");
+    await prefs?.remove("email");
+    await prefs?.remove("first_name");
+    await prefs?.remove("last_name");
+    await prefs?.remove("profile_picture");
+    await prefs?.remove("logged_in");
   }
 
-  void removeWallet() async {
-    prefs!.remove("id");
-    prefs!.remove("createdAt");
-    prefs!.remove("network");
-    prefs!.remove("name");
-    prefs!.remove("address");
-    prefs!.remove("pincode");
+  /// Remove wallet data
+  Future<void> removeWallet() async {
+    await prefs?.remove("id");
+    await prefs?.remove("createdAt");
+    await prefs?.remove("network");
+    await prefs?.remove("name");
+    await prefs?.remove("address");
+    await prefs?.remove("wallet_created");
   }
 
-  Future<String> getToken(args) async {
-    String token = prefs!.getString("token")!;
-    return token;
+  /// Get token
+  Future<String> getToken() async {
+    return prefs?.getString("token") ?? "";
   }
 }

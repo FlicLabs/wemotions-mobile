@@ -12,40 +12,40 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin {
+  @override
   bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Consumer<HomeProvider>(
-      builder: (_, __, ___) {
-        return Scaffold(
-          //temp branch
-          backgroundColor: Colors.black,
-          resizeToAvoidBottomInset: false,
-          body: RefreshIndicator(
-            color: Theme.of(context).hintColor,
-            backgroundColor: Colors.black,
-            onRefresh: () async => __.onRefresh(),
-            child: Stack(
-              children: [
-                EmptyState(),
-                if (__.posts.isNotEmpty) ...[
-                  HomeVideoWidget(
-                    posts: __.posts,
-                    pageController: __.home,
-                    pageIndex: 0,
-                    isFromFeed: true,
-                  )
-                ],
-                ExitToggle(),
-                PostUploadIndicator(),
-                ExitVideoWidget(),
-              ],
+    
+    return Scaffold(
+      backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: false,
+      body: RefreshIndicator(
+        color: Theme.of(context).hintColor,
+        backgroundColor: Colors.black,
+        onRefresh: () async => context.read<HomeProvider>().onRefresh(),
+        child: Stack(
+          children: [
+            Consumer<HomeProvider>(
+              builder: (context, homeProvider, child) {
+                return homeProvider.posts.isEmpty
+                    ? EmptyState()
+                    : HomeVideoWidget(
+                        posts: homeProvider.posts,
+                        pageController: homeProvider.home,
+                        pageIndex: homeProvider.currentIndex,
+                        isFromFeed: true,
+                      );
+              },
             ),
-          ),
-        );
-      },
+            const ExitToggle(),
+            const PostUploadIndicator(),
+            const ExitVideoWidget(),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -14,7 +14,7 @@ class PasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
-      builder: (_, __, ___) {
+      builder: (context, authProvider, _) {
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -26,39 +26,37 @@ class PasswordScreen extends StatelessWidget {
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Form(
-                  key: __.passwordFK,
+                  key: authProvider.passwordFK,
                   child: Column(
                     children: [
                       AuthTextFormField(
-                          keyboardType: TextInputType.visiblePassword,
-                          hintText: 'Password',
-                          obscureText: __.obscureText,
-                          controller: __.password,
-                          suffixIcon: GestureDetector(
-                            onTap: () {
-                              __.obscureText = !__.obscureText;
-                            },
-                            child: AuthObscureIcon(),
-                          ),
-                          validator: (String? v) {
-                            if (v == null || v.isEmpty) {
-                              return 'Please enter your password';
-                            } else if (!v.isValidPassword) {
-                              return 'Please enter a valid password';
-                            } else {
-                              return null;
-                            }
-                          }),
+                        keyboardType: TextInputType.visiblePassword,
+                        hintText: 'Password',
+                        obscureText: authProvider.obscureText,
+                        controller: authProvider.password,
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            authProvider.togglePasswordVisibility();
+                          },
+                          child: AuthObscureIcon(),
+                        ),
+                        validator: (String? v) {
+                          if (v == null || v.isEmpty) {
+                            return 'Please enter your password';
+                          } else if (!v.isValidPassword) {
+                            return 'Please enter a valid password';
+                          }
+                          return null;
+                        },
+                      ),
                       height20,
                       AuthButton(
                         title: 'Continue',
                         onTap: () {
-                          if (__.passwordFK.currentState!.validate()) {
-                            Navigator.of(context).pushNamed(
-                              NameScreen.routeName,
-                            );
+                          if (authProvider.passwordFK.currentState!.validate()) {
+                            Navigator.of(context).pushNamed(NameScreen.routeName);
                           }
                         },
                       ),

@@ -5,44 +5,34 @@ class ReportSubmitDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0), // Rounded corners
+        borderRadius: BorderRadius.circular(20.0),
       ),
       backgroundColor: Theme.of(context).canvasColor,
-      child: Container(
-        width: 334,
-        padding: EdgeInsets.all(20), // Padding inside the dialog
+      child: Padding(
+        padding: const EdgeInsets.all(20),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Ensure minimal size
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Checkmark icon inside the circle
+            // Checkmark icon inside a circular container
             Container(
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(15),
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xFFA858F4), // Circle background color
+                color: Color(0xFFA858F4),
               ),
-              child: Icon(
-                Icons.check_rounded, // Checkmark icon
+              child: const Icon(
+                Icons.check_rounded,
                 size: 40,
                 color: Colors.white,
               ),
             ),
-            SizedBox(height: 20), // Space between icon and text
+            const SizedBox(height: 20),
 
             // Title
             Text(
-              "Your Report Has Been",
-              style: TextStyle(
-                fontSize: 18,
-                color: Theme.of(context).focusColor,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),Text(
-              "Submitted",
+              "Your Report Has Been\nSubmitted",
               style: TextStyle(
                 fontSize: 18,
                 color: Theme.of(context).focusColor,
@@ -50,39 +40,32 @@ class ReportSubmitDialog extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-
-            SizedBox(height: 10), // Space between title and subtitle
+            const SizedBox(height: 10),
 
             // Subtitle
             Text(
-              "We appreciate your feedback. We'll",
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).primaryColorDark,
-              ),
-              textAlign: TextAlign.center,
-            ),Text(
-              " notify you if any further information is",
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).primaryColorDark,
-              ),
-              textAlign: TextAlign.center,
-            ),Text(
-              "needed.",
+              "We appreciate your feedback.\nWe'll notify you if any further\ninformation is needed.",
               style: TextStyle(
                 fontSize: 14,
                 color: Theme.of(context).primaryColorDark,
               ),
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 30),
 
-            SizedBox(height: 30), // Space before the button
-
-            Container(width:200,child: AuthButtonWithColor(title: "Continue", onTap: (){Navigator.of(context).pop();}, isGradient: true)),
+            // Continue Button
+            SizedBox(
+              width: 200,
+              child: AuthButtonWithColor(
+                title: "Continue",
+                onTap: () => Navigator.of(context).pop(),
+                isGradient: true,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
+

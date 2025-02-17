@@ -25,7 +25,7 @@ class UserProfileScreen extends StatefulWidget {
   }) : super(key: key);
 
   final String username;
-  final Function(bool isFollow)? isFollowing;
+  final Function(bool isFollowing)? isFollowing;
 
   static Route route({required UserProfileScreenArgs args}) {
     return CupertinoPageRoute(
@@ -48,10 +48,10 @@ class _UserProfileScreenState extends State<UserProfileScreen>
 
   fetchData() async {
     final user = Provider.of<UserProfileProvider>(context, listen: false);
-
-    await user.getUserProfile(
-      username: widget.username,
-    );
+    
+    if (user.user.username != widget.username || user.user.username.isEmpty) {
+      await user.getUserProfile(username: widget.username);
+    }
 
     if (widget.username != prefs_username) {
       user.isFollowing = user.user.isFollowing;
@@ -64,13 +64,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
     super.initState();
     fetchData();
     _controller = TabController(length: 1, vsync: this);
-
     _posts = ScrollController();
-
-    _posts.addListener(() {
-      _profileScrollListener(_posts);
-    });
-
+    _posts.addListener(() => _profileScrollListener(_posts));
     _controller.addListener(_tabChangeListener);
   }
 
@@ -83,9 +78,11 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   void _profileScrollListener(ScrollController controller) {
     if (controller.position.pixels == controller.position.maxScrollExtent) {
       final user = Provider.of<UserProfileProvider>(context, listen: false);
-      user.page++;
-      if (_controller.index == 0) {
-        user.getUserPosts(username: widget.username);
+      if (!user.loading) {
+        user.page++;
+        if (_controller.index == 0) {
+          user.getUserPosts(username: widget.username);
+        }
       }
     }
   }
@@ -108,9 +105,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
           body: RefreshIndicator(
             color: Theme.of(context).indicatorColor,
             backgroundColor: Theme.of(context).primaryColor,
-            notificationPredicate: (notification) {
-              return notification.depth == 2;
-            },
+            notificationPredicate: (notification) => notification.depth == 2,
             onRefresh: () async {
               __.page = 1;
               __.posts.clear();
@@ -178,16 +173,6 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                 child: ProfileStatsItem(
                                   value: __.user.followingCount,
                                   label: 'Following',
-                                  onTap: () {
-                                    if (__.user.followingCount != 0) {
-                                      Navigator.of(context).pushNamed(
-                                        FollowingScreen.routeName,
-                                        arguments: FollowingScreenArgs(
-                                          username: __.user.username,
-                                        ),
-                                      );
-                                    }
-                                  },
                                 ),
                               ),
                               Expanded(
@@ -202,7 +187,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                           UserProfileButton(
                             isFollowing: widget.isFollowing,
                             username: __.user.username,
-                            chat_id: __.user.chatId,
+                            chatId: __.user.chatId,
                           ),
                           Bio(bio: __.user.bio),
                           ProfileInfo(
@@ -215,29 +200,6 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                         ],
                       ),
                     ),
-                    SliverPersistentHeader(
-                      delegate: _SliverAppBarDelegate(
-                        TabBar(
-                          controller: _controller,
-                          labelStyle: AppTextStyle.bodyLarge
-                              .copyWith(color: Color(0xFF9032E6)),
-                          labelColor: Color(0xFF9032E6),
-                          unselectedLabelStyle: AppTextStyle.bodyLarge
-                              .copyWith(color: Theme.of(context).focusColor),
-                          unselectedLabelColor: Theme.of(context).focusColor,
-                          indicatorColor: Color(0xFF9032E6),
-                          indicatorSize: TabBarIndicatorSize.label,
-                          indicatorWeight: 2.5,
-                          indicatorPadding: EdgeInsets.symmetric(vertical: 6),
-                          dividerColor: Colors.transparent,
-                          tabs: [
-                            Tab(text: 'Videos'),
-                            // Tab(text: 'Liked'),
-                          ],
-                        ),
-                      ),
-                      pinned: true,
-                    ),
                   ];
                 },
                 body: TabBarView(
@@ -249,17 +211,6 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                       likedTab: false,
                       isSelfProfile: false,
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.all(20),
-                    //   child: Text(
-                    //     'This user\'s liked videos are private',
-                    //     style: Theme.of(context)
-                    //         .textTheme
-                    //         .displaySmall!
-                    //         .copyWith(fontSize: 15),
-                    //     textAlign: TextAlign.center,
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -271,27 +222,3 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   }
 }
 
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate(this._tabBar);
-
-  final TabBar _tabBar;
-
-  @override
-  double get minExtent => _tabBar.preferredSize.height;
-  @override
-  double get maxExtent => _tabBar.preferredSize.height;
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return new Container(
-      color: Theme.of(context).primaryColor,
-      child: _tabBar,
-    );
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return true;
-  }
-}

@@ -1,9 +1,17 @@
 
 
-import 'package:socialverse/features/profile/domain/models/users_model.dart';
+import 'package:equatable/equatable.dart';
+import 'users_model.dart';
 
-class ActiveUsersModel {
-  ActiveUsersModel({
+class ActiveUsersModel extends Equatable {
+  final String status;
+  final String message;
+  final String page;
+  final int maxPageSize;
+  final int pageSize;
+  final List<Users> users;
+
+  const ActiveUsersModel({
     required this.status,
     required this.message,
     required this.page,
@@ -12,30 +20,62 @@ class ActiveUsersModel {
     required this.users,
   });
 
-  late final String status;
-  late final String message;
-  late final String page;
-  late final int maxPageSize;
-  late final int pageSize;
-  late final List<Users> users;
-  
-  ActiveUsersModel.fromJson(Map<String, dynamic> json){
-    status = json['status'];
-    message = json['message'];
-    page = json['page'];
-    maxPageSize = json['max_page_size'];
-    pageSize = json['page_size'];
-    users = List.from(json['users']).map((e)=>Users.fromJson(e)).toList();
+  /// Empty instance for default values
+  static const empty = ActiveUsersModel(
+    status: '',
+    message: '',
+    page: '',
+    maxPageSize: 0,
+    pageSize: 0,
+    users: [],
+  );
+
+  /// Factory constructor for safer JSON parsing
+  factory ActiveUsersModel.fromJson(Map<String, dynamic> json) {
+    return ActiveUsersModel(
+      status: json['status'] ?? '',
+      message: json['message'] ?? '',
+      page: json['page'] ?? '',
+      maxPageSize: json['max_page_size'] ?? 0,
+      pageSize: json['page_size'] ?? 0,
+      users: (json['users'] as List<dynamic>?)
+              ?.map((e) => Users.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
   }
 
+  /// Converts the object to JSON format
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['status'] = status;
-    _data['message'] = message;
-    _data['page'] = page;
-    _data['max_page_size'] = maxPageSize;
-    _data['page_size'] = pageSize;
-    _data['users'] = users.map((e)=>e.toJson()).toList();
-    return _data;
+    return {
+      'status': status,
+      'message': message,
+      'page': page,
+      'max_page_size': maxPageSize,
+      'page_size': pageSize,
+      'users': users.map((e) => e.toJson()).toList(),
+    };
   }
+
+  /// Allows modification of specific fields
+  ActiveUsersModel copyWith({
+    String? status,
+    String? message,
+    String? page,
+    int? maxPageSize,
+    int? pageSize,
+    List<Users>? users,
+  }) {
+    return ActiveUsersModel(
+      status: status ?? this.status,
+      message: message ?? this.message,
+      page: page ?? this.page,
+      maxPageSize: maxPageSize ?? this.maxPageSize,
+      pageSize: pageSize ?? this.pageSize,
+      users: users ?? this.users,
+    );
+  }
+
+  @override
+  List<Object> get props => [status, message, page, maxPageSize, pageSize, users];
 }

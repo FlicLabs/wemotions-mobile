@@ -12,16 +12,19 @@ class CameraButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Gradient gradient = const LinearGradient(
+      colors: [Color(0xFFA858F4), Color(0xFF9032E6)],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    );
+
     return CircularPercentIndicator(
       radius: 35,
       lineWidth: 4.0,
       backgroundColor: Colors.white,
-      percent: 1,
-      progressColor: isDark ? Colors.white : Color(0xFFA858F4),
-      animation: true,
-      addAutomaticKeepAlive: true,
-      animationDuration: 0,
-      animateFromLastPercent: true,
+      percent: 1.0,
+      progressColor: isDark ? Colors.white : const Color(0xFFA858F4),
+      animateFromLastPercent: false, // Removed unnecessary animation
       center: Stack(
         alignment: Alignment.center,
         children: [
@@ -30,24 +33,13 @@ class CameraButton extends StatelessWidget {
             width: 48,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFA858F4),
-                    Color(0xFF9032E6),
-                  ],
-                  stops: [
-                    0.0,
-                    1.0
-                  ],
-                  begin: FractionalOffset.topCenter,
-                  end: FractionalOffset.bottomCenter,
-                  tileMode: TileMode.repeated),
+              gradient: gradient,
             ),
           ),
-          Container(
-            child: nav.selectedVideoUploadType == "Video"
-                ? SvgPicture.asset(AppAsset.icvideopost)
-                : SvgPicture.asset(AppAsset.icreply),
+          SvgPicture.asset(
+            nav.selectedVideoUploadType == "Video"
+                ? AppAsset.icvideopost
+                : AppAsset.icreply,
           ),
         ],
       ),

@@ -1,5 +1,25 @@
-class ProfileModel {
-  ProfileModel({
+import 'package:equatable/equatable.dart';
+
+class ProfileModel extends Equatable {
+  final String instagramUrl;
+  final String tiktokUrl;
+  final String youtubeUrl;
+  final String website;
+  final bool isOnline;
+  final String firstName;
+  final String lastName;
+  final String name;
+  final String bio;
+  final String profilePictureUrl;
+  final String username;
+  final int followerCount;
+  final int followingCount;
+  final int postCount;
+  final bool isFollowing;
+  final bool isBlocked;
+  final int? chatId;
+
+  const ProfileModel({
     required this.instagramUrl,
     required this.tiktokUrl,
     required this.youtubeUrl,
@@ -19,26 +39,7 @@ class ProfileModel {
     this.chatId,
   });
 
-  late final String instagramUrl;
-  late final String tiktokUrl;
-  late final String youtubeUrl;
-  late final String website;
-  late final bool isOnline;
-  late final String firstName;
-  late final String lastName;
-  late final String name;
-  late final String bio;
-  late final String profilePictureUrl;
-  late String username;
-  late final int followerCount;
-  late final int followingCount;
-  late final int postCount;
-  late bool isFollowing;
-  late bool isBlocked;
-  late final int? chatId;
-
-
-  static var empty = ProfileModel(
+  static const empty = ProfileModel(
     instagramUrl: '',
     tiktokUrl: '',
     youtubeUrl: '',
@@ -58,45 +59,33 @@ class ProfileModel {
     chatId: null,
   );
 
-  ProfileModel.fromJson(Map<String, dynamic> json) {
-    instagramUrl = json['instagram_url'];
-    tiktokUrl = json['tiktok_url'];
-    youtubeUrl = json['youtube_url'];
-    website = json['website'];
-    isOnline = json['is_online'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    name = json['name'];
-    bio = json['bio'];
-    profilePictureUrl = json['profile_picture_url'];
-    username = json['username'];
-    followerCount = json['follower_count'];
-    followingCount = json['following_count'];
-    postCount = json['post_count'];
-    isFollowing = json['is_following'] ?? false;
-    isBlocked = json['is_blocked'] ?? false;
-    chatId = json['chat_id'];
+  factory ProfileModel.fromJson(Map<String, dynamic> json) {
+    return ProfileModel(
+      instagramUrl: json['instagram_url'] ?? '',
+      tiktokUrl: json['tiktok_url'] ?? '',
+      youtubeUrl: json['youtube_url'] ?? '',
+      website: json['website'] ?? '',
+      isOnline: json['is_online'] ?? false,
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      name: json['name'] ?? '',
+      bio: json['bio'] ?? '',
+      profilePictureUrl: json['profile_picture_url'] ?? '',
+      username: json['username'] ?? '',
+      followerCount: (json['follower_count'] ?? 0) as int,
+      followingCount: (json['following_count'] ?? 0) as int,
+      postCount: (json['post_count'] ?? 0) as int,
+      isFollowing: json['is_following'] ?? false,
+      isBlocked: json['is_blocked'] ?? false,
+      chatId: json['chat_id'] as int?,
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['instagram_url'] = instagramUrl;
-    _data['tiktok_url'] = tiktokUrl;
-    _data['youtube_url'] = youtubeUrl;
-    _data['website'] = website;
-    _data['is_online'] = isOnline;
-    _data['first_name'] = firstName;
-    _data['last_name'] = lastName;
-    _data['name'] = name;
-    _data['bio'] = bio;
-    _data['profile_picture_url'] = profilePictureUrl;
-    _data['username'] = username;
-    _data['follower_count'] = followerCount;
-    _data['following_count'] = followingCount;
-    _data['post_count'] = postCount;
-    _data['is_following'] = isFollowing;
-    _data['is_blocked'] = isBlocked;
-    _data['chat_id'] = chatId;
-    return _data;
-  }
-}
+    return {
+      'instagram_url': instagramUrl,
+      'tiktok_url': tiktokUrl,
+      'youtube_url': youtubeUrl,
+      'website': website,
+      'is_online': isOnline,
+      'first_name': firstName

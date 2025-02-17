@@ -1,21 +1,38 @@
+import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 
 class SettingsService {
-  Dio dio = new Dio();
+  final Dio dio;
 
-  deleteAccount() async {
+  SettingsService({Dio? dioInstance})
+      : dio = dioInstance ?? Dio(BaseOptions(baseUrl: API.endpoint));
+
+  Future<int?> deleteAccount() async {
+    final token = prefs?.getString('token') ?? '';
+
     try {
-      Response response = await dio.delete(
-        '${API.endpoint}${API.user}',
-        options: Options(headers: {'Flic-Token': token ?? ''}),
+      final response = await dio.delete(
+        API.user,
+        options: _authHeaders(token),
       );
-      print(response.statusCode);
-      print(response.statusMessage);
       return response.statusCode;
-    } catch (e) {
-      print(e);
-      return e;
+    } on DioException catch (e) {
+      throw _handleDioError(e);
     }
+  }
+
+  /// Adds authentication headers
+  Options _authHeaders(String token) {
+    return Options(headers: {'Flic-Token': token});
+  }
+
+  /// Handles Dio errors in a structured way
+  Exception _handleDioError(DioException e) {
+    final statusCode = e.response?.statusCode;
+    final errorMessage = e.response?.data ?? e.message;
+
+    log('API Error: $statusCode - $errorMessage');
+    return Exception('API Error: $statusCode - $errorMessage');
   }
 }

@@ -1,11 +1,14 @@
 import 'package:socialverse/export.dart';
 
 class ReplyPlaybackSheet extends StatelessWidget {
+  const ReplyPlaybackSheet({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    List<double> _items = [0.5, 1.0, 1.5, 2.0];
+    const List<double> playbackSpeeds = [0.5, 1.0, 1.5, 2.0];
+
     return Consumer<ReplyProvider>(
-      builder: (_, __, ___) {
+      builder: (_, replyProvider, __) {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           decoration: BoxDecoration(
@@ -18,33 +21,38 @@ class ReplyPlaybackSheet extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              for (int i = 0; i < _items.length; i++)
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  minVerticalPadding: 0,
-                  title: Text(
-                    _items[i] == 1.0 ? 'Normal' : '${_items[i]}x',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(fontSize: 15),
-                  ),
-                  trailing: Radio(
-                    value: _items[i],
-                    activeColor: Theme.of(context).indicatorColor,
-                    groupValue: __.playback_speed,
-                    onChanged: (value) {
-                      HapticFeedback.mediumImpact();
-                      __.playback_speed = value!;
-                      __.setPlaybackSpeed(__.playback_speed);
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: playbackSpeeds.length,
+                itemBuilder: (context, index) {
+                  final speed = playbackSpeeds[index];
 
-                      navKey.currentState!
-                        ..pop()
-                        ..pop();
-                    },
-                  ),
-                ),
-              height20,
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      speed == 1.0 ? 'Normal' : '${speed}x',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontSize: 15),
+                    ),
+                    trailing: Radio<double>(
+                      value: speed,
+                      activeColor: Theme.of(context).indicatorColor,
+                      groupValue: replyProvider.playbackSpeed,
+                      onChanged: (value) {
+                        if (value != null) {
+                          HapticFeedback.mediumImpact();
+                          replyProvider.setPlaybackSpeed(value);
+                          Navigator.pop(context);
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         );

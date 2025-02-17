@@ -26,13 +26,6 @@ class FollowersScreen extends StatefulWidget {
     );
   }
 
-  //  static Route route({required FollowersScreenArgs args}) {
-  //   return getPlatformPageRoute(
-  //     builder: (context) => FollowersScreen(username: args.username),
-  //     routeName: routeName,
-  //   );
-  // }
-
   final String username;
 
   @override
@@ -54,29 +47,35 @@ class _FollowerScreenState extends State<FollowersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final __ = Provider.of<ProfileProvider>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Followers',
-          style: Theme.of(context).textTheme.bodyLarge,
-          textAlign: TextAlign.start,
-        ),
-      ),
-      body: ListView.builder(
-        padding: EdgeInsets.only(top: 20, bottom: 20),
-        itemCount: __.followers.length,
-        itemBuilder: (context, index) {
-          return FollowerItem(
-            index: index,
-            imageUrl: __.followers[index].profilePictureUrl,
-            username: __.followers[index].username,
-            firstName: __.followers[index].firstName,
-            lastName: __.followers[index].lastName,
-            isFollowing: __.followers[index].isFollowing,
-          );
-        },
-      ),
+    return Consumer<ProfileProvider>(
+      builder: (context, profileProvider, child) {
+        final followers = profileProvider.followers ?? [];
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'Followers',
+              style: Theme.of(context).textTheme.bodyLarge,
+              textAlign: TextAlign.start,
+            ),
+          ),
+          body: ListView.builder(
+            padding: EdgeInsets.only(top: 20, bottom: 20),
+            itemCount: followers.length,
+            itemBuilder: (context, index) {
+              final follower = followers[index];
+              return FollowerItem(
+                index: index,
+                imageUrl: follower.profilePictureUrl,
+                username: follower.username,
+                firstName: follower.firstName,
+                lastName: follower.lastName,
+                isFollowing: follower.isFollowing,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
+

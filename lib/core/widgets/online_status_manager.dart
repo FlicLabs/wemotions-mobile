@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:socialverse/export.dart';
+import 'package:flutter/material.dart';
 
 class OnlineStatusManager extends StatefulWidget {
   final Widget child;
@@ -16,8 +16,8 @@ class OnlineStatusManager extends StatefulWidget {
 }
 
 class _OnlineStatusManagerState extends State<OnlineStatusManager> with WidgetsBindingObserver {
-  // Timer? _heartbeatTimer;
   bool _isOnline = false;
+  final Dio _dio = Dio(BaseOptions(followRedirects: false));
 
   @override
   void initState() {
@@ -43,48 +43,39 @@ class _OnlineStatusManagerState extends State<OnlineStatusManager> with WidgetsB
   }
 
   void _goOnline() {
-    setState(() => _isOnline = true);
-    _sendOnlineStatus(true);
-    // _startHeartbeat();
+    if (!_isOnline) {
+      _isOnline = true;
+      _sendOnlineStatus(true);
+    }
   }
 
   void _goOffline() {
-    setState(() => _isOnline = false);
-    _sendOnlineStatus(false);
-    // _stopHeartbeat();
+    if (_isOnline) {
+      _isOnline = false;
+      _sendOnlineStatus(false);
+    }
   }
-
-  // void _startHeartbeat() {
-  //   _heartbeatTimer = Timer.periodic(Duration(minutes: 1), (timer) {
-  //     _sendOnlineStatus(true);
-  //   });
-  // }
-
-  // void _stopHeartbeat() {
-  //   _heartbeatTimer?.cancel();
-  //   _heartbeatTimer = null;
-  // }
 
   Future<void> _sendOnlineStatus(bool isOnline) async {
     try {
-      Dio dio = new Dio(BaseOptions(followRedirects: false));
-      print('${API.endpoint}/user/isonline');
-      print(token);
-      Response response = await dio.post(
-        '${API.endpoint}user/isonline',
+      final response = await _dio.post(
+        '${API.endpoint}/user/isonline',
         data: {'is_online': isOnline},
-        options: Options(headers: {'Content-Type': 'application/json','Flic-Token': widget.flicToken,}),
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Flic-Token': widget.flicToken,
+        }),
       );
 
       if (response.statusCode == 200) {
-        print(response.data);
+        debugPrint("Online status updated successfully: ${response.data}");
       } else {
-        print('Failed to update online status. Status code: ${response.statusCode}');
+        debugPrint("Failed to update online status. Status code: ${response.statusCode}");
       }
-    } on DioError catch (e){
-      print('Error sending online status: $e');
-      print(e.response?.statusCode);
-      print(e.response?.statusMessage);
+    } on DioError catch (e) {
+      debugPrint("Error sending online status: ${e.message}");
+      debugPrint("Response Code: ${e.response?.statusCode}");
+      debugPrint("Response Message: ${e.response?.statusMessage}");
     }
   }
 

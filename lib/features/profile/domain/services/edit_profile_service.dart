@@ -1,78 +1,78 @@
 import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 
 class EditProfileService {
-  Dio dio = new Dio();
+  final Dio dio;
 
-  updateProfile(Map data) async {
+  EditProfileService({Dio? dioInstance})
+      : dio = dioInstance ?? Dio(BaseOptions(baseUrl: API.endpoint));
+
+  Future<int?> updateProfile(Map<String, dynamic> data) async {
+    final token = prefs?.getString('token') ?? '';
+
     try {
-      Response response = await dio.put(
-        '${API.endpoint}${API.updateProfile}',
+      final response = await dio.put(
+        API.updateProfile,
         data: data,
-        options: Options(headers: {'Flic-Token': token ?? ''}),
+        options: _authHeaders(token),
       );
-      print(response.data);
-      print(response.statusCode);
       return response.statusCode;
-    } catch (e) {
-      print(e);
-      return e;
+    } on DioException catch (e) {
+      throw _handleDioError(e);
     }
   }
 
-  uploadImage(dynamic data) async {
-    token = prefs?.getString('token');
+  Future<int?> uploadImage(dynamic data) async {
+    final token = prefs?.getString('token') ?? '';
+
     try {
-      print('${API.endpoint}${API.user}/picture/upload');
-      Response response = await dio.post(
-        '${API.endpoint}${API.user}/picture/upload',
+      final response = await dio.post(
+        '${API.user}/picture/upload',
         data: data,
-        options: Options(headers: {'Flic-Token': token ?? ''}),
+        options: _authHeaders(token),
       );
-      print(response.statusCode);
-      print(response.data);
       return response.statusCode;
-    } on DioError catch (e) {
-      // print(e.response?.statusMessage);
-      print(e.response?.statusCode);
-      return (e.response?.statusCode);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
     }
   }
 
+  Future<Response> updateUsername(Map<String, dynamic> data) async {
+    final token = prefs?.getString('token') ?? '';
 
-  updateUsername(Map data) async {
-    print('${API.endpoint}${API.updateUsername}');
-    token = prefs?.getString('token');
     try {
-      Response response = await dio.post(
-        '${API.endpoint}${API.updateUsername}',
+      final response = await dio.post(
+        API.updateUsername,
         data: data,
-        options: Options(headers: {'Flic-Token': token ?? ''}),
+        options: _authHeaders(token),
       );
-      print(response.data);
-      print(response.statusCode);
       return response;
-    } on DioError catch (e) {
-      log('error');
-      print(e.response?.statusCode);
-      print(e.response?.data);
-      return e;
+    } on DioException catch (e) {
+      throw _handleDioError(e);
     }
   }
 
-  getUsername({required String username}) async {
+  Future<Response> getUsername({required String username}) async {
     try {
-      Response response = await dio.get(
-        '${API.endpoint}${API.profile}/$username',
-      );
-      print(response.data);
-      print(response.statusCode);
+      final response = await dio.get('${API.profile}/$username');
       return response;
-    } on DioError catch (e) {
-      print(e);
-      return e;
+    } on DioException catch (e) {
+      throw _handleDioError(e);
     }
+  }
+
+  /// Adds authentication headers
+  Options _authHeaders(String token) {
+    return Options(headers: {'Flic-Token': token});
+  }
+
+  /// Handles Dio errors in a structured way
+  Exception _handleDioError(DioException e) {
+    final statusCode = e.response?.statusCode;
+    final errorMessage = e.response?.data ?? e.message;
+
+    log('API Error: $statusCode - $errorMessage');
+    return Exception('API Error: $statusCode - $errorMessage');
   }
 }

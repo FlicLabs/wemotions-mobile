@@ -1,52 +1,62 @@
+import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 
-
 class InviteService {
-  Dio dio = new Dio();
+  final Dio dio;
 
-  getActiveUsers() async {
+  InviteService({Dio? dioInstance})
+      : dio = dioInstance ?? Dio(BaseOptions(baseUrl: API.endpoint));
+
+  Future<Response> getActiveUsers({int page = 1}) async {
+    final token = prefs?.getString('token') ?? '';
+
     try {
-      Response response = await dio.get(
-        '${API.endpoint}${API.active}?page=1',
-        options: Options(headers: {'Flic-Token': token ?? ''}),
+      final response = await dio.get(
+        '${API.active}?page=$page',
+        options: _authHeaders(token),
       );
-      print(response.data);
       return response;
-    } on DioError catch (e) {
-      print(e.response?.statusMessage);
-      print(e.response?.statusCode);
-      return (e.response?.statusCode);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
     }
   }
 
-    userFollow(String username) async {
+  Future<int?> userFollow(String username) async {
+    return _postRequest('${API.follow}/$username');
+  }
+
+  Future<int?> userUnfollow(String username) async {
+    return _postRequest('${API.unfollow}/$username');
+  }
+
+  /// Reusable method for follow/unfollow requests
+  Future<int?> _postRequest(String endpoint) async {
+    final token = prefs?.getString('token') ?? '';
+
     try {
-      Response response = await dio.post(
-        '${API.endpoint}${API.follow}/$username',
-        options: Options(headers: {'Flic-Token': token ?? ''}),
+      final response = await dio.post(
+        endpoint,
+        options: _authHeaders(token),
       );
-      print(response.data);
       return response.statusCode;
-    } on DioError catch (e) {
-      print(e.response?.statusMessage);
-      print(e.response?.statusCode);
-      return (e.response?.statusCode);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
     }
   }
 
-  userUnfollow(String username) async {
-    try {
-      Response response = await dio.post(
-        '${API.endpoint}${API.unfollow}/$username',
-        options: Options(headers: {'Flic-Token': token ?? ''}),
-      );
-      print(response.data);
-      return response.statusCode;
-    } on DioError catch (e) {
-      print(e.response?.statusMessage);
-      print(e.response?.statusCode);
-      return (e.response?.statusCode);
-    }
+  /// Adds authentication headers
+  Options _authHeaders(String token) {
+    return Options(headers: {'Flic-Token': token});
+  }
+
+  /// Handles Dio errors in a structured way
+  Exception _handleDioError(DioException e) {
+    final statusCode = e.response?.statusCode;
+    final errorMessage = e.response?.data ?? e.message;
+
+    log('API Error: $statusCode - $errorMessage');
+    return Exception('API Error: $statusCode - $errorMessage');
   }
 }
+

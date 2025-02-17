@@ -1,22 +1,24 @@
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class FirebaseMessagingService {
-  final messaging = FirebaseMessaging.instance;
-  Dio dio = new Dio();
+  final FirebaseMessaging messaging = FirebaseMessaging.instance;
+  final Dio dio = Dio();
+  final String? authToken;
 
-  Future<dynamic> getToken() async {
-    String? token = await messaging.getToken() ?? '';
-    return token;
+  FirebaseMessagingService({required this.authToken});
+
+  Future<String> getToken() async {
+    return await messaging.getToken() ?? '';
   }
 
-  Future<dynamic> getAPNSToken() async {
-    String? token = await messaging.getAPNSToken() ?? '';
-    return token;
+  Future<String> getAPNSToken() async {
+    return await messaging.getAPNSToken() ?? '';
   }
 
   Future<NotificationSettings> setupPushNotifications() async {
-    NotificationSettings settings = await messaging.requestPermission(
+    return await messaging.requestPermission(
       alert: true,
       announcement: true,
       badge: true,
@@ -25,46 +27,51 @@ class FirebaseMessagingService {
       provisional: true,
       sound: true,
     );
-    return settings;
   }
 
-  sendDeviceToken({required data}) async {
-    token = prefs!.getString('token');
-    print('${API.endpoint}${API.device_token}');
-    try {
-      Response response = await dio.post(
-        '${API.endpoint}${API.device_token}',
-        data: data,
-        options: Options(
-          headers: {'Flic-Token': token ?? ''},
-        ),
-      );
-      print(response.statusCode);
-      print(response.data);
-      return response;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.data);
-      return (e.response);
+  Future<Response?> sendDeviceToken({required Map<String, dynamic> data}) async {
+    return _request(
+      method: 'POST',
+      endpoint: API.device_token,
+      data: data,
+    );
+  }
+
+  Future<Response?> fetchActivity() async {
+    return _request(
+      method: 'GET',
+      endpoint: API.notification,
+    );
+  }
+
+  Future<Response?> _request({
+    required String method,
+    required String endpoint,
+    Map<String, dynamic>? data,
+  }) async {
+    if (authToken == null || authToken!.isEmpty) {
+      print("Auth token is missing.");
+      return null;
     }
-  }
 
-  fetchActivity() async {
-    print('${API.endpoint}${API.notification}');
     try {
-      Response response = await dio.get(
-        '${API.endpoint}${API.notification}',
-        options: Options(
-          headers: {'Flic-Token': token ?? ''},
-        ),
-      );
-      //print(response.statusCode);
-      // print(response.data);
+      Response response;
+      String url = '${API.endpoint}$endpoint';
+
+      Options options = Options(headers: {'Flic-Token': authToken!});
+
+      if (method == 'POST') {
+        response = await dio.post(url, data: data, options: options);
+      } else {
+        response = await dio.get(url, options: options);
+      }
+
+      print("Response: ${response.statusCode}");
       return response;
     } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.data);
-      return (e.response);
+      print("Error: ${e.response?.statusCode} - ${e.response?.data}");
+      return e.response;
     }
   }
 }
+

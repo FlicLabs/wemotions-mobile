@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:socialverse/export.dart';
 
 class EditProfileScreenArgs {
@@ -28,6 +30,18 @@ class EditProfileScreenArgs {
 
 class EditProfileScreen extends StatefulWidget {
   static const String routeName = '/edit-profile';
+
+  final String username;
+  final String name;
+  final String bio;
+  final String firstname;
+  final String surname;
+  final String imageUrl;
+  final String website;
+  final String instagram;
+  final String tiktok;
+  final String youtube;
+
   const EditProfileScreen({
     Key? key,
     required this.username,
@@ -41,17 +55,6 @@ class EditProfileScreen extends StatefulWidget {
     required this.tiktok,
     required this.youtube,
   }) : super(key: key);
-
-  final String username;
-  final String name;
-  final String bio;
-  final String firstname;
-  final String surname;
-  final String imageUrl;
-  final String website;
-  final String instagram;
-  final String tiktok;
-  final String youtube;
 
   static Route route({required EditProfileScreenArgs args}) {
     return CupertinoPageRoute(
@@ -72,262 +75,214 @@ class EditProfileScreen extends StatefulWidget {
   }
 
   @override
-  State<EditProfileScreen> createState() => _EditProfileScreenState();
+  _EditProfileScreenState createState() => _EditProfileScreenState();
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  void didChangeDependencies() {
-    final edit = Provider.of<EditProfileProvider>(context, listen: false);
-    final user = Provider.of<ProfileProvider>(context, listen: false);
-    edit.username.text = user.user.username;
-    edit.name.text = user.user.name;
-    edit.bio.text = user.user.bio;
-    edit.firstname.text = user.user.firstName;
-    edit.surname.text = user.user.lastName;
-    edit.website.text = user.user.website;
-    edit.tiktok.text = user.user.tiktokUrl;
-    edit.instagram.text = user.user.instagramUrl;
-    edit.youtube.text = user.user.youtubeUrl;
-    super.didChangeDependencies();
+  late EditProfileProvider editProvider;
+  late ProfileProvider userProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    editProvider = Provider.of<EditProfileProvider>(context, listen: false);
+    userProvider = Provider.of<ProfileProvider>(context, listen: false);
+
+    _initializeFields();
+  }
+
+  void _initializeFields() {
+    final user = userProvider.user;
+    editProvider.username.text = user.username;
+    editProvider.name.text = user.name;
+    editProvider.bio.text = user.bio;
+    editProvider.firstname.text = user.firstName;
+    editProvider.surname.text = user.lastName;
+    editProvider.website.text = user.website;
+    editProvider.tiktok.text = user.tiktokUrl;
+    editProvider.instagram.text = user.instagramUrl;
+    editProvider.youtube.text = user.youtubeUrl;
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<ProfileProvider>(context);
     return Consumer<EditProfileProvider>(
       builder: (_, __, ___) {
         return Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            leading: __.loading ? Container() : null,
             title: Text(
               'Edit Profile',
               style: Theme.of(context).textTheme.bodyLarge,
-              textAlign: TextAlign.start,
             ),
           ),
           body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                      await __.selectProfilePhoto(context);
-                    },
-                    child: Column(
-                      children: [
-                        if (widget.imageUrl.isEmpty) ...[
-                          SvgPicture.asset(
-                            AppAsset.icuser,
-                            height: 100,
-                            width: 100,
-                          ),
-                          height10,
-                          Text(
-                            'Tap to add Subverse photo',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            textAlign: TextAlign.center,
-                          )
-                        ],
-                        if (widget.imageUrl.isNotEmpty &&
-                            __.selectedImage?.path == null) ...[
-                          CustomCircularAvatar(
-                            imageUrl: widget.imageUrl,
-                            height: 100,
-                            width: 100,
-                          ),
-                          height10,
-                          Text(
-                            'Change profile photo',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w200,
-                              color: Theme.of(context).indicatorColor,
-                              fontFamily: 'sofia',
-                            ),
-                          ),
-                        ],
-                        if (__.selectedImage?.path != null) ...[
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Image.file(
-                              File(__.selectedImage!.path),
-                              height: 100,
-                              fit: BoxFit.cover,
-                              width: 100,
-                            ),
-                          ),
-                          height10,
-                          Text(
-                            'Change profile photo',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w200,
-                              color: Theme.of(context).indicatorColor,
-                              fontFamily: 'sofia',
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  // height20,
-                  // CustomCircularAvatar(
-                  //   height: 100,
-                  //   width: 100,
-                  //   imageUrl: widget.imageUrl,
-                  // ),
-                  // height10,
-                  // Text(
-                  //   'Change profile photo',
-                  //   style: TextStyle(
-                  //     fontSize: 12,
-                  //     fontWeight: FontWeight.w200,
-                  //     color: Theme.of(context).indicatorColor,
-                  //     fontFamily: 'sofia',
-                  //   ),
-                  // ),
-                  height20,
-                  ProfileAlignedText(
-                    title: 'Name',
-                  ),
-                  height5,
-                  ProfileTextFormField(
-                    controller: __.name,
-                    hintText: 'Name',
-                    readOnly: true,
-                    enabled: true,
-                    onTap: () {
-                      __.edited = false;
-                      Navigator.of(context).pushNamed(
-                        EditNameScreen.routeName,
-                        arguments: EditNameScreenArgs(
-                          firstname: widget.firstname,
-                          surname: widget.surname,
-                        ),
-                      );
-                    },
-                  ),
-                  // height20,
-                  // ProfileAlignedText(
-                  //   title: 'Username',
-                  // ),
-                  // height5,
-                  // ProfileTextFormField(
-                  //   controller: __.username,
-                  //   hintText: 'Username',
-                  //   readOnly: true,
-                  //   enabled: true,
-                  //   onTap: () {
-                  //     __.edited = false;
-                  //     Navigator.of(context).pushNamed(
-                  //       EditUsernameScreen.routeName,
-                  //       arguments: EditUsernameScreenArgs(
-                  //         username: widget.username,
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  height20,
-                  ProfileAlignedText(
-                    title: 'Bio',
-                  ),
-                  height5,
-                  ProfileTextFormField(
-                    controller: __.bio,
-                    hintText: 'Bio',
-                    readOnly: true,
-                    enabled: true,
-                    onTap: () {
-                      __.edited = false;
-                      Navigator.of(context).pushNamed(
-                        EditBioScreen.routeName,
-                        arguments: EditBioScreenArgs(
-                          bio: widget.bio,
-                        ),
-                      );
-                    },
-                  ),
-                  height20,
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Text(
-                      'Links',
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayMedium!
-                          .copyWith(fontSize: 15),
-                    ),
-                    onTap: () {
-                      __.edited = false;
-                      Navigator.of(context).pushNamed(
-                        EditLinksScreen.routeName,
-                        arguments: EditLinksScreenArgs(
-                          website: widget.website,
-                          tiktok: widget.tiktok,
-                          instagram: widget.tiktok,
-                          youtube: widget.youtube,
-                        ),
-                      );
-                    },
-                    trailing: Icon(
-                      Icons.keyboard_arrow_right_sharp,
-                      color: Theme.of(context).focusColor,
-                    ),
-                  ),
-                  height40,
-                  if (__.loading) ...[
-                    SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: CustomProgressIndicator(),
-                    ),
-                  ],
-                  if (__.loading == false) ...[
-                    TransparentButton(
-                      title: 'Update',
-                      isBorder: false,
-                      gradient: LinearGradient(
-                          colors: [
-                            Color(0xFFA858F4),
-                            Color(0xFF9032E6),
-                          ],
-                          stops: [
-                            0.0,
-                            1.0
-                          ],
-                          begin: FractionalOffset.topCenter,
-                          end: FractionalOffset.bottomCenter,
-                          tileMode: TileMode.repeated),
-                      onTap: () async {
-                        if (__.selectedImage?.path != null) {
-                          final response = await __.uploadImage();
-                          if (response == 200 || response == 201) {
-                            await user.fetchProfile(
-                              username: prefs_username!,
-                              forceRefresh: true,
-                            );
-                          }
-                        }
-
-                        final response = await __.updateProfile(context);
-                        if (response == 200 || response == 201) {
-                          await user.fetchProfile(
-                            username: prefs_username!,
-                            forceRefresh: true,
-                          );
-                        }
-                      },
-                    )
-                  ],
-                ],
-              ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildProfileImageSection(__),
+                const SizedBox(height: 20),
+                _buildEditableField(
+                  title: 'Name',
+                  controller: __.name,
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                      EditNameScreen.routeName,
+                      arguments: EditNameScreenArgs(
+                        firstname: widget.firstname,
+                        surname: widget.surname,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                _buildEditableField(
+                  title: 'Bio',
+                  controller: __.bio,
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                      EditBioScreen.routeName,
+                      arguments: EditBioScreenArgs(bio: widget.bio),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                _buildLinksSection(),
+                const SizedBox(height: 40),
+                _buildUpdateButton(__),
+              ],
             ),
           ),
         );
       },
     );
   }
+
+  Widget _buildProfileImageSection(EditProfileProvider provider) {
+    return GestureDetector(
+      onTap: () async => await provider.selectProfilePhoto(context),
+      child: Column(
+        children: [
+          if (widget.imageUrl.isEmpty && provider.selectedImage?.path == null)
+            Column(
+              children: [
+                SvgPicture.asset(AppAsset.icuser, height: 100, width: 100),
+                const SizedBox(height: 10),
+                Text(
+                  'Tap to add Subverse photo',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          if (widget.imageUrl.isNotEmpty && provider.selectedImage?.path == null)
+            CustomCircularAvatar(imageUrl: widget.imageUrl, height: 100, width: 100),
+          if (provider.selectedImage?.path != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Image.file(
+                File(provider.selectedImage!.path),
+                height: 100,
+                fit: BoxFit.cover,
+                width: 100,
+              ),
+            ),
+          const SizedBox(height: 10),
+          Text(
+            'Change profile photo',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w200,
+              color: Theme.of(context).indicatorColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEditableField({
+    required String title,
+    required TextEditingController controller,
+    required VoidCallback onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ProfileAlignedText(title: title),
+        const SizedBox(height: 5),
+        ProfileTextFormField(
+          controller: controller,
+          hintText: title,
+          readOnly: true,
+          enabled: true,
+          onTap: onTap,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLinksSection() {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Text(
+        'Links',
+        style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 15),
+      ),
+      onTap: () {
+        Navigator.of(context).pushNamed(
+          EditLinksScreen.routeName,
+          arguments: EditLinksScreenArgs(
+            website: widget.website,
+            tiktok: widget.tiktok,
+            instagram: widget.instagram,
+            youtube: widget.youtube,
+          ),
+        );
+      },
+      trailing: Icon(
+        Icons.keyboard_arrow_right_sharp,
+        color: Theme.of(context).focusColor,
+      ),
+    );
+  }
+
+  Widget _buildUpdateButton(EditProfileProvider provider) {
+    return provider.loading
+        ? const SizedBox(
+            height: 50,
+            width: 50,
+            child: CustomProgressIndicator(),
+          )
+        : TransparentButton(
+            title: 'Update',
+            isBorder: false,
+            gradient: const LinearGradient(
+              colors: [Color(0xFFA858F4), Color(0xFF9032E6)],
+              begin: FractionalOffset.topCenter,
+              end: FractionalOffset.bottomCenter,
+            ),
+            onTap: () async {
+              if (provider.selectedImage?.path != null) {
+                final response = await provider.uploadImage();
+                if (response == 200 || response == 201) {
+                  await userProvider.fetchProfile(
+                    username: prefs_username!,
+                    forceRefresh: true,
+                  );
+                }
+              }
+
+              final response = await provider.updateProfile(context);
+              if (response == 200 || response == 201) {
+                await userProvider.fetchProfile(
+                  username: prefs_username!,
+                  forceRefresh: true,
+                );
+              }
+            },
+          );
+  }
 }
+

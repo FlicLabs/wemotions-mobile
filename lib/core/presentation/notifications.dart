@@ -13,7 +13,8 @@ class ActivityScreen extends StatelessWidget {
       NotificationGroup.today: [],
       NotificationGroup.older: [],
     }, (groups, notification) {
-      final notificationDate = DateTime.parse(notification.createdAt);
+      final notificationDate = DateTime.tryParse(notification.createdAt) ??
+          DateTime.fromMillisecondsSinceEpoch(0);
       groups[notificationDate.year == today.year &&
                   notificationDate.month == today.month &&
                   notificationDate.day == today.day
@@ -26,98 +27,87 @@ class ActivityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profile = Provider.of<ProfileProvider>(context);
-    final home = Provider.of<HomeProvider>(context, listen: false);
-    final user = Provider.of<UserProfileProvider>(context);
-    final notification = Provider.of<NotificationProvider>(context);
+    final profile = context.watch<ProfileProvider>();
+    final home = context.read<HomeProvider>();
+    final user = context.watch<UserProfileProvider>();
 
     return Scaffold(
       appBar: AppBar(
-        leading: shrink,
+        leading: const SizedBox(), // Replace `shrink` with SizedBox
         leadingWidth: 10,
         centerTitle: false,
-        title: Center(
-          child: Text(
-            notification.notifications.isNotEmpty ? 'Notifications' : "",
-            style: Theme.of(context).textTheme.bodyLarge,
+        title: Consumer<NotificationProvider>(
+          builder: (_, notification, __) => Center(
+            child: Text(
+              notification.notifications.isNotEmpty ? 'Notifications' : '',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
           ),
         ),
       ),
-      body: Consumer<NotificationProvider>(
-        builder: (_, __, ___) {
-          if (__.notifications.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: SvgPicture.asset(
-                      AppAsset.icnonotification,
-                      height: 128,
-                      color: Color(0xFF7C7C7C),
-                    ),
-                  ),
-                  Text(
-                    'No Notifications',
-                    style: AppTextStyle.bodySmall.copyWith(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    'You don\'t have any notifications right now.\nKeep interacting and check back soon.',
-                    style: AppTextStyle.bodySmall.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            );
+      body: Selector<NotificationProvider, List<dynamic>>(
+        selector: (_, provider) => provider.notifications,
+        builder: (context, notifications, child) {
+          if (notifications.isEmpty) {
+            return _buildEmptyNotificationState();
           }
 
-          // Group notifications by NotificationGroup
-          final groupedNotifications = groupNotifications(__.notifications);
+          final groupedNotifications = groupNotifications(notifications);
 
           return RefreshIndicator(
             color: Theme.of(context).indicatorColor,
             backgroundColor: Theme.of(context).primaryColor,
-            onRefresh: () async {
-              __.notifications.clear();
-              __.fetchActivity();
-            },
+            onRefresh: () => context.read<NotificationProvider>().fetchActivity(),
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              children: NotificationGroup.values.map((group) {
-                final groupTitle =
-                    group == NotificationGroup.today ? "Today" : "Older";
-                final notifications = groupedNotifications[group] ?? [];
-                if (notifications.isEmpty) return SizedBox.shrink();
+              children: NotificationGroup.values.expand((group) {
+                final groupTitle = group == NotificationGroup.today ? "Today" : "Older";
+                final groupItems = groupedNotifications[group] ?? [];
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      groupTitle,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontSize: 18,
-                          ),
-                    ),
-                    const SizedBox(height: 10),
-                    ...notifications.map((notification) {
-                      return _buildNotificationTile(
-                          context, notification, profile, home, user, __);
-                    }).toList(),
-                  ],
-                );
+                if (groupItems.isEmpty) return [];
+
+                return [
+                  Text(
+                    groupTitle,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 18),
+                  ),
+                  const SizedBox(height: 10),
+                  ...groupItems.map((notification) =>
+                      _buildNotificationTile(context, notification, profile, home, user)),
+                ];
               }).toList(),
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildEmptyNotificationState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: SvgPicture.asset(
+              AppAsset.icnonotification,
+              height: 128,
+              color: const Color(0xFF7C7C7C),
+            ),
+          ),
+          const Text(
+            'No Notifications',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
+            textAlign: TextAlign.center,
+          ),
+          const Text(
+            'You don\'t have any notifications right now.\nKeep interacting and check back soon.',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
@@ -128,108 +118,53 @@ class ActivityScreen extends StatelessWidget {
     ProfileProvider profile,
     HomeProvider home,
     UserProfileProvider user,
-    NotificationProvider notificationProvider,
   ) {
+    final actionType = notification.actionType;
+    final notificationImage = notification.contentAvatarUrl ?? "";
+    final notificationActor = notification.actor;
+    
     Widget? trailingWidget;
-    Widget? leadingWidget;
 
-    switch (notification.actionType) {
-      case 'follow':
-        trailingWidget = null;
-        break;
-
-      case 'like':
-        trailingWidget = GestureDetector(
-          onTap: () async {
-            home.single_post.clear();
-            int postId = int.parse(notification.targetId!);
-            await home.getSinglePost(id: postId);
-            if (home.isPlaying == true) {
-              await home.videoController(home.index)?.pause();
-            }
-            Navigator.pushNamed(
-              context,
-              VideoWidget.routeName,
-              arguments: VideoWidgetArgs(
-                posts: home.single_post,
-                pageController: PageController(initialPage: 0),
-                pageIndex: 0,
-              ),
-            );
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: CustomNetworkImage(
-              imageUrl: notification.contentAvatarUrl,
-              height: 48,
-              width: 38,
-            ),
-          ),
-        );
-        break;
-
-      case 'inspire':
-        trailingWidget = GestureDetector(
-          onTap: () async {
-            home.single_post.clear();
-            int postId = int.parse(notification.targetId!);
-            await home.getSinglePost(id: postId);
-            if (home.isPlaying == true) {
-              await home.videoController(home.index)?.pause();
-            }
-            Navigator.pushNamed(
-              context,
-              VideoWidget.routeName,
-              arguments: VideoWidgetArgs(
-                posts: home.single_post,
-                pageController: PageController(initialPage: 0),
-                pageIndex: 0,
-              ),
-            );
-          },
+    if (actionType == 'like' || actionType == 'inspire') {
+      trailingWidget = GestureDetector(
+        onTap: () => _handleNotificationTap(context, home, notification),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(4),
           child: CustomNetworkImage(
-            imageUrl: notification.contentAvatarUrl,
-            height: 50,
-            width: 50,
+            imageUrl: notificationImage,
+            height: 48,
+            width: 38,
           ),
-        );
-        break;
-
-      default:
-        trailingWidget = null;
-        break;
+        ),
+      );
     }
-
-    leadingWidget = GestureDetector(
-      onTap: () {
-        user.page = 1;
-        user.posts.clear();
-        user.user = ProfileModel.empty;
-        Navigator.of(context).pushNamed(
-          UserProfileScreen.routeName,
-          arguments: UserProfileScreenArgs(
-            username: notification.actor.username,
-            isFollowing: (following) {
-              notification.actor.isFollowing = following;
-            },
-          ),
-        );
-      },
-      child: CustomCircularAvatar(
-        height: 50,
-        width: 50,
-        imageUrl: notification.actor.profileUrl,
-      ),
-    );
 
     return ListTile(
       contentPadding: const EdgeInsets.only(bottom: 15),
-      leading: leadingWidget,
+      leading: GestureDetector(
+        onTap: () {
+          user.page = 1;
+          user.posts.clear();
+          user.user = ProfileModel.empty;
+          Navigator.of(context).pushNamed(
+            UserProfileScreen.routeName,
+            arguments: UserProfileScreenArgs(
+              username: notificationActor.username,
+              isFollowing: (following) => notificationActor.isFollowing = following,
+            ),
+          );
+        },
+        child: CustomCircularAvatar(
+          height: 50,
+          width: 50,
+          imageUrl: notificationActor.profileUrl,
+        ),
+      ),
       title: RichText(
         text: TextSpan(
           children: [
             TextSpan(
-              text: notification.actor.username,
+              text: notificationActor.username,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -245,5 +180,28 @@ class ActivityScreen extends StatelessWidget {
       ),
       trailing: trailingWidget,
     );
+  }
+
+  void _handleNotificationTap(BuildContext context, HomeProvider home, dynamic notification) async {
+    home.single_post.clear();
+    final postId = int.tryParse(notification.targetId ?? '0') ?? 0;
+
+    if (postId > 0) {
+      await home.getSinglePost(id: postId);
+
+      if (home.isPlaying) {
+        await home.videoController(home.index)?.pause();
+      }
+
+      Navigator.pushNamed(
+        context,
+        VideoWidget.routeName,
+        arguments: VideoWidgetArgs(
+          posts: home.single_post,
+          pageController: PageController(initialPage: 0),
+          pageIndex: 0,
+        ),
+      );
+    }
   }
 }

@@ -1,169 +1,154 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart'; // For debugPrint
 import 'package:socialverse/export.dart';
 
 class PostService {
-  Dio dio = new Dio();
+  final Dio _dio = Dio();
 
-  getUploadToken() async {
-    token = prefs?.getString('token');
-    Response response = await dio.get(
-      '${API.endpoint}${API.uploadToken}',
-      options: Options(
-        headers: {'Flic-Token': token ?? ''},
-      ),
-    );
-    return response;
+  Options getHeaders() {
+    return Options(headers: {'Flic-Token': token ?? ''});
   }
 
-  Future<dynamic> createPost({
+  Future<Response?> getUploadToken() async {
+    final String url = '${API.endpoint}${API.uploadToken}';
+    debugPrint('Fetching upload token: $url');
+
+    try {
+      Response response = await _dio.get(url, options: getHeaders());
+      return response;
+    } on DioException catch (e) {
+      debugPrint('DioError (getUploadToken): ${e.message}');
+      return null;
+    }
+  }
+
+  Future<http.StreamedResponse> createPost({
     required String hash,
     required String title,
-    String? category_id,
-    String? is_private,
+    required String categoryId,
+    required String isPrivate,
   }) async {
-    var uri = Uri.parse('${API.endpoint}${API.posts}');
-    var request = http.MultipartRequest('POST', uri);
-    request.fields.addAll({
-      'title': title,
-      'hash': hash,
-      'is_available_in_public_feed': is_private!,
-      'category_id': category_id!,
-    });
-    request.headers.addAll({'Flic-Token': token ?? ''});
-    var response = await request.send();
-    print(response);
-    print(response.reasonPhrase);
-    print(response.statusCode);
-    return response.stream.transform(utf8.decoder);
+    final Uri uri = Uri.parse('${API.endpoint}${API.posts}');
+    final request = http.MultipartRequest('POST', uri)
+      ..fields.addAll({
+        'title': title,
+        'hash': hash,
+        'is_available_in_public_feed': isPrivate,
+        'category_id': categoryId,
+      })
+      ..headers.addAll({'Flic-Token': token ?? ''});
+
+    debugPrint('Creating post: ${request.fields}');
+    return request.send();
   }
 
-  Future<dynamic> createReply({
+  Future<http.StreamedResponse> createReply({
     required String hash,
     required String title,
-    String? category_id,
-    String? is_private,
-    required String parent_video_id
+    required String parentVideoId,
+    required String categoryId,
+    required String isPrivate,
   }) async {
-    print({
-      'title': title,
-      'hash': hash,
-      'is_available_in_public_feed': is_private!,
-      'parent_video_id' : parent_video_id,
-      'category_id': category_id!,
-    });
-    var uri = Uri.parse('${API.endpoint}${API.posts}');
-    var request = http.MultipartRequest('POST', uri);
-    request.fields.addAll({
-      'title': title,
-      'hash': hash,
-      'is_available_in_public_feed': is_private,
-      'parent_video_id' : parent_video_id,
-      // 'category_id': category_id!,
-    });
-    request.headers.addAll({'Flic-Token': token ?? ''});
-    var response = await request.send();
-    print(response);
-    print(response.reasonPhrase);
-    print(response.statusCode);
-    return response.stream.transform(utf8.decoder);
+    final Uri uri = Uri.parse('${API.endpoint}${API.posts}');
+    final request = http.MultipartRequest('POST', uri)
+      ..fields.addAll({
+        'title': title,
+        'hash': hash,
+        'is_available_in_public_feed': isPrivate,
+        'parent_video_id': parentVideoId,
+        'category_id': categoryId,
+      })
+      ..headers.addAll({'Flic-Token': token ?? ''});
+
+    debugPrint('Creating reply: ${request.fields}');
+    return request.send();
   }
 
-  uploadVideo({
-    required upload_url,
-    required video_path,
-    required upload_percentage_value,
+  Future<void> uploadVideo({
+    required String uploadUrl,
+    required String videoPath,
+    required void Function(int percentage) onUploadProgress,
   }) async {
-    var path = File(video_path).readAsBytesSync();
-    await dio.put(
-      upload_url,
-      data: Stream.fromIterable(path.map((e) => [e])),
-      onSendProgress: (int sent, int total) {
-        upload_percentage_value = (sent / total * 100).round();
-      },
-      options: Options(
-        contentType: "mp4",
-        headers: {
-          'Accept': "*/*",
-          'Content-Length': path.length,
-          'Connection': 'keep-alive',
-          'User-Agent': 'ClinicPlush'
+    final File file = File(videoPath);
+    final int fileSize = file.lengthSync();
+    final Stream<List<int>> stream = file.openRead();
+
+    try {
+      await _dio.put(
+        uploadUrl,
+        data: stream,
+        onSendProgress: (int sent, int total) {
+          int percentage = ((sent / total) * 100).round();
+          onUploadProgress(percentage);
         },
-      ),
-    );
-  }
-
-  searchUserForTagging(String query) async {
-    print('${API.endpoint}search?type=user&query=$query');
-    try {
-      Response response = await dio.get(
-        '${API.endpoint}search?type=user&query=$query',
         options: Options(
-          headers: {'Flic-Token': token},
+          contentType: "video/mp4",
+          headers: {
+            'Accept': "*/*",
+            'Content-Length': fileSize.toString(),
+            'Connection': 'keep-alive',
+            'User-Agent': 'ClinicPlush'
+          },
         ),
       );
-      return response.data;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.statusMessage);
-      return e.response?.statusCode;
+      debugPrint('Video upload successful');
+    } on DioException catch (e) {
+      debugPrint('DioError (uploadVideo): ${e.message}');
     }
   }
 
-  tagUser({required data}) async{
-    print('${API.endpoint}${API.posts}/tag');
+  Future<Response?> searchUserForTagging(String query) async {
+    final String url = '${API.endpoint}search?type=user&query=$query';
+    debugPrint('Searching user: $url');
+
     try {
-      Response response = await dio.post(
-        '${API.endpoint}${API.posts}/tag',
-        data: data,
-        options: Options(
-          headers: {'Flic-Token': token},
-        ),
-      );
-      return response.data;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.statusMessage);
-      print(e.response);
-      print(e);
-      return e.response?.statusCode;
+      Response response = await _dio.get(url, options: getHeaders());
+      return response;
+    } on DioException catch (e) {
+      debugPrint('DioError (searchUserForTagging): ${e.message}');
+      return null;
     }
   }
 
-  removeTag({required data}) async {
-    print('${API.endpoint}${API.posts}/remove/tag');
+  Future<Response?> tagUser({required Map<String, dynamic> data}) async {
+    final String url = '${API.endpoint}${API.posts}/tag';
+    debugPrint('Tagging user: $url with data: $data');
+
     try {
-      Response response = await dio.delete(
-        '${API.endpoint}${API.posts}/remove/tag',
-        data: data,
-        options: Options(
-          headers: {'Flic-Token': token},
-        ),
-      );
-      return response.data;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.statusMessage);
-      print(e.response);
-      print(e);
-      return e.response?.statusCode;
+      Response response = await _dio.post(url, data: data, options: getHeaders());
+      return response;
+    } on DioException catch (e) {
+      debugPrint('DioError (tagUser): ${e.message}');
+      return null;
     }
   }
 
-  updateTags(int postId) async {
-    print('${API.endpoint}${API.posts}/$postId');
+  Future<Response?> removeTag({required Map<String, dynamic> data}) async {
+    final String url = '${API.endpoint}${API.posts}/remove/tag';
+    debugPrint('Removing tag: $url with data: $data');
+
     try {
-      Response response = await dio.get(
-        '${API.endpoint}${API.posts}/$postId',
-        options: Options(
-          headers: {'Flic-Token': token},
-        ),
-      );
-      return response.data;
-    } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.statusMessage);
-      return e.response?.statusCode;
+      Response response = await _dio.delete(url, data: data, options: getHeaders());
+      return response;
+    } on DioException catch (e) {
+      debugPrint('DioError (removeTag): ${e.message}');
+      return null;
+    }
+  }
+
+  Future<Response?> updateTags(int postId) async {
+    final String url = '${API.endpoint}${API.posts}/$postId';
+    debugPrint('Updating tags: $url');
+
+    try {
+      Response response = await _dio.get(url, options: getHeaders());
+      return response;
+    } on DioException catch (e) {
+      debugPrint('DioError (updateTags): ${e.message}');
+      return null;
     }
   }
 }
