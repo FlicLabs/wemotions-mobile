@@ -40,16 +40,17 @@ class FollowersScreen extends StatefulWidget {
 
 class _FollowerScreenState extends State<FollowersScreen> {
   fetchData() async {
-    Provider.of<ProfileProvider>(context, listen: false).getFollowers(
+    await Provider.of<ProfileProvider>(context, listen: false).getFollowers(
       username: widget.username,
     );
   }
 
   @override
   void initState() {
-    fetchData();
     super.initState();
+    fetchData();
   }
+
 
   @override
   Widget build(BuildContext context) {

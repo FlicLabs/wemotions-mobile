@@ -40,6 +40,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
   }
 
   initializeVideo() async {
+    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     await _reply.initializedVideoPlayer();
     // _reply.index = widget.postIndex;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -69,15 +70,12 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
             PageView.builder(
               scrollDirection: Axis.horizontal,
               onPageChanged: (index) {
-                home.horizontalIndex = index + 1;
+                home.horizontalIndex = index;
 
                 reply.onPageChanged(index);
                 reply.isFollowing = reply.posts[index].following;
 
-
-                Future.microtask((){
-                  _initializePageIndicator();
-                });
+                _initializePageIndicator();
 
 
 
@@ -175,7 +173,45 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                       color: Theme.of(context).hintColor,
                                       label: 'Video Saved',
                                     ),
+
+
+                                  if(!video.isViewMode)  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Container(
+                                      height:home.heightOfUserInfoBar,
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                            colors: [
+                                              Colors.black12.withOpacity(0.56),
+                                              Colors.black12.withOpacity(0.56),
+                                              Colors.black12.withOpacity(0.46),
+                                              Colors.black12.withOpacity(0.34),
+                                              Colors.black12.withOpacity(0.24),
+                                              Colors.black12.withOpacity(0.24),
+                                              Colors.black12.withOpacity(0.21),
+                                              Colors.black12.withOpacity(0.18),
+                                              Colors.black12.withOpacity(0.12),
+                                              Colors.black12.withOpacity(0.08),
+                                              Colors.black12.withOpacity(0.04),
+                                              Colors.black12.withOpacity(0.0),
+                                            ],
+                                            begin: Alignment.bottomCenter,
+                                            end: Alignment.topCenter
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+
+                                      ),
+                                    ),
+                                  ),
+
                                   video.isViewMode ? shrink : ReplyInfoSideBar(),
+
+                                  if(!reply.isPlaying)
+                                    Container(
+                                      color: Colors.black12.withOpacity(0.04),
+                                      height: cs.height(context),
+                                      width: cs.width(context),
+                                    ),
                                   ReplyPlayButton(),
                                   if (reply.isLiked) ...[
                                     Positioned(

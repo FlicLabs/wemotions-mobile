@@ -135,7 +135,7 @@ class SettingsScreen extends StatelessWidget {
                             nav.currentPage = 0;
                             profile.user = ProfileModel.empty;
                             profile.posts.clear();
-                            account.logout(context);
+                            account.logout(context: context);
                           },
                         ),
                       );

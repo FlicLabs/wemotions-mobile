@@ -22,8 +22,20 @@ class NotificationProvider extends ChangeNotifier {
   List<Notifications> _notifications = <Notifications>[];
   List<Notifications> get notifications => _notifications;
 
+  int _notSeenNotification=0;
+  int get notSeenNotification=> _notSeenNotification;
+
+  set notSeenNotification(int val){
+    if(_notSeenNotification!=val){
+      _notSeenNotification=val;
+      notifyListeners();
+    }
+  }
+
   PayloadModel? _payload;
   PayloadModel? get payload => _payload;
+
+
 
   void show({
     required String? title,
@@ -144,6 +156,13 @@ class NotificationProvider extends ChangeNotifier {
                 .fromJson(response.data)
                 .notifications;
         _notifications.addAll(notifications.toList());
+
+        _notifications.forEach((element) {
+          if(element.hasSeen==null){
+            _notSeenNotification+=1;
+          }
+        });
+
         notifyListeners();
       } else {}
     }catch (e){
@@ -158,9 +177,9 @@ class NotificationProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteActivity({required int postId, bool notifyUser = false}) async{
+  Future<void> deleteActivity({required int notificationId, bool notifyUser = false}) async{
     try {
-      Response response = await _service.deleteNotification(postId);
+      Response response = await _service.deleteNotification(notificationId);
       if (response.statusCode == 200 || response.statusCode == 201) {
         if(notifyUser) {
 
@@ -184,4 +203,26 @@ class NotificationProvider extends ChangeNotifier {
 
     }
   }
+
+  Future<void> readActivity(int notificationId) async{
+    try {
+      Response response = await _service.readNotification(notificationId);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+
+      } else{}
+    }catch (e){
+
+      final errorMessage = e.toString().replaceAll('Exception: ', '');
+
+      // this.show(
+      //   title: errorMessage,
+      //   type: NotificationType.local,
+      // );
+
+      log(errorMessage);
+
+    }
+  }
+
+
 }

@@ -162,7 +162,7 @@ class DataControlsScreen extends StatelessWidget {
                       HapticFeedback.heavyImpact();
                       nav.currentPage = 0;
                       nav.jumpToPage();
-                      await account.logout(context);
+                      await account.logout(context: context,everyWhere: true);
                       if (Platform.isAndroid) {
                         SystemNavigator.pop();
                       } else if (Platform.isIOS) {

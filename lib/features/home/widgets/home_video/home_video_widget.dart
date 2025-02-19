@@ -72,6 +72,8 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
   }
 
   void _initializePageIndicator() {
+    print(reply.posts.length.toString()+"/////////////////////////////////////////////////");
+    page.onReply = reply.onReply;
     page.totalVerticalPages = home.posts.length;
     page.currentVerticalIndex = home.index;
     page.totalHorizontalPages = reply.posts.length;
@@ -146,9 +148,25 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             physics: VideoScrollPhysics(),
             onPageChanged: (idx) async {
 
+              print(reply.onReply.toString()+' 55555555555555555555555555555555555555');
               home.vertical_drag_direction = home.index < idx ? 1 : -1;
               home.posts_page++;
-              home.horizontalIndex = 0;
+
+              // reset variable
+              if(home.horizontalIndex!=0){
+                home.horizontalIndex = 0;
+              }
+              if(reply.onReply!=false){
+                print(reply.index.toString());
+                await reply.videoController(reply.index)?..pause();
+                await reply.videoController(reply.index)?..seekTo(Duration.zero);
+                // reply.isPlaying
+                reply.onReply=false;
+              }
+
+              if(home.posts[idx].length == 1){
+                reply.posts.clear();
+              }
 
 
               home.onPageChanged(idx);
@@ -235,7 +253,22 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                   ),
                   if (!video.isViewMode) HomeUserInfoBar(),
 
+                  if(!home.isPlaying)
+                    Container(
+                      color: Colors.black12.withOpacity(0.04),
+                      height: cs.height(context),
+                      width: cs.width(context),
+                    ),
                   PlayButton(),
+
+                  // Center(
+                  //   child: Container(
+                  //     color: Colors.black12,
+                  //     height: 100,
+                  //     width: 100,
+                  //     child: Text('$index',style: TextStyle(color: Colors.white),),
+                  //   ),
+                  // ),
 
                   if (!video.isViewMode) _buildSideBar(),
 
@@ -313,6 +346,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
         width: cs.width(context) / 4.5,
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             HomeSideBar(),
             height2,
@@ -359,25 +393,36 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     }
   }
 
-  void _handleHorizontalPageChange(int idx, int index) {
+  void _handleHorizontalPageChange(int idx, int index) async{
 
     reply.horizontal_drag_direction = reply.index < idx? 1 : -1;
 
     if (idx == 1) {
       home.horizontalIndex = 1;
-      home.videoController(home.index)!.pause();
+
+      await home.videoController(home.index)?.pause();
+      await home.videoController(home.index)?.seekTo(Duration.zero);
+
       reply.onReply=true;
       reply.isPlaying = true;
-      reply.videoController(reply.index)!.play();
 
-      home.videoController(home.index)!.seekTo(Duration.zero);
+      reply.videoController(reply.index)?.setLooping(true);
+      reply.videoController(reply.index)?.play();
+
 
     } else if (idx == 0) {
       home.horizontalIndex = 0;
+
+      reply.videoController(reply.index)?.pause();
+      reply.videoController(reply.index)?.seekTo(Duration.zero);
+
       reply.onReply=false;
       reply.horizontal_drag_direction=0;
-      home.videoController(home.index)!.play();
       reply.isPlaying = false;
+
+      home.videoController(home.index)!.play();
+
+
     }
 
     Future.microtask((){

@@ -302,9 +302,9 @@ class ReplyProvider extends ChangeNotifier {
 
   Future<void> onRefresh() async {
     HapticFeedback.mediumImpact();
-    posts.isEmpty ? null : disposed(_index);
-    posts_page = 1;
-    posts.clear();
+    _posts.isEmpty ? null : await disposeAllReplyControllers();
+    _posts_page = 1;
+    _posts.clear();
     notifyListeners();
   }
 
@@ -367,11 +367,6 @@ class ReplyProvider extends ChangeNotifier {
     }
   }
 
-  makeFirstHControllerReady()async{
-    _isPlaying=false;
-    _onReply=false;
-    await _initController(0).then((value) => null);
-  }
 
   Future<void> _initController(int index) async {
     if (_controllers.containsKey(posts.elementAt(index).videoLink)) return;
@@ -394,6 +389,7 @@ class ReplyProvider extends ChangeNotifier {
   }
 
   Future<void> _stopController(int index) async{
+    print("replying:stop: $index :::: ${_controllers[posts.elementAt(index).videoLink]} ::::::::::::::::::::::::::::::::::::::");
     try {
       if (index < 0 || index >= posts.length) return;
 
@@ -545,21 +541,20 @@ class ReplyProvider extends ChangeNotifier {
 
 
 
-  @override
-  void dispose() {
-    _controllers.forEach((_, controller) {
-      controller.pause();
-      controller.dispose();
+  Future<void> disposeAllReplyControllers() async{
+    _controllers.forEach((_, controller) async {
+      await controller.pause();
+      await controller.dispose();
     });
     _controllers.clear();
     _listeners.clear();
     _viewCountUpdated.clear();
-    super.dispose();
   }
 
 
 
   Future <void> _playController(int index) async {
+    print("replying:play: $index :::: ${_controllers[_posts.elementAt(index).videoLink]} ::::::::::::::::::::::::::::::::::::::");
     try {
       if (index < 0 || index >= posts.length) return;
 
@@ -587,15 +582,17 @@ class ReplyProvider extends ChangeNotifier {
   }
 
   Future<void> _nextVideo() async {
-    if (_index == posts.length - 1) {
-      return;
-    }
+    if(!_onReply) return;
+    // if (_index == posts.length - 1) {
+    //   await _playController(index);
+    //   return;
+    // }
 
     if (_index + 1 < posts.length && !_controllers.containsKey(posts.elementAt(_index + 1).videoLink)) {
       _initController(_index + 1);
     }
 
-    await _stopController(_index);
+    // await _stopController(_index);
 
     await _playController(_index);
 
@@ -605,12 +602,13 @@ class ReplyProvider extends ChangeNotifier {
 
 
   Future<void> _previousVideo() async {
+    if(!_onReply) return;
 
     if (_index - 1 >= 0 && !_controllers.containsKey(posts.elementAt(_index - 1).videoLink)) {
       _initController(_index - 1);
     }
 
-    await _stopController(_index+1);
+    // await _stopController(_index+1);
 
     await _playController(_index);
 

@@ -128,12 +128,29 @@ class CustomRouter {
         return ManageAccountScreen.route();
       case AccountInformationScreen.routeName:
         return AccountInformationScreen.route();
-      case ChangePasswordScreen.routeName:
-        return ChangePasswordScreen.route();
 
       case VideoViewPage.routeName:
         final args = settings.arguments as VideoViewPageArgs;
         return VideoViewPage.route(args: args);
+
+      case ViewVideoWidget.routeName:
+        final args = settings.arguments as ViewVideoWidgetArgs;
+        return ViewVideoWidget.route(args: args);
+
+      // case SubverseDetailScreen.routeName:
+      //   return SubverseDetailScreen.route(
+      //     args: settings.arguments as SubverseDetailScreenArgs,
+      //   );
+      case SubverseEmptyScreen.routeName:
+        return SubverseEmptyScreen.route(
+          args: settings.arguments as SubverseEmptyScreenArgs,
+        );
+      case EditSubverseScreen.routeName:
+        return EditSubverseScreen.route(
+          args: settings.arguments as EditSubverseScreenArgs,
+        );
+      case SearchScreen.routeName:
+        return SearchScreen.route();
 
 
       default:

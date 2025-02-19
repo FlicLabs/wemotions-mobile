@@ -180,6 +180,26 @@ export 'package:socialverse/features/profile/utils/profile_share_sheet.dart';
 
 export 'package:socialverse/features/search/widgets/subverse_detail/subverse_post_grid_placeholder.dart';
 export 'package:socialverse/features/search/helper/image_helper.dart';
+export 'package:socialverse/features/search/utils/subverse_share_item.dart';
+export 'package:socialverse/features/search/utils/subverse_share_sheet.dart';
+export 'package:socialverse/features/search/widgets/search/post_search_list.dart';
+export 'package:socialverse/features/search/widgets/search/search_bar.dart';
+export 'package:socialverse/features/search/widgets/search/subverse_search_list.dart';
+export 'package:socialverse/features/search/widgets/search/user_search_list.dart';
+
+export 'package:socialverse/features/search/widgets/subverse/custom_button.dart';
+export 'package:socialverse/features/search/widgets/subverse/custom_cached_network_image.dart';
+export 'package:socialverse/features/search/widgets/subverse/grid_holder.dart';
+export 'package:socialverse/features/search/widgets/subverse/grid_placeholder.dart';
+export 'package:socialverse/features/search/widgets/subverse/grid_view_button.dart';
+export 'package:socialverse/features/search/widgets/subverse/list_holder.dart';
+export 'package:socialverse/features/search/widgets/subverse/list_placeholder.dart';
+export 'package:socialverse/features/search/widgets/subverse/subverse_aligned_text.dart';
+export 'package:socialverse/features/search/widgets/subverse/subverse_grid_item.dart';
+export 'package:socialverse/features/search/widgets/subverse/subverse_header.dart';
+export 'package:socialverse/features/search/widgets/subverse/subverse_list_item.dart';
+export 'package:socialverse/features/search/widgets/subverse/subverse_textformfield.dart';
+export 'package:socialverse/features/search/widgets/subverse/subverse_widget.dart';
 
 
 
@@ -187,6 +207,7 @@ export 'package:socialverse/features/search/helper/image_helper.dart';
 
 
 // Models, Services, Repositories
+export 'package:socialverse/core/domain/models/category_model.dart';
 export 'package:socialverse/core/domain/models/notifications_model.dart';
 export 'package:socialverse/core/domain/models/post_model.dart';
 export 'package:socialverse/core/domain/models/notification_model.dart';
@@ -204,6 +225,18 @@ export 'package:socialverse/features/profile/domain/services/edit_profile_servic
 export 'package:socialverse/features/profile/domain/services/invite_service.dart';
 export 'package:socialverse/features/profile/domain/services/settings_services.dart';
 export 'package:socialverse/features/profile/domain/services/user_service.dart';
+
+export 'package:socialverse/features/home/domain/models/single_post_model.dart';
+
+export 'package:socialverse/features/search/domain/models/search/post_search_model.dart';
+export 'package:socialverse/features/search/domain/models/search/subverse_search_model.dart';
+export 'package:socialverse/features/search/domain/models/search/user_search_model.dart';
+export 'package:socialverse/features/search/domain/models/subverse/category_model.dart';
+export 'package:socialverse/features/search/domain/models/subverse/subverse_model.dart';
+export 'package:socialverse/features/search/domain/services/create_subverse_service.dart';
+export 'package:socialverse/features/search/domain/services/edit_subverse_service.dart';
+export 'package:socialverse/features/search/domain/services/subscription_service.dart';
+export 'package:socialverse/features/search/domain/services/subverse_service.dart';
 
 
 
@@ -237,7 +270,11 @@ export 'package:socialverse/features/profile/providers/settings/invite_provider.
 export 'package:socialverse/features/profile/providers/settings/qr_code_provider.dart';
 export 'package:socialverse/features/profile/providers/settings/settings_provider.dart';
 
-export 'package:socialverse/features/home/domain/models/single_post_model.dart';
+export 'package:socialverse/features/search/providers/create_subverse_provider.dart';
+export 'package:socialverse/features/search/providers/edit_subverse_provider.dart';
+export 'package:socialverse/features/search/providers/search_provider.dart';
+export 'package:socialverse/features/search/providers/subscription_provider.dart';
+
 
 
 
@@ -261,6 +298,15 @@ export 'package:socialverse/features/create/presentation/post_screen.dart';
 
 export 'package:socialverse/core/presentation/notifications.dart';
 
+export 'package:socialverse/features/search/presentation/create_edit/create_subverse_screen.dart.dart';
+export 'package:socialverse/features/search/presentation/create_edit/edit_subverse_screen.dart';
+export 'package:socialverse/features/search/presentation/subverse/search_screen.dart';
+export 'package:socialverse/features/search/presentation/subverse/subverse_detail_screen.dart';
+export 'package:socialverse/features/search/presentation/subverse/subverse_empty_screen.dart';
+export 'package:socialverse/features/search/presentation/subverse/subverse_screen.dart';
+export 'package:socialverse/features/search/widgets/subverse_detail/subverse_detail_header.dart';
+export 'package:socialverse/features/search/widgets/subverse_detail/subverse_post_grid_item.dart';
+export 'package:socialverse/features/search/widgets/video/view_video_widget.dart';
 
 // export 'package:socialverse/core/presentation/welcome_screen.dart';
 

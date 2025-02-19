@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/domain/models/profile_posts_model.dart';
-import 'package:socialverse/features/profile/domain/models/users_model.dart';
+import 'dart:developer';
 
 class ProfileProvider extends ChangeNotifier {
   ProfileModel _user = ProfileModel.empty;
@@ -95,26 +94,45 @@ class ProfileProvider extends ChangeNotifier {
     required String username,
     bool? forceRefresh,
   }) async {
-    Response response = await _service.getUserProfile(
-      username: username,
-      forceRefresh: forceRefresh,
-    );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      _posts.isEmpty ? getUserPosts(username: username) : null;
-      String jsonString = json.encode(response.data);
-      final Map<String, dynamic> responseData = json.decode(jsonString);
-      ProfileModel userProfile = ProfileModel.fromJson(responseData);
-      _user = userProfile;
-      notifyListeners();
-    } else {
+    try{
+
+      Response response = await _service.getUserProfile(
+        username: username,
+        forceRefresh: forceRefresh,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _posts.isEmpty ? getUserPosts(username: username) : null;
+        String jsonString = json.encode(response.data);
+        final Map<String, dynamic> responseData = json.decode(jsonString);
+        ProfileModel userProfile = ProfileModel.fromJson(responseData);
+        _user = userProfile;
+        notifyListeners();
+      } else {
+        notification.show(
+          title: 'Something went wrong',
+          type: NotificationType.local,
+        );
+        if(_loading){
+          _loading=false;
+          notifyListeners();
+        }
+      }
+
+    }catch(e){
+
+      final errorMessage = e.toString().replaceAll('Exception: ', '');
+
       notification.show(
-        title: 'Something went wrong',
+        title: errorMessage,
         type: NotificationType.local,
       );
       if(_loading){
         _loading=false;
         notifyListeners();
       }
+
+      log(errorMessage);
+
     }
   }
 
@@ -138,55 +156,108 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> userFollow({
     required String username,
   }) async {
-    final response = await _service.userFollow(username);
-    if (response == 200 || response == 201) {
-      fetchProfile(username: prefs_username!);
+
+    try{
+      final response = await _service.userFollow(username);
+      if (response == 200 || response == 201) {
+      }
+    }catch(e){
+      final errorMessage = e.toString().replaceAll('Exception: ', '');
+
+      notification.show(
+        title: errorMessage,
+        type: NotificationType.local,
+      );
+
+      log(errorMessage.toString()+' while follow');
     }
   }
 
   Future<void> userUnfollow({
     required String username,
   }) async {
-    final response = await _service.userUnfollow(username);
-    if (response == 200 || response == 201) {
-      fetchProfile(username: prefs_username!);
+
+    try{
+      final response = await _service.userUnfollow(username);
+      if (response == 200 || response == 201) {
+
+      }
+    }catch(e){
+      final errorMessage = e.toString().replaceAll('Exception: ', '');
+
+      notification.show(
+        title: errorMessage,
+        type: NotificationType.local,
+      );
+
+      log(errorMessage.toString()+' while unfollow');
     }
   }
 
-  void followUser({
+  Future<void> followUser({
     required String username,
     required bool isFollowing,
-  }) {
+  }) async{
     if (isFollowing == true) {
-      userUnfollow(username: username);
+      await userUnfollow(username: username);
     } else {
-      userFollow(username: username);
+      await userFollow(username: username);
     }
   }
+
+
 
   Future<void> getFollowing({
     required String username,
   }) async {
-    List<Users> _temp = <Users>[];
-    final response = await _service.getFollowing(username);
-    String jsonString = json.encode(response);
-    _temp = (json.decode(jsonString) as List)
-        .map((data) => Users.fromJson(data))
-        .toList();
-    _following = _temp;
-    notifyListeners();
+    try{
+      List<Users> _temp = <Users>[];
+      final Response response = await _service.getFollowing(username);
+      String jsonString = json.encode(response.data);
+      _temp = (json.decode(jsonString) as List)
+          .map((data) => Users.fromJson(data))
+          .toList();
+      _following = _temp;
+      notifyListeners();
+
+    }catch(e){
+      final errorMessage = e.toString().replaceAll('Exception: ', '');
+
+      notification.show(
+        title: errorMessage,
+        type: NotificationType.local,
+      );
+
+      log(errorMessage.toString()+' while getFollowing');
+    }
   }
 
   Future<void> getFollowers({
     required String username,
   }) async {
-    List<Users> _temp = <Users>[];
-    final response = await _service.getFollowers(username);
-    String jsonString = json.encode(response);
-    _temp = (json.decode(jsonString) as List)
-        .map((data) => Users.fromJson(data))
-        .toList();
-    _followers = _temp;
-    notifyListeners();
+
+    try{
+
+      List<Users> _temp = <Users>[];
+      final Response response = await _service.getFollowers(username);
+      String jsonString = json.encode(response.data);
+      _temp = (json.decode(jsonString) as List)
+          .map((data) => Users.fromJson(data))
+          .toList();
+      _followers = _temp;
+      notifyListeners();
+
+    }catch(e){
+      final errorMessage = e.toString().replaceAll('Exception: ', '');
+
+      notification.show(
+        title: errorMessage,
+        type: NotificationType.local,
+      );
+
+      log(errorMessage.toString()+' while getFollowers');
+    }
+
+
   }
 }

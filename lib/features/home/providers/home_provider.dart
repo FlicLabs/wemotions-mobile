@@ -977,9 +977,10 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> onRefresh() async {
     HapticFeedback.mediumImpact();
-    posts.isEmpty ? null : disposed(_index);
-    posts_page = 1;
-    horizontalIndex = 0;
+    _posts.isEmpty ? null : await disposeAllControllers();
+
+    _posts_page = 1;
+    _horizontalIndex = 0;
     _posts.clear();
     // hPosts.clear();
     notifyListeners();
@@ -1039,9 +1040,7 @@ class HomeProvider extends ChangeNotifier {
     if (_posts.isNotEmpty) {
       _index = 0;
       _isPlaying = true;
-      await _initController(0).then((_) {
-        _playController(0);
-      });
+      await _initController(0);
     }
     if (_posts.length > 1) {
       await _initController(1);
@@ -1136,6 +1135,7 @@ class HomeProvider extends ChangeNotifier {
           }
         }
       }
+
       notifyListeners();
     };
   }
@@ -1264,16 +1264,14 @@ class HomeProvider extends ChangeNotifier {
 
 
 
-  @override
-  void dispose() {
-    _controllers.forEach((_, controller) {
-      controller.pause();
-      controller.dispose();
+  Future<void> disposeAllControllers() async{
+    _controllers.forEach((_, controller) async {
+      await controller.pause();
+      await controller.dispose();
     });
     _controllers.clear();
     _listeners.clear();
     _viewCountUpdated.clear();
-    // super.dispose();
   }
 
   Future<void> _previousVideo() async {
@@ -1288,11 +1286,11 @@ class HomeProvider extends ChangeNotifier {
 
     // Initialize previous video if needed before any playback changes
     if (_index - 1 >= 0 && !_controllers.containsKey(posts.elementAt(_index - 1)[0].videoLink)) {
-      _initController(_index - 1);  // Don't await here for faster playback
+      unawaited(_initController(_index - 1));  // Don't await here for faster playback
     }
 
     // Make sure next video is stopped
-    await _stopController(_index + 1);
+    // await _stopController(_index + 1);
 
     // Play current video
     await _playController(_index);
@@ -1310,11 +1308,11 @@ class HomeProvider extends ChangeNotifier {
 
     // Initialize next video if needed before any playback changes
     if (_index + 1 < posts.length && !_controllers.containsKey(posts.elementAt(_index + 1)[0].videoLink)) {
-      _initController(_index + 1);  // Don't await here for faster playback
+      unawaited(_initController(_index + 1));  // Don't await here for faster playback
     }
 
     // Make sure previous video is stopped
-    await _stopController(_index - 1);
+    // await _stopController(_index - 1);
 
     // Play current video
     await _playController(_index);
@@ -1346,6 +1344,7 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> _stopController(int index) async {
+    print("stop: $index :::: ${_controllers[posts.elementAt(index)[0].videoLink]} ::::::::::::::::::::::::::::::::::::::");
     try {
       if (index < 0 || index >= posts.length) return;
 
@@ -1359,7 +1358,8 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> _playController(int index) async {
+  Future<void>  _playController(int index) async {
+    print("playing: $index :::: ${_controllers[posts.elementAt(index)[0].videoLink]} ::::::::::::::::::::::::::::::::::::::");
     try {
       if (index < 0 || index >= posts.length) return;
 

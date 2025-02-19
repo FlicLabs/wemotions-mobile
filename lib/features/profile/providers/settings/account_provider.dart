@@ -8,16 +8,10 @@ class AccountProvider extends ChangeNotifier {
   final firstName = TextEditingController();
   final lastName = TextEditingController();
 
-  final password = TextEditingController();
-  final password_confirm = TextEditingController();
+  // final password = TextEditingController();
+  // final password_confirm = TextEditingController();
 
-  bool _obscureText = true;
-  bool get obscureText => _obscureText;
 
-  set obscureText(bool value) {
-    _obscureText = value;
-    notifyListeners();
-  }
 
   String? _passwordError = null;
   String? get passwordError => _passwordError;
@@ -27,11 +21,11 @@ class AccountProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  clearPasswordController(){
-    password.text='';
-    password_confirm.text='';
-    notifyListeners();
-  }
+  // clearPasswordController(){
+  //   password.text='';
+  //   // password_confirm.text='';
+  //   notifyListeners();
+  // }
 
   final notification = getIt<NotificationProvider>();
 
@@ -51,7 +45,7 @@ class AccountProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<int> updateUsername(context) async {
+  Future<bool> updateUsername(context) async {
     log('init');
     _loading = true;
     notifyListeners();
@@ -61,86 +55,94 @@ class AccountProvider extends ChangeNotifier {
     };
 
     log('updating username');
-    Response response = await _service.updateUsername(data);
+    try{
+      Response response = await _service.updateUsername(data);
 
-    if (response.data['status'] == 'success') {
-      Response response = await _service.getUsername(
-        username: username.text.trim(),
-      );
+      if (response.data['status'] == 'success') {
+        Response response = await _service.getUsername(
+          username: username.text.trim(),
+        );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        String jsonString = json.encode(response.data);
-        final Map<String, dynamic> responseData = json.decode(jsonString);
-        var userData = responseData;
-        ProfileModel userProfile = ProfileModel.fromJson(userData);
-        _user = userProfile;
-        prefs!.setString("username", user.username);
-        prefs_username = prefs?.getString('username') ?? '';
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          String jsonString = json.encode(response.data);
+          final Map<String, dynamic> responseData = json.decode(jsonString);
+          var userData = responseData;
+          ProfileModel userProfile = ProfileModel.fromJson(userData);
+          _user = userProfile;
+          prefs!.setString("username", user.username);
+          prefs_username = prefs?.getString('username') ?? '';
 
+          _loading = false;
+          notifyListeners();
+
+          navKey.currentState!
+            ..pop()
+            ..pop();
+        }
+
+        notification.show(
+          title: 'Your username has been changed',
+          type: NotificationType.local,
+        );
+      } else if (response.data['status'] == 'error') {
+        username.text = '';
         _loading = false;
         notifyListeners();
-
-        navKey.currentState!
-          ..pop()
-          ..pop();
+        notification.show(
+          title: 'Username already exists',
+          type: NotificationType.local,
+        );
       }
+    }catch(e){
 
-      notification.show(
-        title: 'Your username has been changed',
-        type: NotificationType.local,
-      );
-    } else if (response.data['status'] == 'error') {
-      username.text = '';
-      _loading = false;
-      notifyListeners();
-      notification.show(
-        title: 'Username already exists',
-        type: NotificationType.local,
-      );
-    } else {
       _loading = false;
       notifyListeners();
       notification.show(
         title: 'Something went wrong',
         type: NotificationType.local,
       );
+
+      return false;
     }
 
-    return response.statusCode!;
+    return true;
   }
 
-  Future<void> logout(context) async {
+  Future<void> logout({required BuildContext context,bool everyWhere=false}) async {
     _loading = true;
     notifyListeners();
-    final response = await _service.logout();
-    if (response == 200 || response == 201) {
-      UserPreferences().removeUser();
-      UserPreferences().removeWallet();
-      prefs!.setBool("logged_in", false);
-      prefs!.setBool("wallet_created", false);
-      logged_in = prefs!.getBool('logged_in') ?? false;
-      _loading = false;
+    try{
+      final Response response = everyWhere?(await _service.logoutEveryWhere()):(await _service.logout());
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        UserPreferences().removeUser();
+        UserPreferences().removeWallet();
+        prefs!.setBool("logged_in", false);
+        prefs!.setBool("wallet_created", false);
+        logged_in = prefs!.getBool('logged_in') ?? false;
+        _loading = false;
+        notifyListeners();
+        Navigator.of(context, rootNavigator: true)
+          ..pop()
+          ..pop();
+      } else if (response.statusCode != 200) {
+        // await FirebaseAuth.instance.signOut();
+        UserPreferences().removeUser();
+        UserPreferences().removeWallet();
+        prefs!.setBool("logged_in", false);
+        prefs!.setBool("wallet_created", false);
+        prefs!.setString("username", '');
+        logged_in = prefs!.getBool('logged_in') ?? false;
+        prefs_username = prefs?.getString('username') ?? '';
+        _loading = false;
+        notifyListeners();
+        Navigator.of(context, rootNavigator: true)
+          ..pop()
+          ..pop()
+          ..pop();
+      } else {}
+    }catch(e){
+      _loading=false;
       notifyListeners();
-      Navigator.of(context, rootNavigator: true)
-        ..pop()
-        ..pop();
-      return response;
-    } else if (response != 200) {
-      // await FirebaseAuth.instance.signOut();
-      UserPreferences().removeUser();
-      UserPreferences().removeWallet();
-      prefs!.setBool("logged_in", false);
-      prefs!.setBool("wallet_created", false);
-      prefs!.setString("username", '');
-      logged_in = prefs!.getBool('logged_in') ?? false;
-      prefs_username = prefs?.getString('username') ?? '';
-      _loading = false;
-      notifyListeners();
-      Navigator.of(context, rootNavigator: true)
-        ..pop()
-        ..pop()
-        ..pop();
-    } else {
       notification.show(
         title: 'Something went wrong',
         type: NotificationType.local,
@@ -148,7 +150,7 @@ class AccountProvider extends ChangeNotifier {
     }
   }
 
-  Future<int> updateProfile(context) async {
+  Future<void> updateProfile(context) async {
     log('init');
     _loading = true;
     notifyListeners();
@@ -159,59 +161,66 @@ class AccountProvider extends ChangeNotifier {
       "new_username": username.text.trim(),
     };
 
-    final response = await _service.updateProfile(data);
-    if (response == 200 || response == 201) {
+    try{
+      final Response response = await _service.updateProfile(data);
+      if (response.statusCode == 200 || response == 201) {
+        _loading = false;
+        notifyListeners();
+        Navigator.pop(context);
+        notification.show(
+          title: 'Your profile has been updated',
+          type: NotificationType.local,
+        );
+      } else {}
+
+    }catch(e){
       _loading = false;
       notifyListeners();
-      Navigator.pop(context);
-      notification.show(
-        title: 'Your profile has been updated',
-        type: NotificationType.local,
-      );
-    } else {
-      _loading = false;
-      notifyListeners();
-      notification.show(
-        title: 'Something went wrong',
-        type: NotificationType.local,
-      );
-    }
-
-    return response;
-  }
-
-  Future<void> resetPassword(BuildContext context)async {
-
-    _loading = true;
-    notifyListeners();
-
-    Map data= {
-      "token": token ?? '',
-    "password": password.text,
-    "password-confirm": password_confirm.text
-    };
-
-    // print("==============================================$data");
-
-    final response = await _service.resetPassword(data);
-    if (response == 200) {
-      _loading = false;
-      notifyListeners();
-      Navigator.pop(context);
-      notification.show(
-        title: 'Your password has been updated',
-        type: NotificationType.local,
-      );
-    } else {
-      _loading = false;
-      notifyListeners();
-      Navigator.pop(context);
       notification.show(
         title: 'Something went wrong',
         type: NotificationType.local,
       );
     }
 
+    // return response;
   }
+
+  // Future<void> resetPassword(BuildContext context)async {
+  //
+  //   _loading = true;
+  //   notifyListeners();
+  //
+  //   log('reset password');
+  //
+  //   Map data= {
+  //     "token": token ?? '',
+  //   "password": password.text,
+  //   "password-confirm": password_confirm.text
+  //   };
+  //
+  //   // print("==============================================$data");
+  //   try{
+  //     final Response response = await _service.resetPassword(data);
+  //     if (response.statusCode == 200) {
+  //       _loading = false;
+  //       notifyListeners();
+  //       Navigator.pop(context);
+  //       notification.show(
+  //         title: 'Your password has been updated',
+  //         type: NotificationType.local,
+  //       );
+  //     } else {}
+  //
+  //   }catch(e){
+  //     _loading = false;
+  //     notifyListeners();
+  //     Navigator.pop(context);
+  //     notification.show(
+  //       title: 'Something went wrong',
+  //       type: NotificationType.local,
+  //     );
+  //   }
+  //
+  // }
 
 }

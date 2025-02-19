@@ -5,7 +5,7 @@ import 'package:socialverse/export.dart';
 class ProfileService {
   Dio dio = new Dio();
 
-  getUserProfile({required String username, bool? forceRefresh}) async {
+  Future<Response> getUserProfile({required String username, bool? forceRefresh}) async {
     print('${API.endpoint}${API.profile}/$username');
     try {
       Response response = await dio.get(
@@ -21,9 +21,15 @@ class ProfileService {
     } on DioError catch (e) {
       print(e.response?.statusMessage);
       print(e.response?.statusCode);
-      return (e.response);
+
+      if(e.response?.statusCode==404){
+        throw 'User not found';
+      }
+      throw 'Something Went Wrong';
     }
   }
+
+  //later
 
   getPosts(String username, int page) async {
     print('${API.endpoint}users/$username/posts?page=$page');
@@ -62,35 +68,51 @@ class ProfileService {
     }
   }
 
-  userFollow(String username) async {
+
+
+  Future<Response> userFollow(String username) async {
     try {
       Response response = await dio.post(
         '${API.endpoint}${API.follow}/$username',
         options: Options(headers: {'Flic-Token': token ?? ''}),
       );
       print(response.data);
-      return response.statusCode;
+      return response;
     } on DioError catch (e) {
       print(e.response?.statusMessage);
       print(e.response?.statusCode);
-      return (e.response?.statusCode);
+
+      if(e.response?.statusCode==404){
+        throw 'Log in to follow';
+      }else if(e.response?.statusCode==400){
+        throw e.response?.data['message'];
+      }
+      throw 'Something Went Wrong';
     }
   }
 
-  userUnfollow(String username) async {
+  Future<Response> userUnfollow(String username) async {
     try {
       Response response = await dio.post(
         '${API.endpoint}${API.unfollow}/$username',
         options: Options(headers: {'Flic-Token': token ?? ''}),
       );
       print(response.data);
-      return response.statusCode;
+      return response;
     } on DioError catch (e) {
       print(e.response?.statusMessage);
       print(e.response?.statusCode);
-      return (e.response?.statusCode);
+
+      if(e.response?.statusCode==404){
+        throw 'User not found';
+      }
+
+      throw 'Something Went Wrong';
+
+
     }
   }
+
 
   blockUser(String username) async {
     try {
@@ -137,33 +159,34 @@ class ProfileService {
     }
   }
 
-  getFollowing(String username) async {
+  Future<Response> getFollowing(String username) async {
     try {
       Response response = await dio.get(
         '${API.endpoint}${API.following}/$username',
         options: Options(headers: {'Flic-Token': token ?? ''}),
       );
-      // print(response.data);
-      return response.data;
+      print(response.data);
+      return response;
     } on DioError catch (e) {
       print(e.response?.statusMessage);
       print(e.response?.statusCode);
-      return (e.response?.statusCode);
+      throw 'Something Went Wrong';
     }
   }
 
-  getFollowers(String username) async {
+  Future<Response> getFollowers(String username) async {
     try {
       Response response = await dio.get(
         '${API.endpoint}${API.followers}/$username',
         options: Options(headers: {'Flic-Token': token ?? ''}),
       );
       // print(response.data);
-      return response.data;
+      return response;
     } on DioError catch (e) {
       print(e.response?.statusMessage);
       print(e.response?.statusCode);
-      return (e.response?.statusCode);
+
+      throw 'Something Went Wrong';
     }
   }
 }

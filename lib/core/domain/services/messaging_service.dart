@@ -87,11 +87,11 @@ class FirebaseMessagingService {
   }
 
 
-  Future<Response> readNotification(String postId)async{
+  Future<Response> readNotification(int notificationId)async{
     print('${API.endpoint}${API.notification}');
 
     var data={
-      "notification_id": postId
+      "notification_id": notificationId
     };
 
     try{
@@ -113,7 +113,7 @@ class FirebaseMessagingService {
       print(e.response?.data);
       if(e.response?.statusCode==403){
         if(e.response?.data['message']=='Unauthorized access'){
-          throw "You Can't Read this Message";
+          throw "You Can't Read this Notification";
         }
       }else if (e.response?.statusCode == 401) {
         throw e.response?.data['message'];
@@ -124,11 +124,11 @@ class FirebaseMessagingService {
   }
 
 
-  Future<Response> deleteNotification(int postId)async{
+  Future<Response> deleteNotification(int notificationId)async{
     print('${API.endpoint}${API.notification}');
 
     var data={
-      "notification_id": postId
+      "notification_id": notificationId
     };
 
     try{

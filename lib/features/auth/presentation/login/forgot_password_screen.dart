@@ -122,6 +122,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                           onTap: () async {
                             if (__.emailFK.currentState!.validate()) {
                               await __.reset();
+                              Navigator.pop(context);
                             }
                           },
                         ),

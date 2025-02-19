@@ -21,8 +21,8 @@ class _BottomNavBarState extends State<BottomNavBar>
     with WidgetsBindingObserver {
   final List<Widget> _screens = [
     HomeScreen(),
-    Container(),
-    // SubverseScreen(),
+    // Container(),
+    SubverseScreen(),
     Container(),
     ActivityScreen(),
     ProfileScreen(),
@@ -45,6 +45,7 @@ class _BottomNavBarState extends State<BottomNavBar>
     final nav = Provider.of<BottomNavBarProvider>(context);
     final reply = Provider.of<ReplyProvider>(context);
     final camera = Provider.of<CameraProvider>(context);
+    final notification = Provider.of<NotificationProvider>(context);
     final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     if (camera.showCameraScreen && home.isPlaying) {
@@ -183,7 +184,12 @@ class _BottomNavBarState extends State<BottomNavBar>
 
 
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: () async{
+        if(camera.showCameraScreen){
+          await camera.resetValues(isDisposing: true);
+        }
+        return false;
+      },
       child: Stack(
         children: [
           Scaffold(
@@ -213,6 +219,11 @@ class _BottomNavBarState extends State<BottomNavBar>
                               auth.showAuthBottomSheet(context);
                             } else {
                               nav.currentPage = index;
+
+                              if(index!=0 && nav.selectedVideoUploadType=='Reply'){
+                                nav.selectedVideoUploadType='Video';
+                              }
+
                               if (home.posts.isNotEmpty) {
                                 if (reply.posts.isNotEmpty) {
                                   if (index == 1 ||
@@ -248,6 +259,13 @@ class _BottomNavBarState extends State<BottomNavBar>
                                     home.videoController(home.index)?.pause();
                                   }
                                 }
+                              }
+
+                              if (index==3){
+                                notification.notifications.forEach((element) async{
+                                  await notification.readActivity(element.id);
+                                });
+                                notification.notSeenNotification=0;
                               }
                             }
                           },
@@ -285,18 +303,40 @@ class _BottomNavBarState extends State<BottomNavBar>
                             BottomNavigationBarItem(
                                 icon: CameraModeSelector(nav: nav), label: ''),
                             BottomNavigationBarItem(
-                              icon: nav.currentPage == 3
-                                  ? SvgPicture.asset(
-                                      AppAsset.icnotification_active,
-                                      height: 24,
-                                      width: 24,
-                                    )
-                                  : SvgPicture.asset(
-                                      AppAsset.icnotification,
-                                      color: Theme.of(context).focusColor,
-                                      height: 24,
-                                      width: 24,
+                              icon: Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  nav.currentPage == 3
+                                      ? SvgPicture.asset(
+                                    AppAsset.icnotification_active,
+                                    height: 24,
+                                    width: 24,
+                                  )
+                                      : SvgPicture.asset(
+                                    AppAsset.icnotification,
+                                    color: Theme.of(context).focusColor,
+                                    height: 24,
+                                    width: 24,
+                                  ),
+
+                                  if(notification.notSeenNotification!=0) Positioned(
+                                    right: -1,
+                                    top: -2,
+                                    child: Container(
+                                      // padding: EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      constraints: BoxConstraints(
+                                        minHeight: 12,
+                                        minWidth: 12,
+                                      ),
+                                      child: Text('${notification.notSeenNotification}',style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold,),textAlign: TextAlign.center,),
                                     ),
+                                  )
+                                ],
+                              ),
                               label: '',
                             ),
                             BottomNavigationBarItem(

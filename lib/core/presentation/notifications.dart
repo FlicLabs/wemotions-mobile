@@ -88,7 +88,7 @@ class ActivityScreen extends StatelessWidget {
             backgroundColor: Theme.of(context).primaryColor,
             onRefresh: () async {
               __.notifications.clear();
-              __.fetchActivity();
+              await __.fetchActivity();
             },
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -201,7 +201,7 @@ class ActivityScreen extends StatelessWidget {
         break;
     }
 
-    leadingWidget = GestureDetector(
+    leadingWidget = InkWell(
       onTap: () {
         user.page = 1;
         user.posts.clear();
@@ -226,22 +226,38 @@ class ActivityScreen extends StatelessWidget {
     return ListTile(
       contentPadding: const EdgeInsets.only(bottom: 15),
       leading: leadingWidget,
-      title: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-              text: notification.actor.username,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+      title: InkWell(
+        onTap: (){
+          user.page = 1;
+          user.posts.clear();
+          user.user = ProfileModel.empty;
+          Navigator.of(context).pushNamed(
+            UserProfileScreen.routeName,
+            arguments: UserProfileScreenArgs(
+              username: notification.actor.username,
+              isFollowing: (following) {
+                notification.actor.isFollowing = following;
+              },
             ),
-            TextSpan(
-              text: " ${notification.content}",
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.normal,
-                  ),
-            ),
-          ],
+          );
+        },
+        child: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: notification.actor.username,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              TextSpan(
+                text: " ${notification.content}",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.normal,
+                    ),
+              ),
+            ],
+          ),
         ),
       ),
       trailing: trailingWidget,

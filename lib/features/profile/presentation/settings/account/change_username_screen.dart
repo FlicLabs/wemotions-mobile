@@ -48,8 +48,8 @@ class ChangeUsernameScreen extends StatelessWidget {
                 ),
                 child: AccountSaveButton(
                   onTap: () async {
-                    final response = await __.updateUsername(context);
-                    if (response == 200 || response == 201) {
+                    final bool res = await __.updateUsername(context);
+                    if (res) {
                       await user.fetchProfile(
                         username: prefs_username!,
                         forceRefresh: true,

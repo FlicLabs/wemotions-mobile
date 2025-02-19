@@ -57,8 +57,13 @@ class _UserProfileScreenState extends State<UserProfileScreen>
     setState(() => _isLoading = true);
 
     final userProvider = Provider.of<UserProfileProvider>(context, listen: false);
-    userProvider.page = 1;
+    // userProvider.page = 1; //remove this line
     userProvider.posts.clear();
+
+    // Defer the page change to the next frame
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      userProvider.page = 1; //set the page here
+    });
 
     await userProvider.getUserProfile(username: widget.username);
 
@@ -216,7 +221,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               Expanded(
                                 child: ProfileStatsItem(
                                   value: userProvider.user.postCount,
-                                  label: 'Videos',
+                                  label: 'Vidoes',
                                 ),
                               ),
                             ],

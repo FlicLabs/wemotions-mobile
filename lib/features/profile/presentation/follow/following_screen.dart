@@ -33,15 +33,15 @@ class FollowingScreen extends StatefulWidget {
 
 class _FollowingScreenState extends State<FollowingScreen> {
   fetchData() async {
-    Provider.of<ProfileProvider>(context, listen: false).getFollowing(
+    await Provider.of<ProfileProvider>(context, listen: false).getFollowing(
       username: widget.username,
     );
   }
 
   @override
   void initState() {
-    fetchData();
     super.initState();
+    fetchData();
   }
 
   @override

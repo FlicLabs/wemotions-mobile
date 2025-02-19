@@ -1,6 +1,6 @@
 import 'package:socialverse/export.dart';
 
-class FollowingItem extends StatelessWidget {
+class FollowingItem extends StatefulWidget {
   FollowingItem({
     Key? key,
     this.imageUrl,
@@ -21,20 +21,36 @@ class FollowingItem extends StatelessWidget {
   final int index;
 
   @override
+  State<FollowingItem> createState() => _FollowingItemState();
+}
+
+class _FollowingItemState extends State<FollowingItem> {
+
+  late final AuthProvider auth;
+  late final UserProfileProvider user;
+  late bool isFollowing;
+
+  @override
+  void initState() {
+    super.initState();
+    auth = Provider.of<AuthProvider>(context,listen: false);
+    user = Provider.of<UserProfileProvider>(context,listen: false);
+    isFollowing= widget.isFollowing;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context);
-    // final user = Provider.of<UserProfileProvider>(context);
     return GestureDetector(
       onTap: () {
-        // user.page = 1;
-        // user.posts.clear();
-        // user.user = ProfileModel.empty;
-        // Navigator.of(context).pushNamed(
-        //   UserProfileScreen.routeName,
-        //   arguments: UserProfileScreenArgs(
-        //     username: username,
-        //   ),
-        // );
+        user.page = 1;
+        user.posts.clear();
+        user.user = ProfileModel.empty;
+        Navigator.of(context).pushNamed(
+          UserProfileScreen.routeName,
+          arguments: UserProfileScreenArgs(
+            username: widget.username,
+          ),
+        );
       },
       child: Padding(
         padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
@@ -44,7 +60,7 @@ class FollowingItem extends StatelessWidget {
               child: Row(
                 children: [
                   CustomCircularAvatar(
-                    imageUrl: imageUrl,
+                    imageUrl: widget.imageUrl,
                     height: 40,
                     width: 40,
                   ),
@@ -54,23 +70,23 @@ class FollowingItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          username,
+                          widget.username,
                           style: Theme.of(context).textTheme.headlineMedium,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         height5,
                         Text(
-                          replierType??'',
+                          widget.replierType??'',
                           style: Theme.of(context).textTheme.headlineSmall,
                         )
                       ],
                     ),
                   ),
                   width20,
-                  Consumer(
+                  Consumer<ProfileProvider>(
                     builder: (_, __, ___) {
-                      return prefs_username == username
+                      return prefs_username == widget.username
                           ? shrink
                           : isFollowing
                           ? TransparentButton(
@@ -80,10 +96,15 @@ class FollowingItem extends StatelessWidget {
                         color: Theme.of(context).canvasColor,
                         borderColor: Constants.primaryColor,
                         textColor: Constants.primaryColor,
-                        onTap: () {
+                        onTap: () async{
                           if (logged_in == true) {
                             // __.toggleFollowing(index);
                             // __.userUnfollow(username: username);
+                            await __.followUser(username: widget.username, isFollowing: true);
+                            setState(() {
+                              isFollowing = false;
+                            });
+                            await __.fetchProfile(username: prefs_username??'',forceRefresh: true);
                           } else {
                             auth.showAuthBottomSheet(context);
                           }
@@ -96,10 +117,16 @@ class FollowingItem extends StatelessWidget {
                         color: Constants.primaryColor,
                         isBorder: false,
                         textColor: Constants.lightPrimary,
-                        onTap: () {
+                        onTap: () async{
                           if (logged_in == true) {
                             // __.toggleFollowing(index);
                             // __.userFollow(username: username);
+                            await __.followUser(username: widget.username, isFollowing: false);
+                            setState(() {
+                              isFollowing = true;
+                            });
+                            await __.fetchProfile(username: prefs_username??'',forceRefresh: true);
+
                           } else {
                             auth.showAuthBottomSheet(context);
                           }

@@ -1,4 +1,5 @@
 import 'package:socialverse/app.dart';
+import 'package:socialverse/features/search/providers/video_provider.dart';
 
 import 'export.dart';
 
@@ -97,6 +98,8 @@ void main() async {
             ChangeNotifierProvider(create: (_) => ExitProvider()),
             ChangeNotifierProvider(create: (_) => NotificationProvider()),
             ChangeNotifierProvider(create: (_) => ReplyProvider()),
+            ChangeNotifierProvider(create: (_) => SearchProvider()),
+            ChangeNotifierProvider(create: (_) => ViewVideoProvider()),
             ChangeNotifierProvider<ThemeProvider>(
               create: (_) => ThemeProvider(
                 value ? Constants.darkTheme : Constants.lightTheme,

@@ -1,6 +1,6 @@
 import 'package:socialverse/export.dart';
 
-class FollowerItem extends StatelessWidget {
+class FollowerItem extends StatefulWidget {
   FollowerItem({
     Key? key,
     this.imageUrl,
@@ -18,9 +18,26 @@ class FollowerItem extends StatelessWidget {
   final bool isFollowing;
   final int index;
 
+  @override
+  State<FollowerItem> createState() => _FollowerItemState();
+}
+
+class _FollowerItemState extends State<FollowerItem> {
+
+  late final AuthProvider auth;
+  late final UserProfileProvider user;
+  late bool isFollowing;
+
+  @override
+  void initState() {
+    super.initState();
+    auth = Provider.of<AuthProvider>(context,listen: false);
+    user = Provider.of<UserProfileProvider>(context,listen: false);
+    isFollowing= widget.isFollowing;
+  }
+
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context);
-    final user = Provider.of<UserProfileProvider>(context);
+
     return GestureDetector(
       onTap: () {
         user.page = 1;
@@ -29,7 +46,7 @@ class FollowerItem extends StatelessWidget {
         Navigator.of(context).pushNamed(
           UserProfileScreen.routeName,
           arguments: UserProfileScreenArgs(
-            username: username,
+            username: widget.username,
           ),
         );
       },
@@ -41,7 +58,7 @@ class FollowerItem extends StatelessWidget {
               child: Row(
                 children: [
                   CustomCircularAvatar(
-                    imageUrl: imageUrl,
+                    imageUrl: widget.imageUrl,
                     height: 40,
                     width: 40,
                   ),
@@ -51,14 +68,14 @@ class FollowerItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          firstName + ' ' + lastName,
+                          widget.firstName + ' ' + widget.lastName,
                           style: Theme.of(context).textTheme.headlineMedium,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         height5,
                         Text(
-                          username,
+                          widget.username,
                           style: Theme.of(context).textTheme.displaySmall,
                         )
                       ],
@@ -67,7 +84,7 @@ class FollowerItem extends StatelessWidget {
                   width20,
                   Consumer<ProfileProvider>(
                     builder: (_, __, ___) {
-                      return prefs_username == username
+                      return prefs_username == widget.username
                           ? shrink
                           : isFollowing
                           ? TransparentButton(
@@ -77,10 +94,18 @@ class FollowerItem extends StatelessWidget {
                         color: Theme.of(context).canvasColor,
                         borderColor: Constants.primaryColor,
                         textColor: Constants.primaryColor,
-                        onTap: () {
+                        onTap: () async{
                           if (logged_in == true) {
                             // __.toggleFollowing(index);
                             // __.userUnfollow(username: username);
+                            __.followUser(username: widget.username, isFollowing: true);
+
+                            setState(() {
+                              isFollowing= false;
+                            });
+
+                            await __.fetchProfile(username: prefs_username??'',forceRefresh: true);
+
                           } else {
                             auth.showAuthBottomSheet(context);
                           }
@@ -93,10 +118,17 @@ class FollowerItem extends StatelessWidget {
                         color: Constants.primaryColor,
                         isBorder: false,
                         textColor: Constants.lightPrimary,
-                        onTap: () {
+                        onTap: () async {
                           if (logged_in == true) {
                             // __.toggleFollowing(index);
                             // __.userFollow(username: username);
+                            __.followUser(username: widget.username, isFollowing: false);
+                            setState(() {
+                              isFollowing= true;
+                            });
+
+                            await __.fetchProfile(username: prefs_username??'',forceRefresh: true);
+
                           } else {
                             auth.showAuthBottomSheet(context);
                           }

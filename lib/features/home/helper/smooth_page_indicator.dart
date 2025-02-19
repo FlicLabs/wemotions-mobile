@@ -5,42 +5,28 @@ import 'package:socialverse/features/home/utils/circular_dot.dart';
 
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 class SmoothPageIndicatorView extends StatelessWidget {
-  // final int? totalHorizontalPages;
-  // final int? totalVerticalPages;
-  // final int? currentHorizontalIndex;
-  // final int? currentVerticalIndex;
-
   const SmoothPageIndicatorView({
     Key? key,
-    // this.totalHorizontalPages,
-    // this.totalVerticalPages,
-    // this.currentHorizontalIndex,
-    // this.currentVerticalIndex,
   }) : super(key: key);
 
-
-
   List<Widget> _buildDots({
+    required SmoothPageIndicatorProvider provider,
     required int totalCount,
     required int currentIndex,
     required bool isHorizontal,
     required int visibleDots,
   }) {
+    List<Widget> dots = [];
 
-    List<Widget> dots=[];
-
-    if(totalCount==0){
+    if (totalCount == 0) {
       dots.clear();
       return dots;
     }
 
     int start = currentIndex - 1;
     int end = currentIndex + 1;
-
 
     if (start < 0) {
       start = 0;
@@ -51,87 +37,115 @@ class SmoothPageIndicatorView extends StatelessWidget {
     }
 
     // Add leading more indicator if needed
-    if (start > 0) {
-      dots.add(
-        Indicator(
-          isActive: false,
-          isHorizontal: isHorizontal,
-          isMoreIndicator: true,
-        ),
-      );
-    }
+    // if (start > 0) {
+    //   dots.add(
+    //     Indicator(
+    //       isActive: false,
+    //       isHorizontal: isHorizontal,
+    //       isMoreIndicator: true,
+    //     ),
+    //   );
+    // }
 
     // Add main dots
     for (int i = start; i <= end; i++) {
-      dots.add(
-        Indicator(
-          isActive: i == currentIndex,
-          isHorizontal: isHorizontal,
-        ),
-      );
+      if(!isHorizontal){
+        dots.add(
+          Row(
+            children: [
+              Indicator(
+                isActive: provider.onReply? false:i == currentIndex,
+                isHorizontal: isHorizontal,
+                makeTransparent: provider.onReply && i != currentIndex? true:false,
+              ),
+
+              if (provider.totalHorizontalPages != -1 &&
+                  provider.currentHorizontalIndex != -1 &&
+                  provider.currentVerticalIndex != -1 &&
+                  provider.totalHorizontalPages != 0 && i==currentIndex)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: _buildDots(
+                    provider: provider,
+                    totalCount: provider.totalHorizontalPages,
+                    currentIndex: provider.currentHorizontalIndex,
+                    isHorizontal: true,
+                    visibleDots: provider.horizontalVisibleDots,
+                  ),
+                ),
+            ],
+          ),
+        );
+      }else{
+        dots.add(
+          Indicator(
+            isActive: provider.onReply? i == currentIndex:false,
+            isHorizontal: isHorizontal,
+          ),
+        );
+      }
+
     }
 
-    if (end < totalCount - 1) {
-      dots.add(
-        Indicator(
-          isActive: false,
-          isHorizontal: isHorizontal,
-          isMoreIndicator: true,
-        ),
-      );
-    }
+    // // Add trailing more indicator if needed
+    // if (end < totalCount - 1) {
+    //   dots.add(
+    //     Indicator(
+    //       isActive: false,
+    //       isHorizontal: isHorizontal,
+    //       isMoreIndicator: true,
+    //     ),
+    //   );
+    // }
 
     return dots;
   }
 
   @override
   Widget build(BuildContext context) {
+    return Consumer<SmoothPageIndicatorProvider>(
+      builder: (_, provider, ___) {
+        // Ensure we have valid data before building
+        if (provider.totalVerticalPages == -1 || provider.currentVerticalIndex == -1) {
+          return SizedBox.shrink();
+        }
 
+        // Calculate offset to ensure horizontal indicator overlaps vertical active indicator
+        double verticalOffset = 0;
+        if (provider.currentVerticalIndex != -1) {
+          // Calculate position based on current index (accounting for more indicators)
+          // int visibleVerticalPosition = 0;
+          // if (provider.currentVerticalIndex > 0) {
+          //   visibleVerticalPosition++; // Account for leading more indicator
+          // }
+          verticalOffset = (provider.currentVerticalIndex == 0 ? 0 : 1) +
+              (provider.currentVerticalIndex - math.max(0, provider.currentVerticalIndex - 1));
+        }
 
-    return Container(
-      // color: Colors.red,
-      width: 60,
-      height: 82,
-      child: Consumer<SmoothPageIndicatorProvider>(
-        builder: (_, __, ___) {
-          return Stack(
+        return Container(
+          // width: 72,
+          height: 82,
+          child: Stack(
             alignment: Alignment.center,
             children: [
               // Vertical indicators
-              if (__.totalVerticalPages != -1 && __.currentVerticalIndex != -1)
-                Column(
+              Padding(
+                padding: EdgeInsets.only(left: provider.totalHorizontalPages>=3?(cs.width(context) / 4.5)/(2.3):(cs.width(context) / 4.5)/(1.9)),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: _buildDots(
-                      totalCount: __.totalVerticalPages,
-                      currentIndex: __.currentVerticalIndex,
-                      isHorizontal: false,
-                      visibleDots: __.verticalVisibleDots,
+                    provider: provider,
+                    totalCount: provider.totalVerticalPages,
+                    currentIndex: provider.currentVerticalIndex,
+                    isHorizontal: false,
+                    visibleDots: provider.verticalVisibleDots,
                   ),
                 ),
-              //horizontal indicator
-              if (__.totalHorizontalPages != -1 &&
-                  __.currentHorizontalIndex != -1 &&
-                  __.currentVerticalIndex != -1)
-                if(__.totalHorizontalPages!=0) ...[
-                  Positioned(
-                    top: (0),
-                    left: 30,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: _buildDots(
-                        totalCount: __.totalHorizontalPages,
-                        currentIndex: __.currentHorizontalIndex,
-                        isHorizontal: true,
-                        visibleDots: __.horizontalVisibleDots,
-                      ),
-                    ),
-                  ),
-                ]
-
+              ),
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -140,12 +154,14 @@ class Indicator extends StatelessWidget {
   final bool isActive;
   final bool isHorizontal;
   final bool isMoreIndicator;
+  final bool makeTransparent;
 
   const Indicator({
     Key? key,
     required this.isActive,
     required this.isHorizontal,
     this.isMoreIndicator = false,
+    this.makeTransparent =false,
   }) : super(key: key);
 
   @override
@@ -154,17 +170,17 @@ class Indicator extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       margin: EdgeInsets.symmetric(
-        horizontal: isHorizontal ? 4 : 0,
+        horizontal: isHorizontal ? 3 : 0,
         vertical: isHorizontal ? 0 : 4,
       ),
       width: isHorizontal
-          ? (isMoreIndicator ? 6 : (isActive ? 12 : 8))
+          ? (isMoreIndicator ? 6 : (isActive? 9:8))
           : (isMoreIndicator ? 6 : 8),
       height: isHorizontal
           ? (isMoreIndicator ? 6 : 8)
-          : (isMoreIndicator ? 6 : (isActive ? 12 : 8)),
+          : (isMoreIndicator ? 6 : (isActive? 9:8)),
       decoration: BoxDecoration(
-        color: isActive
+        color: makeTransparent? Colors.transparent:isActive
             ? Constants.primaryColor
             : (isMoreIndicator
             ? Constants.lightPrimary.withOpacity(0.3)

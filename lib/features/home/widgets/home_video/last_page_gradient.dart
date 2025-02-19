@@ -16,6 +16,7 @@ class LastPageGradient extends StatelessWidget {
   Widget build(BuildContext context) {
     final home = Provider.of<HomeProvider>(context);
     final camera = Provider.of<CameraProvider>(context);
+    final auth = Provider.of<AuthProvider>(context);
     return Positioned.fill(
       child: Container(
         decoration: BoxDecoration(
@@ -61,7 +62,11 @@ class LastPageGradient extends StatelessWidget {
               height20,
               TransparentButton(
                 onTap: () async {
+                  if (home.videoController(home.index)!.value.isPlaying) {
+                    await home.videoController(home.index)!.pause();
+                  }
                   Share.share('link');
+
                 },
                 title: 'Share',
                 textColor: Constants.darkPrimary,
@@ -70,9 +75,16 @@ class LastPageGradient extends StatelessWidget {
               height10,
               TransparentButton(
                 onTap: () async {
-                  // if (home.videoController(home.index)!.value.isPlaying) {
-                  //   await home.videoController(home.index)!.pause();
-                  // }
+
+                  if (home.videoController(home.index)!.value.isPlaying) {
+                    await home.videoController(home.index)!..pause();
+                  }
+
+                  if (!logged_in!) {
+                    auth.showAuthBottomSheet(context);
+                    return ;
+                  }
+
                   PermissionStatus status = await Permission.camera.request();
                   if (status.isDenied || status.isPermanentlyDenied) {
                     showDialog(
@@ -96,6 +108,7 @@ class LastPageGradient extends StatelessWidget {
                         camera.shouldStartRecording = true;
                         camera.localValue=value;
                         camera.isReply=false;
+                        camera.isThroughSingleTap=true;
                         camera.showCameraScreen = true;
                         camera.isLongPressed=false;
 

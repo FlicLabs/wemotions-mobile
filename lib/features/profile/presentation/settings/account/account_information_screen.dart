@@ -143,8 +143,8 @@ class AccountInformationScreen extends StatelessWidget {
                   AuthButtonWithColor(
                       title: 'Confirm',
                       onTap: () async {
-                        final response = await __.updateUsername(context);
-                        if (response == 200 || response == 201) {
+                        final bool res = await __.updateUsername(context);
+                        if (res) {
                           await profile.fetchProfile(
                             username: prefs_username!,
                             forceRefresh: true,

@@ -45,6 +45,8 @@ class UserProfileButton extends StatelessWidget {
                                 __.userUnfollow(
                                   username: username,
                                 );
+                                // notification.deleteActivity(notificationId: notification.notifications.where((notification) => (notification.actor.username==prefs_username) && notification.user.username==username).first.id);
+
                               } else {
                                 auth.showAuthBottomSheet(context);
                               }

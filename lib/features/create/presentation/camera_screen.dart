@@ -258,8 +258,8 @@ class _CameraScreenState extends State<CameraScreen> {
                                       ? Color(0xFFA858F4)
                                       : Colors.white,
                                   icon: __.isCameraFlashOn
-                                      ? AppAsset.icflash2
-                                      : AppAsset.icflash,
+                                      ? AppAsset.icflash
+                                  : AppAsset.icflash2,
                                   label: "Flash",
                                   onTap: () {
                                     __.toggleFlash();

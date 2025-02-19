@@ -54,9 +54,9 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
             ),
             CustomListTile(
               onTap: () {
-                Navigator.of(context).pushNamed(
-                  ChangePasswordScreen.routeName,
-                );
+
+                Navigator.pushNamed(
+                    context, ForgotPasswordScreen.routeName);
               },
               label: 'Change Password',
             ),
