@@ -3,36 +3,37 @@ import 'package:socialverse/export.dart';
 import 'package:socialverse/features/create/utils/discard_dialog.dart';
 
 class CameraScreenArgs {
-  bool isReply;
-  int? parent_video_id;
+  final bool isReply;
+  final int? parentVideoId;
   final List<CameraDescription>? cameras;
+
   CameraScreenArgs({
-    this.cameras,
     required this.isReply,
-    this.parent_video_id,
+    this.parentVideoId,
+    this.cameras,
   });
 }
 
 class CameraScreen extends StatefulWidget {
   static const String routeName = '/camera';
 
-  CameraScreen({
+  const CameraScreen({
     Key? key,
     required this.cameras,
     required this.isReply,
-    this.parent_video_id,
+    this.parentVideoId,
   }) : super(key: key);
 
   final List<CameraDescription>? cameras;
-  bool isReply;
-  int? parent_video_id;
+  final bool isReply;
+  final int? parentVideoId;
 
   static Route route({required CameraScreenArgs args}) {
     return SlideRoute(
       page: CameraScreen(
         cameras: args.cameras,
         isReply: args.isReply,
-        parent_video_id: args.parent_video_id,
+        parentVideoId: args.parentVideoId,
       ),
     );
   }
@@ -42,238 +43,170 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-  CameraProvider? _cameraProvider;
-
-  // Variables for Zoom Gesture
-  double _initialVerticalDragDetails = 0.0;
+  late final CameraProvider _cameraProvider;
   double _currentZoom = 1.0;
 
   @override
   void initState() {
     super.initState();
     _cameraProvider = Provider.of<CameraProvider>(context, listen: false);
-    _cameraProvider?.initCamera(
-      description: widget.cameras![1],
-      mounted: mounted,
-    );
+    if (widget.cameras?.isNotEmpty ?? false) {
+      _cameraProvider.initCamera(
+        description: widget.cameras![1],
+        mounted: mounted,
+      );
+    }
   }
 
   @override
   void dispose() {
-    _cameraProvider?.resetValues(isDisposing: true);
+    _cameraProvider.resetValues(isDisposing: true);
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _cameraProvider = Provider.of<CameraProvider>(context);
-    _currentZoom = _cameraProvider?.currentZoomLevel ?? 1.0;
-  }
-
-  // Method to handle vertical drag update for zoom
   void _onVerticalDragUpdate(DragUpdateDetails details) {
-    double sensitivity = 0.005; // Adjust sensitivity as needed
-    double delta = details.delta.dy * sensitivity;
+    const double sensitivity = 0.005;
+    final double newZoom = (_currentZoom - details.delta.dy * sensitivity)
+        .clamp(_cameraProvider.minZoomLevel, _cameraProvider.maxZoomLevel);
 
-    // Invert delta to make upward drag increase zoom
-    double newZoom = _currentZoom - delta;
-
-    // Clamp zoom level
-    newZoom = newZoom.clamp(
-      _cameraProvider!.minZoomLevel,
-      _cameraProvider!.maxZoomLevel,
-    );
-
-    _currentZoom = newZoom;
-
-    // Set the new zoom level via provider
-    _cameraProvider!.setZoomLevel(_currentZoom);
+    if (newZoom != _currentZoom) {
+      _currentZoom = newZoom;
+      _cameraProvider.setZoomLevel(_currentZoom);
+    }
   }
 
-  // Method to handle double tap for camera flip
   void _onDoubleTap() {
-    if (_cameraProvider!.isVideoRecord) {
-      _cameraProvider!.flipCamera(cameras: widget.cameras!);
+    if (_cameraProvider.isVideoRecord) {
+      _cameraProvider.flipCamera(cameras: widget.cameras!);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CameraProvider>(
-      builder: (_, __, ___) {
-        bool video = __.videoController == null;
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.black,
-          body: __.isCameraReady
-              ? Column(
-                  children: [
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          // GestureDetector for Zoom and Double-Tap
-                          SizedBox(
-                            height: cs().height(context),
-                            width: cs().width(context),
-                            child: FittedBox(
-                              fit: BoxFit.cover,
-                              child: SizedBox(
-                                width: cs().width(context),
-                                height: cs().width(context) * 16 / 9,
-                                child: video
-                                    ? GestureDetector(
-                                        onVerticalDragStart: (details) {
-                                          _initialVerticalDragDetails =
-                                              details.localPosition.dy;
-                                        },
-                                        onVerticalDragUpdate:
-                                            _onVerticalDragUpdate,
-                                        onDoubleTap: _onDoubleTap,
-                                        child:
-                                         Transform.scale(
-                                          scale: 1.35,
-                                          child: Align(
-                                            alignment: Alignment.center,
-                                            child: CameraPreview(
-                                                __.cameraController),
-                                          ),
-                                        ),
-                                      )
-                                    : VideoPlayer(
-                                        __.videoController!,
-                                      ),
-                              ),
-                            ),
-                          ),
-                          // Flip and Flash Buttons
-                          if (__.isRecordStart && __.selectedVideo == null)
-                            Positioned(
-                              top: Platform.isIOS ? 85 : 60,
-                              right: 20,
-                              child: Column(
-                                children: [
-                                  CameraBarItem(
-                                    iconColor: __.isCameraFlip
-                                        ? Color(0xFFA858F4)
-                                        : Colors.white,
-                                    label: 'Flip',
-                                    onTap: () {
-                                      __.flipCamera(
-                                        cameras: widget.cameras!,
-                                      );
-                                    },
-                                    icon: AppAsset.icflip,
-                                  ),
-                                  SizedBox(height: 24),
-                                  CameraBarItem(
-                                    iconColor: __.isCameraFlashOn
-                                        ? Color(0xFFA858F4)
-                                        : Colors.white,
-                                    icon: __.isCameraFlashOn
-                                        ? AppAsset.icflash2
-                                        : AppAsset.icflash,
-                                    label: "Flash",
-                                    onTap: () {
-                                      __.toggleFlash();
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          // Discard Button
-                          if (!video)
-                            Positioned(
-                              top: Platform.isIOS ? 85 : 60,
-                              right: 20,
-                              child: CameraBarItem(
-                                iconColor: Colors.white,
-                                icon: AppAsset.icdiscard,
-                                label: 'Discard',
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return DiscardDialog();
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          // Back Button
-                          Positioned(
-                            top: Platform.isIOS ? 85 : 60,
-                            left: 20,
-                            child: GestureDetector(
-                              onTap: () {
-                                __.resetValues();
-                              },
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          // Circular Button to Stop Recording and Navigate
-                          if (!video)
-                            Positioned(
-                              bottom: 65,
-                              width: cs().width(context),
-                              child: CircularButton(
-                                onTap: () async {
-                                  // Ensure recording is stopped before disposing
-                                  if (__.isVideoRecord) {
-                                    await __.stopRecording();
-                                  }
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.black,
+      body: Consumer<CameraProvider>(
+        builder: (context, provider, child) {
+          final bool isVideoMode = provider.videoController == null;
 
-                                  __.videoController?.pause();
-                                  __.cameraController.dispose();
-                                  Navigator.of(context)
-                                      .pushNamed(
-                                    PostScreen.routeName,
-                                    arguments: PostScreenArgs(
-                                      isReply: widget.isReply,
-                                      path: __.selectedVideo,
-                                      parent_video_id: widget.parent_video_id,
+          return provider.isCameraReady
+              ? Stack(
+                  children: [
+                    GestureDetector(
+                      onVerticalDragUpdate: _onVerticalDragUpdate,
+                      onDoubleTap: _onDoubleTap,
+                      child: SizedBox(
+                        height: cs().height(context),
+                        width: cs().width(context),
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: SizedBox(
+                            width: cs().width(context),
+                            height: cs().width(context) * 16 / 9,
+                            child: isVideoMode
+                                ? Transform.scale(
+                                    scale: 1.35,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child:
+                                          CameraPreview(provider.cameraController),
                                     ),
                                   )
-                                      .then(
-                                    (value) {
-                                      __.resetValues();
-                                      __.initCamera(
-                                        description: widget.cameras![0],
-                                        mounted: mounted,
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          // Optional: Display Recording Duration
-                          /*
-                          Positioned(
-                            bottom: cs().height(context) * 0.25,
-                            width: cs().width(context),
-                            child: Text(
-                              cameraProvider.recordingDuration,
-                              style: const TextStyle(
-                                fontSize: 40,
-                                color: Colors.white,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                                : VideoPlayer(provider.videoController!),
                           ),
-                          */
-                        ],
+                        ),
                       ),
                     ),
+                    if (provider.isRecordStart && provider.selectedVideo == null)
+                      Positioned(
+                        top: Platform.isIOS ? 85 : 60,
+                        right: 20,
+                        child: Column(
+                          children: [
+                            CameraBarItem(
+                              iconColor: provider.isCameraFlip
+                                  ? const Color(0xFFA858F4)
+                                  : Colors.white,
+                              label: 'Flip',
+                              onTap: () => provider.flipCamera(
+                                cameras: widget.cameras!,
+                              ),
+                              icon: AppAsset.icflip,
+                            ),
+                            const SizedBox(height: 24),
+                            CameraBarItem(
+                              iconColor: provider.isCameraFlashOn
+                                  ? const Color(0xFFA858F4)
+                                  : Colors.white,
+                              icon: provider.isCameraFlashOn
+                                  ? AppAsset.icflash2
+                                  : AppAsset.icflash,
+                              label: "Flash",
+                              onTap: provider.toggleFlash,
+                            ),
+                          ],
+                        ),
+                      ),
+                    if (!isVideoMode)
+                      Positioned(
+                        top: Platform.isIOS ? 85 : 60,
+                        right: 20,
+                        child: CameraBarItem(
+                          iconColor: Colors.white,
+                          icon: AppAsset.icdiscard,
+                          label: 'Discard',
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (context) => const DiscardDialog(),
+                          ),
+                        ),
+                      ),
+                    Positioned(
+                      top: Platform.isIOS ? 85 : 60,
+                      left: 20,
+                      child: GestureDetector(
+                        onTap: provider.resetValues,
+                        child: const Icon(Icons.arrow_back, color: Colors.white),
+                      ),
+                    ),
+                    if (!isVideoMode)
+                      Positioned(
+                        bottom: 65,
+                        width: cs().width(context),
+                        child: CircularButton(
+                          onTap: () async {
+                            if (provider.isVideoRecord) {
+                              await provider.stopRecording();
+                            }
+
+                            provider.videoController?.pause();
+                            provider.cameraController.dispose();
+
+                            Navigator.of(context)
+                                .pushNamed(
+                                  PostScreen.routeName,
+                                  arguments: PostScreenArgs(
+                                    isReply: widget.isReply,
+                                    path: provider.selectedVideo,
+                                    parentVideoId: widget.parentVideoId,
+                                  ),
+                                )
+                                .then((_) {
+                                  provider.resetValues();
+                                  provider.initCamera(
+                                    description: widget.cameras![0],
+                                    mounted: mounted,
+                                  );
+                                });
+                          },
+                        ),
+                      ),
                   ],
                 )
-              : const Center(
-                  child: CustomProgressIndicator(),
-                ),
-        );
-      },
+              : const Center(child: CustomProgressIndicator());
+        },
+      ),
     );
   }
 }
