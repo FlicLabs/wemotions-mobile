@@ -3,7 +3,7 @@ import 'package:socialverse/export.dart';
 class PostSearchModel {
   PostSearchModel({
     required this.id,
-    required this.category,
+    this.category,
     required this.slug,
     required this.title,
     required this.identifier,
@@ -26,101 +26,86 @@ class PostSearchModel {
     required this.following,
     required this.pictureUrl,
   });
-  late final int id;
-  late final Category category;
-  late final String slug;
-  late final String title;
-  late final String identifier;
-  late int commentCount;
-  late int upvoteCount;
-  late int viewCount;
-  late int exitCount;
-  late int ratingCount;
-  late int averageRating;
-  late int shareCount;
-  late final String videoLink;
-  late final bool isLocked;
-  late final int createdAt;
-  late final String firstName;
-  late final String lastName;
-  late final String username;
-  late bool upvoted;
-  late final bool bookmarked;
-  late final String thumbnailUrl;
-  late bool following;
-  late final String pictureUrl;
 
-  PostSearchModel.fromJson(Map<String, dynamic> json) {
-    // TODO: Fix null is not a subtype of type Map
-    id = json['id'] ?? 0;
-    // category = Category.fromJson(
-    //   json['category'] ??
-    //       Category(
-    //         id: 0,
-    //         name: '',
-    //         count: 0,
-    //         imageUrl: '',
-    //       ).toJson(),
-    // );
-    // Handle category being either a list or a map
-    if (json['category'] is Map<String, dynamic>) {
-      category = Category.fromJson(json['category']);
-    } else {
-      category = Category(
-        id: 0,
-        name: '',
-        count: 0,
-        imageUrl: '',
-      );
-    }
-    slug = json['slug'] ?? '';
-    title = json['title'] ?? '';
-    identifier = json['identifier'] ?? '';
-    commentCount = json['comment_count'] ?? 0;
-    viewCount = json['view_count'] ?? 0;
-    exitCount = json['exit_count'] ?? 0;
-    ratingCount = json['rating_count'] ?? 0;
-    averageRating = json['average_rating'] ?? 0;
-    upvoteCount = json['upvote_count'] ?? 0;
-    shareCount = json['share_count'] ?? 0;
-    videoLink = json['video_link'] ?? '';
-    isLocked = json['is_locked'] ?? false;
-    createdAt = json['created_at'] ?? 0;
-    firstName = json['first_name'] ?? '';
-    lastName = json['last_name'] ?? '';
-    username = json['username'] ?? '';
-    upvoted = json['upvoted'] ?? false;
-    bookmarked = json['bookmarked'] ?? false;
-    thumbnailUrl = json['thumbnail_url'] ?? '';
-    following = json['following'] ?? false;
-    pictureUrl = json['picture_url'] ?? '';
+  final int id;
+  final Category? category; // Made nullable
+  final String slug;
+  final String title;
+  final String identifier;
+  int commentCount;
+  int upvoteCount;
+  int viewCount;
+  int exitCount;
+  int ratingCount;
+  int averageRating;
+  int shareCount;
+  final String videoLink;
+  final bool isLocked;
+  final int createdAt;
+  final String firstName;
+  final String lastName;
+  final String username;
+  bool upvoted;
+  final bool bookmarked;
+  final String thumbnailUrl;
+  bool following;
+  final String pictureUrl;
+
+  factory PostSearchModel.fromJson(Map<String, dynamic> json) {
+    return PostSearchModel(
+      id: json['id'] ?? 0,
+      category: (json['category'] != null && json['category'] is Map<String, dynamic>)
+          ? Category.fromJson(json['category'])
+          : null, // Handle null category properly
+      slug: json['slug'] ?? '',
+      title: json['title'] ?? '',
+      identifier: json['identifier'] ?? '',
+      commentCount: json['comment_count'] ?? 0,
+      upvoteCount: json['upvote_count'] ?? 0,
+      viewCount: json['view_count'] ?? 0,
+      exitCount: json['exit_count'] ?? 0,
+      ratingCount: json['rating_count'] ?? 0,
+      averageRating: json['average_rating'] ?? 0,
+      shareCount: json['share_count'] ?? 0,
+      videoLink: json['video_link'] ?? '',
+      isLocked: json['is_locked'] ?? false,
+      createdAt: json['created_at'] ?? 0,
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      username: json['username'] ?? '',
+      upvoted: json['upvoted'] ?? false,
+      bookmarked: json['bookmarked'] ?? false,
+      thumbnailUrl: json['thumbnail_url'] ?? '',
+      following: json['following'] ?? false,
+      pictureUrl: json['picture_url'] ?? '',
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['category'] = category.toJson();
-    _data['slug'] = slug;
-    _data['title'] = title;
-    _data['identifier'] = identifier;
-    _data['comment_count'] = commentCount;
-    _data['upvote_count'] = upvoteCount;
-    _data['view_count'] = viewCount;
-    _data['exit_count'] = exitCount;
-    _data['rating_count'] = ratingCount;
-    _data['average_rating'] = averageRating;
-    _data['share_count'] = shareCount;
-    _data['video_link'] = videoLink;
-    _data['is_locked'] = isLocked;
-    _data['created_at'] = createdAt;
-    _data['first_name'] = firstName;
-    _data['last_name'] = lastName;
-    _data['username'] = username;
-    _data['upvoted'] = upvoted;
-    _data['bookmarked'] = bookmarked;
-    _data['thumbnail_url'] = thumbnailUrl;
-    _data['following'] = following;
-    _data['picture_url'] = pictureUrl;
-    return _data;
+    return {
+      'id': id,
+      'category': category?.toJson(), // Handle nullable category
+      'slug': slug,
+      'title': title,
+      'identifier': identifier,
+      'comment_count': commentCount,
+      'upvote_count': upvoteCount,
+      'view_count': viewCount,
+      'exit_count': exitCount,
+      'rating_count': ratingCount,
+      'average_rating': averageRating,
+      'share_count': shareCount,
+      'video_link': videoLink,
+      'is_locked': isLocked,
+      'created_at': createdAt,
+      'first_name': firstName,
+      'last_name': lastName,
+      'username': username,
+      'upvoted': upvoted,
+      'bookmarked': bookmarked,
+      'thumbnail_url': thumbnailUrl,
+      'following': following,
+      'picture_url': pictureUrl,
+    };
   }
 }
