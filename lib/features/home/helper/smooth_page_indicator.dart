@@ -130,7 +130,7 @@ class SmoothPageIndicatorView extends StatelessWidget {
             children: [
               // Vertical indicators
               Padding(
-                padding: EdgeInsets.only(left: provider.totalHorizontalPages>=3?(cs.width(context) / 4.5)/(2.3):(cs.width(context) / 4.5)/(1.9)),
+                padding: EdgeInsets.only(left: provider.totalHorizontalPages>=3?(cs.width(context) / 4.5)/(2.4):(cs.width(context) / 4.5)/(1.9)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: _buildDots(

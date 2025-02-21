@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 
@@ -78,9 +80,12 @@ class FirebaseMessagingService {
       print(e.response?.statusCode);
       print(e.response?.data);
 
+      log('${e.response?.data}  ${e.response?.statusCode} in fetchActivity');
+
       if (e.response?.statusCode == 401) {
         throw e.response?.data['message'];
       }
+
 
       throw 'Something went wrong';
     }

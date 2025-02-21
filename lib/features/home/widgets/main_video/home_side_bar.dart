@@ -9,7 +9,7 @@ class HomeSideBar extends StatelessWidget {
 
     return Consumer<HomeProvider>(
       builder: (_, __, ___) {
-        return false
+        return __.posts.isEmpty
             ? shrink
             : Container(
                 height: cs.height(context),

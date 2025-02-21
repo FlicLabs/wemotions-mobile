@@ -103,18 +103,23 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
   // }
 
   Future<void> initializeVideo() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
+
+
+
+    WidgetsBinding.instance.addPostFrameCallback(await (_) async{
       viewVideo.posts=widget.posts;
+      // print("mmmmmmmmmmmmmmmmmmmmmmmmm111111111111");
+      await viewVideo.initializedVideoPlayer(widget.pageIndex);
+      // print("mmmmmmmmmmmmmmmmmmmmmmmmm22222222222222");
     });
-    await viewVideo.initializedVideoPlayer(widget.pageIndex);
+
+
     // reply.posts = viewVideo.posts[0].sublist(1);
 
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   home.index = widget.pageIndex;
     //   _initializePageIndicator();
     // });
-
-
   }
 
 
@@ -172,52 +177,62 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
       canPop: true,
       child: Consumer2<ViewVideoProvider,SmoothPageIndicatorProvider>(
         builder: (_,__,___,____){
-          return Stack(
-            children: [
-              AnimatedContainer(
-                duration: Duration(milliseconds: 100),
-                child: PageView.builder(
-                  itemCount: widget.posts.length,
-                  controller: widget.pageController,
-                  scrollDirection: Axis.vertical,
-                  physics: VideoScrollPhysics(),
-                  onPageChanged: (idx) async {
 
-                    __.vertical_drag_direction = viewVideo.index < idx ? 1 : -1;
+          if (__.posts.isEmpty) {
+            return Center(child: CustomProgressIndicator());
+          }
 
+          return Hero(
+            tag: 'video_${widget.posts[widget.pageIndex].id}',
+            child: Scaffold(
+              body: Stack(
+                children: [
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 100),
+                    child: PageView.builder(
+                      itemCount: widget.posts.length,
+                      controller: widget.pageController,
+                      scrollDirection: Axis.vertical,
+                      physics: VideoScrollPhysics(),
+                      onPageChanged: (idx) async {
 
-                    // // reset variable
-                    // if(home.horizontalIndex!=0){
-                    //   home.horizontalIndex = 0;
-                    // }
-                    // if(reply.onReply!=false){
-                    //   print(reply.index.toString());
-                    //   await reply.videoController(reply.index)?..pause();
-                    //   await reply.videoController(reply.index)?..seekTo(Duration.zero);
-                    //   // reply.isPlaying
-                    //   reply.onReply=false;
-                    // }
-                    //
-                    // if(home.posts[idx].length == 1){
-                    //   reply.posts.clear();
-                    // }
+                        __.vertical_drag_direction = viewVideo.index < idx ? 1 : -1;
 
 
-                    __.onPageChanged(idx);
+                        // // reset variable
+                        // if(home.horizontalIndex!=0){
+                        //   home.horizontalIndex = 0;
+                        // }
+                        // if(reply.onReply!=false){
+                        //   print(reply.index.toString());
+                        //   await reply.videoController(reply.index)?..pause();
+                        //   await reply.videoController(reply.index)?..seekTo(Duration.zero);
+                        //   // reply.isPlaying
+                        //   reply.onReply=false;
+                        // }
+                        //
+                        // if(home.posts[idx].length == 1){
+                        //   reply.posts.clear();
+                        // }
 
-                    __.isFollowing = viewVideo.posts[idx].following;
+
+                        __.onPageChanged(idx);
+
+                        __.isFollowing = viewVideo.posts[idx].following;
 
 
-                    // unawaited(_handleRepliesInBackground(idx));
+                        // unawaited(_handleRepliesInBackground(idx));
 
-                    // _initializePageIndicator();
-                  },
-                  itemBuilder: (context, index)  {
-                    return _buildVideoPage(index,__);
-                  },
-                ),
+                        // _initializePageIndicator();
+                      },
+                      itemBuilder: (context, index)  {
+                        return _buildVideoPage(index,__);
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           );
         },
       ),
@@ -225,6 +240,8 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
   }
 
   Widget _buildVideoPage(int index,ViewVideoProvider __) {
+
+
 
     return PageView(
       scrollDirection: Axis.horizontal,
@@ -250,7 +267,7 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
               children: [
                 ...[
 
-                  if (!__.isInitialized && !viewVideo.isPlaying) _buildThumbnail(index,__),
+                  _buildThumbnail(index,__),
 
                   if (__.isInitialized) _buildVideoPlayer(index,__),
 

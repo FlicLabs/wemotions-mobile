@@ -151,7 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                               ),
                               Expanded(
                                 child: ProfileStatsItem(
-                                  value: __.user.postCount,
+                                  value: __.posts.length,
                                   label: 'Videos',
                                   onTap: () {},
                                 ),

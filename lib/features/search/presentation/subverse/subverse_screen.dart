@@ -10,7 +10,7 @@ class SubverseScreen extends StatelessWidget {
         return Scaffold(
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(56),
-            child: CustomAppBar(),
+            child: SafeArea(child: CustomAppBar()),
           ),
           body: RefreshIndicator(
             color: Theme.of(context).indicatorColor,
@@ -28,8 +28,7 @@ class SubverseScreen extends StatelessWidget {
                     controller: __.controller,
                     shrinkWrap: true,
                     padding: const EdgeInsets.only(top: 20),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       crossAxisSpacing: 1,
                       mainAxisSpacing: 1,
@@ -37,26 +36,29 @@ class SubverseScreen extends StatelessWidget {
                     ),
                     itemCount: __.currentSortedPosts.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return SubversePostGridItem(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            ViewVideoWidget.routeName,
-                            arguments: ViewVideoWidgetArgs(
-                              posts: __.currentSortedPosts,
-                              pageController:
-                                  PageController(initialPage: index),
-                              pageIndex: index,
-                              // isFromSubverse: true,
-                            ),
-                          );
-                        },
-                        imageUrl: __.currentSortedPosts[index].thumbnailUrl,
-                        createdAt: __.currentSortedPosts[index].createdAt,
-                        viewCount: __.currentSortedPosts[index].viewCount,
-                        username: __.currentSortedPosts[index].username,
-                        pictureUrl: __.currentSortedPosts[index].pictureUrl,
+                      return Hero(
+                          tag: 'video_${__.currentSortedPosts[index].id}',
+                        child: SubversePostGridItem(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              ViewVideoWidget.routeName,
+                              arguments: ViewVideoWidgetArgs(
+                                posts: __.currentSortedPosts,
+                                pageController:
+                                    PageController(initialPage: index),
+                                pageIndex: index,
+                                // isFromSubverse: true,
+                              ),
+                            );
+                          },
+                          imageUrl: __.currentSortedPosts[index].thumbnailUrl,
+                          createdAt: __.currentSortedPosts[index].createdAt,
+                          viewCount: __.currentSortedPosts[index].viewCount,
+                          username: __.currentSortedPosts[index].username,
+                          pictureUrl: __.currentSortedPosts[index].pictureUrl,
 
+                        ),
                       );
                     },
                   ),

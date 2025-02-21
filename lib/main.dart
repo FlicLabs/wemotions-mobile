@@ -1,4 +1,5 @@
 import 'package:socialverse/app.dart';
+import 'package:socialverse/features/home/providers/nested_provider.dart';
 import 'package:socialverse/features/search/providers/video_provider.dart';
 
 import 'export.dart';
@@ -100,6 +101,7 @@ void main() async {
             ChangeNotifierProvider(create: (_) => ReplyProvider()),
             ChangeNotifierProvider(create: (_) => SearchProvider()),
             ChangeNotifierProvider(create: (_) => ViewVideoProvider()),
+            ChangeNotifierProvider(create: (_) => NestedRProvider()),
             ChangeNotifierProvider<ThemeProvider>(
               create: (_) => ThemeProvider(
                 value ? Constants.darkTheme : Constants.lightTheme,

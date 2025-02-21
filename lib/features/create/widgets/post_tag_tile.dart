@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/create/widgets/tagpeople_widget.dart';
 
@@ -20,8 +23,7 @@ class PostTagTile extends StatelessWidget {
                 ),
               ),
               builder: (context) {
-                return SizedBox();
-                // TagPeopleWidget();
+                return TagPeopleWidget();
               },
             ).whenComplete(() {
               // __.searched_users.clear();
@@ -46,25 +48,25 @@ class PostTagTile extends StatelessWidget {
                     'Tag people',
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
+
                 ],
               ),
-              // Row(
-              //   children: [
-              //     if(__.selected_users.isNotEmpty)...[
-              //       if(__.selected_users.length > 1)...[
-              //         Text(__.selected_users.length.toString()+" people")
-              //       ]else...[
-              //         Text(__.selected_users.first.username)
-              //       ]
-              //     ],
-              //     Icon(
-              //           Icons.arrow_forward_ios_rounded
-              //               ,
-              //         color: Theme.of(context).focusColor,
-              //         size: 16,
-              //       ),
-              //   ],
-              // ),
+              Row(
+                children: [
+                  if(__.selected_users.isNotEmpty)...[
+                    if(__.selected_users.length > 1)...[
+                      Text(__.selected_users.length.toString()+" people")
+                    ]else...[
+                      Text(__.selected_users.first.username)
+                    ]
+                  ],
+                  Icon(
+                        Icons.arrow_forward_ios_rounded,
+                      color: Theme.of(context).focusColor,
+                      size: 16,
+                    ),
+                ],
+              ),
             ],
           ),
         );

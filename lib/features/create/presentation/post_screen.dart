@@ -33,9 +33,15 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
+
+  late final BottomNavBarProvider nav;
+  late final CameraProvider camera;
+
   @override
   void initState() {
     initPost();
+    nav= Provider.of<BottomNavBarProvider>(context,listen: false);
+    camera = Provider.of<CameraProvider>(context,listen: false);
     super.initState();
   }
 
@@ -47,7 +53,6 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final nav = Provider.of<BottomNavBarProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -130,17 +135,23 @@ class _PostScreenState extends State<PostScreen> {
                         padding: EdgeInsets.only(bottom: 20),
                         child: AuthButtonWithColor(
                           isGradient: true,
-                          onTap: () {
+                          onTap: () async {
                             if (__.formKey.currentState!.validate()) {
-                              // if (mounted) {
-                              //   Navigator.of(context, rootNavigator: true)..pop();
-                              // }
-                              // __.uploadVideo(
-                              //     path: widget.path!.path,
-                              //     isReply: widget.isReply,
-                              //     parent_video_id: widget.parent_video_id);
-                              // nav.currentPage = 0;
-                              // nav.jumpToPage();
+                              if (mounted) {
+                                // reset camera first
+                                await camera.resetValues(isDisposing: true).whenComplete(() => Navigator.of(context, rootNavigator: true)..pop());
+
+                                // Navigator.of(context, rootNavigator: true)..pop();
+                              }
+                              // __.addTag(postId)
+                              print(widget.isReply.toString()+"111111111111111111111111111111111111111111");
+                              print(widget.parent_video_id.toString()+"111111111111111111111111111111111111111111");
+                              __.uploadVideo(
+                                  path: widget.path!.path,
+                                  isReply: widget.isReply,
+                                  parent_video_id: widget.parent_video_id);
+                              nav.currentPage = 0;
+                              nav.jumpToPage();
                             }
                           },
                           title: 'Upload Video',

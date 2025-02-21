@@ -148,12 +148,12 @@ class HomeService {
         options: Options(headers: {'Flic-Token': token}),
       );
       ;
-      // print(response.statusCode);
-      // print(response.data);
+      print(response.statusCode);
+      print(response.data.toString()+"22222222222222222222222222222222222222");
       return response.data;
     } on DioError catch (e) {
-      print(e.response?.statusCode);
-      print(e.response?.statusMessage);
+      print((e.response?.statusCode).toString()+'22222222222222222222222222222222222222');
+      print((e.response?.statusMessage).toString()+'22222222222222222222222222222222222222');
       return e.response?.statusCode;
     }
   }

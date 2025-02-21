@@ -309,7 +309,6 @@ class _CameraScreenState extends State<CameraScreen> {
                             width: cs.width(context),
                             child: CircularButton(
                               onTap: () async {
-                                // Ensure recording is stopped before disposing
                                 if (__.isVideoRecord) {
                                   await __.stopRecording();
                                 }

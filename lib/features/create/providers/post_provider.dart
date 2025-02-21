@@ -42,7 +42,7 @@ class PostProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _subverse_name = 'Vible';
+  String _subverse_name = 'WeMotions';
   String get subverse_name => _subverse_name;
 
   set subverse_name(String value) {
@@ -179,69 +179,73 @@ class PostProvider extends ChangeNotifier {
       );
   }
 
-  //Tagging Feature Data
-  // List<UserSearchModel> _searched_users = [];
-  // List<UserSearchModel> get searched_users => _searched_users;
+  // Tagging Feature Data
+  List<UserSearchModel> _searched_users = [];
+  List<UserSearchModel> get searched_users => _searched_users;
   //
-  // List<UserSearchModel> _selected_users = [];
-  // List<UserSearchModel> get selected_users => _selected_users;
-  //
-  // Future<void> selectUsers(UserSearchModel user) async {
-  //   if (selected_users.contains(user)) {
-  //     selected_users.remove(user);
-  //
-  //   } else {
-  //     selected_users.add(user);
-  //   }
-  //   notifyListeners();
-  // }
-  //
-  // final TextEditingController _searchController = TextEditingController();
-  // TextEditingController get searchController => _searchController;
-  //
-  // Timer? _debounce;
-  // Timer? get debounce => _debounce;
-  //
-  // void onSearchChanged(String query) {
-  //   if (_debounce?.isActive ?? false) _debounce!.cancel();
-  //   _debounce = Timer(const Duration(milliseconds: 300), () {
-  //     if (query.isNotEmpty) {
-  //       searchUsers(query);
-  //     } else {
-  //       _searched_users = [];
-  //     }
-  //   });
-  // }
-  //
-  // Future<void> searchUsers(String query) async {
-  //   final response = await _postService.searchUserForTagging(query);
-  //   _searched_users =
-  //       List.from(response).map((e) => UserSearchModel.fromJson(e)).toList();
-  //   notifyListeners();
-  // }
-  //
-  // Future<void> addTag(int postId, UserSearchModel user) async {
-  //   Map data = {
-  //     "post_id": postId,
-  //     "username": user.username,
-  //   };
-  //   await _postService.tagUser(data: data);
-  //   // await updateTags(postId);
-  //   notifyListeners();
-  // }
-  //
-  // Future<void> removeTag(int postId, UserSearchModel user) async {
-  //   Map data = {
-  //     "post_id": postId,
-  //     "username": user.username,
-  //   };
-  //   await _postService.removeTag(data: data);
-  //   // await updateTags(postId);
-  //   notifyListeners();
-  // }
+  List<UserSearchModel> _selected_users = [];
+  List<UserSearchModel> get selected_users => _selected_users;
+
+  Future<void> selectUsers(UserSearchModel user) async {
+    if (selected_users.contains(user)) {
+      selected_users.remove(user);
+
+    } else {
+      selected_users.add(user);
+    }
+    notifyListeners();
+  }
+
+  final TextEditingController _searchController = TextEditingController();
+  TextEditingController get searchController => _searchController;
+
+  void onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      if (query.isNotEmpty) {
+        searchUsers(query);
+      } else {
+        _searched_users = [];
+      }
+    });
+  }
+
+
+
+  Timer? _debounce;
+  Timer? get debounce => _debounce;
+
+
+
+  Future<void> searchUsers(String query) async {
+    final response = await _postService.searchUserForTagging(query);
+    _searched_users =
+        List.from(response).map((e) => UserSearchModel.fromJson(e)).toList();
+    notifyListeners();
+  }
+
+  Future<void> addTag(int postId, UserSearchModel user) async {
+    Map data = {
+      "post_id": postId,
+      "username": user.username,
+    };
+    await _postService.tagUser(data: data);
+    // await updateTags(postId);
+    notifyListeners();
+  }
+
+  Future<void> removeTag(int postId, UserSearchModel user) async {
+    Map data = {
+      "post_id": postId,
+      "username": user.username,
+    };
+    await _postService.removeTag(data: data);
+    // await updateTags(postId);
+    notifyListeners();
+  }
 
   // Future<void> updateTags(int postId) async {
-  //   final response = await PostService.updateTags(postId);
+  //   final response = await _postService.updateTags(postId);
   //   Posts newPost =
   //   List.from(response['post']).map((e) => Posts.fromJson(e)).toList()[0];
   //   posts[index][0].tags = newPost.tags;

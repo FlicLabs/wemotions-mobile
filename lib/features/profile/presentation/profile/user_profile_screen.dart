@@ -220,7 +220,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               ),
                               Expanded(
                                 child: ProfileStatsItem(
-                                  value: userProvider.user.postCount,
+                                  value: userProvider.posts.length,
                                   label: 'Vidoes',
                                 ),
                               ),

@@ -1,5 +1,7 @@
 import 'package:socialverse/export.dart';
 
+import '../widgets/home_video/post_upload_indicator.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -35,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen>
                     pageIndex: 0,
                     isFromFeed: true,
                   ),
+                  Positioned(child: PostUploadIndicator(),bottom: __.heightOfUserInfoBar,),
                 ],
               ],
             ),

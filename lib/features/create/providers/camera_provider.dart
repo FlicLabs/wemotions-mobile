@@ -240,6 +240,8 @@ class CameraProvider extends ChangeNotifier {
   bool shouldStartRecording = false;
 
   bool _isRecording=false;
+  bool get isRecording=>_isRecording;
+
 
   bool _isCameraFlip = false;
   bool get isCameraFlip => _isCameraFlip;
@@ -431,6 +433,8 @@ class CameraProvider extends ChangeNotifier {
   /// Sets the zoom level with debouncing to ensure smooth transitions
   Future<void> setZoomLevel(double zoom) async {
     if (!_isCameraReady) return;
+
+    if(_currentZoomLevel==zoom.clamp(_minZoomLevel, _maxZoomLevel)) return;
 
     // Clamp zoom level between min and max
     double newZoom = zoom.clamp(_minZoomLevel, _maxZoomLevel);

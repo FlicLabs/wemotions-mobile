@@ -31,7 +31,7 @@ class _RecordButtonState extends State<RecordButton> {
             }
           },
           child: CircularPercentIndicator(
-            radius: 35,
+            radius: __.isRecording?45:40,
             lineWidth: 4.0,
             backgroundColor:
                 __.isRecordStart ? Colors.white : Theme.of(context).hintColor,
@@ -60,24 +60,30 @@ class _RecordButtonState extends State<RecordButton> {
                     ),
                   ),
                 ),
-                Container(
-                  height: 48,
-                  width: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                ),
+
+
+
                 AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
-                  height: 18,
-                  width: 18,
+                  duration: Duration(milliseconds: 500),
+                  height: __.isRecording?52:48,
+                  width: __.isRecording?52:48,
                   decoration: BoxDecoration(
-                    shape:
-                        __.isRecordStart ? BoxShape.circle : BoxShape.rectangle,
-                    color: Theme.of(context).hintColor,
+                    shape: BoxShape.rectangle,
+                    color: __.isRecording? Constants.primaryColor:Colors.white,
+                    borderRadius: __.isRecording?BorderRadius.all(Radius.circular(20)):BorderRadius.all(Radius.circular(50)),
                   ),
                 ),
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 400),
+                    height: __.isRecording?0:18,
+                    width: __.isRecording?0:18,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: __.isRecordStart?BorderRadius.all(Radius.circular(50)):BorderRadius.all(Radius.circular(2)),
+                      color: Theme.of(context).hintColor,
+                    ),
+                  ),
+
               ],
             ),
           ),

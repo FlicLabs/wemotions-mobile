@@ -421,6 +421,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                         await availableCameras().then((value) {
                           camera.localValue = value;
                           camera.isReply = nav.selectedVideoUploadType == 'Video' ? false : true;
+                          nav.parentVideoId=camera.isReply? (reply.onReply?reply.posts[reply.index].id: home.posts[home.index][0].id) : null;
                           camera.isThroughSingleTap=true;
                           camera.shouldStartRecording = false;
                           camera.showCameraScreen = true;
@@ -438,8 +439,10 @@ class _BottomNavBarState extends State<BottomNavBar>
                       if (permissionsGranted) {
                         camera.hasPermission = true;
                         await availableCameras().then((value) {
+                          nav.parentVideoId=camera.isReply? (reply.onReply?reply.index:home.index) : null;
                           camera.localValue = value;
                           camera.isReply = nav.selectedVideoUploadType == 'Video' ? false : true;
+                          nav.parentVideoId=camera.isReply? (reply.onReply?reply.posts[reply.index].id: home.posts[home.index][0].id) : null;
                           camera.shouldStartRecording = true;
                           camera.showCameraScreen = true;
 
@@ -457,13 +460,19 @@ class _BottomNavBarState extends State<BottomNavBar>
                       }
                       else{
                         double horizontalDifference = details.globalPosition.dx - camera.pressPosition!.dx;
-
+                        double verticalDifference = details.globalPosition.dy - camera.pressPosition!.dy;
 
                         if(horizontalDifference<-10){
                           camera.isLockIconHovered=true;
                         }else{
                           camera.isLockIconHovered=false;
                         }
+
+                        // if(verticalDifference<100){
+                        //   camera.setZoomLevel(1.5);
+                        // }else if(verticalDifference>5){
+                        //   camera.setZoomLevel(1.0);
+                        // }
                       }
 
                     },
