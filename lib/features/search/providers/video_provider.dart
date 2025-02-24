@@ -240,7 +240,7 @@ class ViewVideoProvider with ChangeNotifier{
 
           if (positionInSeconds > 1) {
             if (positionInSeconds > 1 &&
-                !_viewCountUpdated[index]! &&
+                (_viewCountUpdated[index] ?? false) == false &&
                 logged_in!) {
               updateViewCount(id: _posts.elementAt(index).id);
               _viewCountUpdated[index] = true;

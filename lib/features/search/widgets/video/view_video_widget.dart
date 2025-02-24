@@ -175,16 +175,16 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
         }
       },
       canPop: true,
-      child: Consumer2<ViewVideoProvider,SmoothPageIndicatorProvider>(
-        builder: (_,__,___,____){
+      child: Hero(
+        tag: 'videoIndex_${widget.pageIndex}',
+        child: Consumer2<ViewVideoProvider,SmoothPageIndicatorProvider>(
+          builder: (_,__,___,____){
 
-          if (__.posts.isEmpty) {
-            return Center(child: CustomProgressIndicator());
-          }
+            if (__.posts.isEmpty) {
+              return Center(child: CustomProgressIndicator());
+            }
 
-          return Hero(
-            tag: 'video_${widget.posts[widget.pageIndex].id}',
-            child: Scaffold(
+            return Scaffold(
               body: Stack(
                 children: [
                   AnimatedContainer(
@@ -232,9 +232,9 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
                   ),
                 ],
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

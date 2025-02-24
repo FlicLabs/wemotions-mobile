@@ -23,7 +23,7 @@ class _BottomNavBarState extends State<BottomNavBar>
     HomeScreen(),
     // Container(),
     SubverseScreen(),
-    Container(),
+    EmptyState(),
     ActivityScreen(),
     ProfileScreen(),
   ];
@@ -213,6 +213,8 @@ class _BottomNavBarState extends State<BottomNavBar>
                           showUnselectedLabels: false,
                           selectedFontSize: 0,
                           onTap: (index) {
+                            if( index==2) return;
+
                             if (index == 3 && logged_in == false) {
                               auth.showAuthBottomSheet(context);
                             } else if (index == 4 && logged_in == false) {

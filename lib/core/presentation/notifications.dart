@@ -24,6 +24,7 @@ class ActivityScreen extends StatelessWidget {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     final profile = Provider.of<ProfileProvider>(context);

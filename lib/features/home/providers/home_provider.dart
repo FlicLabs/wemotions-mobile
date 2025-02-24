@@ -1119,7 +1119,7 @@ class HomeProvider extends ChangeNotifier {
           }
 
           if (positionInSeconds > 1) {
-            if (positionInSeconds > 1 && (_viewCountUpdated[index] ?? false) && logged_in!) {
+            if (positionInSeconds > 1 && (_viewCountUpdated[index] ?? false) == false && logged_in!) {
               updateViewCount(id: posts.elementAt(index)[0].id);
               _viewCountUpdated[index] = true;
             }

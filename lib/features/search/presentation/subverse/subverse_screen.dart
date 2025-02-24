@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:socialverse/export.dart';
 
 class SubverseScreen extends StatelessWidget {
   const SubverseScreen({Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -17,71 +19,79 @@ class SubverseScreen extends StatelessWidget {
             backgroundColor: Theme.of(context).primaryColor,
             onRefresh: () async {
               __.loading = true;
+              __.currentSortedPosts.clear();
               __.posts_page = 1;
+              if(!logged_in!){
+                __.loading = false;
+                return Future.value();
+              }
               await __.fetchCurrentSortedPosts;
             },
-            child: Stack(
-              children: [
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Stack(
+                children: [
 
-                if (!__.loading) ...[
-                  GridView.builder(
-                    controller: __.controller,
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.only(top: 20),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 1,
-                      mainAxisSpacing: 1,
-                      childAspectRatio: 0.65,
-                    ),
-                    itemCount: __.currentSortedPosts.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Hero(
-                          tag: 'video_${__.currentSortedPosts[index].id}',
-                        child: SubversePostGridItem(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              ViewVideoWidget.routeName,
-                              arguments: ViewVideoWidgetArgs(
-                                posts: __.currentSortedPosts,
-                                pageController:
-                                    PageController(initialPage: index),
-                                pageIndex: index,
-                                // isFromSubverse: true,
-                              ),
-                            );
-                          },
-                          imageUrl: __.currentSortedPosts[index].thumbnailUrl,
-                          createdAt: __.currentSortedPosts[index].createdAt,
-                          viewCount: __.currentSortedPosts[index].viewCount,
-                          username: __.currentSortedPosts[index].username,
-                          pictureUrl: __.currentSortedPosts[index].pictureUrl,
+                  if (!__.loading) ...[
+                    GridView.builder(
+                      controller: __.controller,
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.only(top: 20),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 1,
+                        mainAxisSpacing: 1,
+                        childAspectRatio: 0.65,
+                      ),
+                      itemCount: __.currentSortedPosts.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Hero(
+                            tag: 'videoIndex_${index}',
+                          child: SubversePostGridItem(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                ViewVideoWidget.routeName,
+                                arguments: ViewVideoWidgetArgs(
+                                  posts: __.currentSortedPosts,
+                                  pageController:
+                                      PageController(initialPage: index),
+                                  pageIndex: index,
+                                  // isFromSubverse: true,
+                                ),
+                              );
+                            },
+                            imageUrl: __.currentSortedPosts[index].thumbnailUrl,
+                            createdAt: __.currentSortedPosts[index].createdAt,
+                            viewCount: __.currentSortedPosts[index].viewCount,
+                            username: __.currentSortedPosts[index].username,
+                            pictureUrl: __.currentSortedPosts[index].pictureUrl,
 
-                        ),
-                      );
-                    },
-                  ),
-                ],
-                if (__.loading) ...[
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.only(top: 20),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 1,
-                      mainAxisSpacing: 1,
-                      childAspectRatio: 0.65,
+                          ),
+                        );
+                      },
                     ),
-                    itemCount: 12,
-                    itemBuilder: (_, __) {
-                      return SubversePostGridPlaceholder();
-                    },
-                  ),
+                  ],
+                  if (__.loading) ...[
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(top: 20),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 1,
+                        mainAxisSpacing: 1,
+                        childAspectRatio: 0.65,
+                      ),
+                      itemCount: 12,
+                      itemBuilder: (_, __) {
+                        return SubversePostGridPlaceholder();
+                      },
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         );
