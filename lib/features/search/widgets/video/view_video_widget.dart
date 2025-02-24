@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:socialverse/core/configs/page_routers/scale_route.dart';
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/search/providers/video_provider.dart';
 
@@ -33,8 +35,8 @@ class ViewVideoWidget extends StatefulWidget {
   }) : super(key: key);
 
   static Route route({required ViewVideoWidgetArgs args}) {
-    return MaterialPageRoute(
-      builder: (_) => ViewVideoWidget(
+    return ScaleRoute(
+      page: ViewVideoWidget(
         posts: args.posts,
         pageController: args.pageController,
         pageIndex: args.pageIndex,
@@ -108,9 +110,7 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
 
     WidgetsBinding.instance.addPostFrameCallback(await (_) async{
       viewVideo.posts=widget.posts;
-      // print("mmmmmmmmmmmmmmmmmmmmmmmmm111111111111");
       await viewVideo.initializedVideoPlayer(widget.pageIndex);
-      // print("mmmmmmmmmmmmmmmmmmmmmmmmm22222222222222");
     });
 
 
@@ -175,66 +175,63 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
         }
       },
       canPop: true,
-      child: Hero(
-        tag: 'videoIndex_${widget.pageIndex}',
-        child: Consumer2<ViewVideoProvider,SmoothPageIndicatorProvider>(
-          builder: (_,__,___,____){
+      child: Consumer2<ViewVideoProvider,SmoothPageIndicatorProvider>(
+        builder: (_,__,___,____){
 
-            if (__.posts.isEmpty) {
-              return Center(child: CustomProgressIndicator());
-            }
+          if (__.posts.isEmpty) {
+            return Center(child: CustomProgressIndicator());
+          }
 
-            return Scaffold(
-              body: Stack(
-                children: [
-                  AnimatedContainer(
-                    duration: Duration(milliseconds: 100),
-                    child: PageView.builder(
-                      itemCount: widget.posts.length,
-                      controller: widget.pageController,
-                      scrollDirection: Axis.vertical,
-                      physics: VideoScrollPhysics(),
-                      onPageChanged: (idx) async {
+          return Scaffold(
+            body: Stack(
+              children: [
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 100),
+                  child: PageView.builder(
+                    itemCount: widget.posts.length,
+                    controller: widget.pageController,
+                    scrollDirection: Axis.vertical,
+                    physics: VideoScrollPhysics(),
+                    onPageChanged: (idx) async {
 
-                        __.vertical_drag_direction = viewVideo.index < idx ? 1 : -1;
+                      __.vertical_drag_direction = viewVideo.index < idx ? 1 : -1;
 
 
-                        // // reset variable
-                        // if(home.horizontalIndex!=0){
-                        //   home.horizontalIndex = 0;
-                        // }
-                        // if(reply.onReply!=false){
-                        //   print(reply.index.toString());
-                        //   await reply.videoController(reply.index)?..pause();
-                        //   await reply.videoController(reply.index)?..seekTo(Duration.zero);
-                        //   // reply.isPlaying
-                        //   reply.onReply=false;
-                        // }
-                        //
-                        // if(home.posts[idx].length == 1){
-                        //   reply.posts.clear();
-                        // }
+                      // // reset variable
+                      // if(home.horizontalIndex!=0){
+                      //   home.horizontalIndex = 0;
+                      // }
+                      // if(reply.onReply!=false){
+                      //   print(reply.index.toString());
+                      //   await reply.videoController(reply.index)?..pause();
+                      //   await reply.videoController(reply.index)?..seekTo(Duration.zero);
+                      //   // reply.isPlaying
+                      //   reply.onReply=false;
+                      // }
+                      //
+                      // if(home.posts[idx].length == 1){
+                      //   reply.posts.clear();
+                      // }
 
 
-                        __.onPageChanged(idx);
+                      __.onPageChanged(idx);
 
-                        __.isFollowing = viewVideo.posts[idx].following;
+                      __.isFollowing = viewVideo.posts[idx].following;
 
 
-                        // unawaited(_handleRepliesInBackground(idx));
+                      // unawaited(_handleRepliesInBackground(idx));
 
-                        // _initializePageIndicator();
-                      },
-                      itemBuilder: (context, index)  {
-                        return _buildVideoPage(index,__);
-                      },
-                    ),
+                      // _initializePageIndicator();
+                    },
+                    itemBuilder: (context, index)  {
+                      return _buildVideoPage(index,__);
+                    },
                   ),
-                ],
-              ),
-            );
-          },
-        ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -270,6 +267,28 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
                   _buildThumbnail(index,__),
 
                   if (__.isInitialized) _buildVideoPlayer(index,__),
+
+                  Positioned(
+                    left: 20,
+                    top: 60,
+                    child: InkWell(
+                      onTap: ()=> Navigator.pop(context),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        height: 18,
+                        width: 18,
+                        child: SvgPicture.asset(
+                          AppAsset.icBackArrow,
+                          color: Colors.white,
+                          height: 18,
+                          width: 18,
+                        ),
+                      ),
+                    ),
+
+                  ),
 
                   Align(
                     alignment: Alignment.bottomCenter,
@@ -333,7 +352,7 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
 
   Widget _buildThumbnail(int index,ViewVideoProvider __) {
     return CustomNetworkImage(
-      height: cs.availableHeightWithNav(context),
+      height: cs.height(context),
       width: cs.width(context),
       imageUrl: __.posts[index].thumbnailUrl,
       isLoading: true,

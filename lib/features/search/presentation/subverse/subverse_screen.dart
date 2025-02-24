@@ -45,29 +45,26 @@ class SubverseScreen extends StatelessWidget {
                       ),
                       itemCount: __.currentSortedPosts.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return Hero(
-                            tag: 'videoIndex_${index}',
-                          child: SubversePostGridItem(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                ViewVideoWidget.routeName,
-                                arguments: ViewVideoWidgetArgs(
-                                  posts: __.currentSortedPosts,
-                                  pageController:
-                                      PageController(initialPage: index),
-                                  pageIndex: index,
-                                  // isFromSubverse: true,
-                                ),
-                              );
-                            },
-                            imageUrl: __.currentSortedPosts[index].thumbnailUrl,
-                            createdAt: __.currentSortedPosts[index].createdAt,
-                            viewCount: __.currentSortedPosts[index].viewCount,
-                            username: __.currentSortedPosts[index].username,
-                            pictureUrl: __.currentSortedPosts[index].pictureUrl,
+                        return SubversePostGridItem(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              ViewVideoWidget.routeName,
+                              arguments: ViewVideoWidgetArgs(
+                                posts: __.currentSortedPosts,
+                                pageController:
+                                    PageController(initialPage: index),
+                                pageIndex: index,
+                                // isFromSubverse: true,
+                              ),
+                            );
+                          },
+                          imageUrl: __.currentSortedPosts[index].thumbnailUrl,
+                          createdAt: __.currentSortedPosts[index].createdAt,
+                          viewCount: __.currentSortedPosts[index].viewCount,
+                          username: __.currentSortedPosts[index].username,
+                          pictureUrl: __.currentSortedPosts[index].pictureUrl,
 
-                          ),
                         );
                       },
                     ),

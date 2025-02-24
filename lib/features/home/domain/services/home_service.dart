@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 
@@ -149,11 +151,11 @@ class HomeService {
       );
       ;
       print(response.statusCode);
-      print(response.data.toString()+"22222222222222222222222222222222222222");
+      print(response.data.toString());
       return response.data;
     } on DioError catch (e) {
-      print((e.response?.statusCode).toString()+'22222222222222222222222222222222222222');
-      print((e.response?.statusMessage).toString()+'22222222222222222222222222222222222222');
+      print((e.response?.statusCode).toString());
+      print((e.response?.statusMessage).toString());
       return e.response?.statusCode;
     }
   }

@@ -54,6 +54,7 @@ class AppAsset {
   static const icadd = "assets/svg/icadd.svg";
   static const icsetting = "assets/svg/settings.svg";
   static const icForwardArrow = "assets/svg/icForwardArrow.svg";
+  static const icBackArrow = "assets/svg/icBackArrow.svg";
   static const icnonotification = "assets/svg/notification_bell.svg";
 
   static const imagePicker = "assets/images/imagePicker.png";

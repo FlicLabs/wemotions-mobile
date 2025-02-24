@@ -265,12 +265,17 @@ class ViewVideoProvider with ChangeNotifier{
     return _controllers[_posts.elementAt(index).videoLink];
   }
 
+
+
   Future<void> updateViewCount({required int id}) async {
     Map data = {
       "post_id": id,
     };
-    await _homeService.view(data: data);
-    notifyListeners();
+    try {
+      await _homeService.view(data: data);
+    } catch (e) {
+      print("Error in updateViewCount: $e");
+    }
   }
 
 

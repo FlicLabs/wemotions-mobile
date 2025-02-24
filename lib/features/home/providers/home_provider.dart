@@ -861,6 +861,17 @@ class HomeProvider extends ChangeNotifier {
   bool _loading = false;
   bool get loading => _loading;
 
+  set loading(bool val){
+    if(_loading!=val){
+      _loading=val;
+      notifyListeners();
+    }
+  }
+
+  bool _hasMorePosts = true;
+  bool get hasMorePosts=>_hasMorePosts;
+
+
   bool _isLiked = false;
   bool get isLiked => _isLiked;
 
@@ -952,7 +963,12 @@ class HomeProvider extends ChangeNotifier {
     Map data = {
       "post_id": id,
     };
-    await _homeService.view(data: data);
+    try {
+      await _homeService.view(data: data);
+    } catch (e) {
+      print("Error in updateViewCount: $e");
+    }
+
     notifyListeners();
   }
 
@@ -980,6 +996,7 @@ class HomeProvider extends ChangeNotifier {
     _posts.isEmpty ? null : await disposeAllControllers();
 
     _posts_page = 1;
+    _hasMorePosts=true;
     _horizontalIndex = 0;
     _posts.clear();
     // hPosts.clear();
@@ -1081,8 +1098,7 @@ class HomeProvider extends ChangeNotifier {
   }
 
   // VideoPlayerController? videoController(int index) {
-  //   print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^${_controllers[API.video_link]}");
-  //   return _controllers[posts.elementAt(index)[0].videoLink] ??
+  //  return _controllers[posts.elementAt(index)[0].videoLink] ??
   //       _controllers[API.video_link];
   // }
 
@@ -1208,7 +1224,6 @@ class HomeProvider extends ChangeNotifier {
   }
 
   onPageChanged(int index) async {
-    print(_controllers.toString()+'|||||||||||||||||||||||||||||||||');
     _isPlaying = true;
 
 
@@ -1248,10 +1263,10 @@ class HomeProvider extends ChangeNotifier {
     // Cleanup controllers outside the valid range
     _cleanupControllers(index);
 
-    unawaited(createIsolate(token: token)
-        .then((_) => notifyListeners())
-        .catchError((e) => print("Error fetching new data: $e"))
-    );
+    // unawaited(createIsolate(token: token)
+    //     .then((_) => notifyListeners())
+    //     .catchError((e) => print("Error fetching new data: $e"))
+    // );
 
     // // Update UI state after video operations are complete
     // isFollowing = posts[index][0].following;
@@ -1302,6 +1317,7 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> _nextVideo() async {
     if (_index == posts.length - 1) {
+      await _playController(_index);
       return;
     }
 
@@ -1343,7 +1359,6 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> _stopController(int index) async {
-    print("stop: $index :::: ${_controllers[posts.elementAt(index)[0].videoLink]} ::::::::::::::::::::::::::::::::::::::");
     try {
       if (index < 0 || index >= posts.length) return;
 
@@ -1358,7 +1373,6 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void>  _playController(int index) async {
-    print("playing: $index :::: ${_controllers[posts.elementAt(index)[0].videoLink]} ::::::::::::::::::::::::::::::::::::::");
     try {
       if (index < 0 || index >= posts.length) return;
 
@@ -1405,18 +1419,26 @@ class HomeProvider extends ChangeNotifier {
     mainReceivePort.listen((message) {
       if (message is SendPort) {
         SendPort isolateSendPort = message;
-
         ReceivePort isolateResponseReceivePort = ReceivePort();
+
         isolateSendPort.send([_posts_page, isolateResponseReceivePort.sendPort, token]);
 
         isolateResponseReceivePort.listen((isolateResponse) {
           if (isolateResponse is List) {
-            // Explicitly cast to List<List<Posts>>
-            _posts.addAll(isolateResponse.cast<List<Posts>>());
-            notifyListeners();
-            // Now that posts are fetched, we can safely fetch replies if needed
-            _canFetchReplies = true;
+            final newPosts = isolateResponse.cast<List<Posts>>();
+            if(newPosts.isNotEmpty){
+              final existingPostIds = _posts.map((postList) => postList[0].id).toSet();
+              final uniquePosts = newPosts.where((postList) => !existingPostIds.contains(postList[0].id)).toList();
 
+              if (uniquePosts.isNotEmpty) {
+                _posts.addAll(uniquePosts);
+                _posts_page++;
+              }
+            }else{
+              _hasMorePosts= false;
+            }
+            _canFetchReplies = true;
+            notifyListeners();
           }
         });
       }
@@ -1426,7 +1448,6 @@ class HomeProvider extends ChangeNotifier {
   static void getVideosTask(SendPort mySendPort) async {
     final _homeService = HomeService();
     ReceivePort isolateReceivePort = ReceivePort();
-
     mySendPort.send(isolateReceivePort.sendPort);
 
     await for (var message in isolateReceivePort) {
@@ -1440,12 +1461,13 @@ class HomeProvider extends ChangeNotifier {
           final List<Posts> data = FeedModel.fromJson(response).posts;
           isolateResponseSendPort.send(data.map((e) => [e]).toList());
         } catch (e) {
-          print("Error in isolate: $e");
-          isolateResponseSendPort.send([]);
+          print("Error fetching feed in isolate: $e");
+          isolateResponseSendPort.send([]); // Send empty response on failure
         }
       }
     }
   }
+
 
   Future<void> createReplyIsolate(int indexForFetch, {String? token}) async {
     if (!_canFetchReplies) {
@@ -1454,9 +1476,12 @@ class HomeProvider extends ChangeNotifier {
     }
 
 
-    if (_fetchingIndices.contains(indexForFetch)) {
-      return;
-    }
+    if (_fetchingIndices.contains(indexForFetch)) return;
+
+    if (_posts.isEmpty || indexForFetch >= _posts.length) return;
+
+
+
     _fetchingIndices.add(indexForFetch);
     _fetchingReplies = true;
 
@@ -1481,6 +1506,7 @@ class HomeProvider extends ChangeNotifier {
       if (_posts[indexForFetch].length > 1) {
         _posts[indexForFetch] = [_posts[indexForFetch][0]];
       }
+
 
       _posts[indexForFetch].addAll(isolateResponse);
 

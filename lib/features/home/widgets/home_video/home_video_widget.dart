@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/home/helper/smooth_page_indicator.dart';
 import 'package:socialverse/features/home/helper/v_video_scroll_physics.dart';
@@ -76,13 +78,12 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
   }
 
   void _initializePageIndicator() {
-    print(reply.posts.length.toString()+"/////////////////////////////////////////////////");
     page.onReply = reply.onReply;
     page.totalVerticalPages = home.posts.length;
     page.currentVerticalIndex = home.index;
     page.totalHorizontalPages = reply.posts.length;
     page.currentHorizontalIndex = reply.index;
-    print("${page.totalVerticalPages} ${page.currentVerticalIndex} ${page.totalHorizontalPages} ${page.currentHorizontalIndex} 8888888888888888888888888888888888888");
+
   }
 
   Future<void> initializeVideo() async {
@@ -106,21 +107,19 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     if (home.vertical_drag_direction == 1) {
       if (idx + 1 <= home.posts.length - 1) {
         unawaited(home.createReplyIsolate(idx + 1, token: token));
-        if (reply.posts.isNotEmpty) {
-          print(reply.posts.toString()+"${idx+2}00000000000000000000000000"+reply.posts[0].id.toString());
-        }
+
       }
     } else {
       if (idx - 1 >= 0) {
         unawaited(home.createReplyIsolate(idx - 1, token: token));
-        if (reply.posts.isNotEmpty) {
-          print(reply.posts.toString()+"${idx-2}00000000000000000000000000"+reply.posts[0].id.toString());
-        }
+
       }
     }
   }
 
   void _pageListener() {
+    if(!mounted) return;
+
     final currentPage = widget.pageController.page?.round() ?? 0;
     final lastPage = widget.posts.length - 1;
 
@@ -131,6 +130,12 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     }
 
     _previousPage = currentPage;
+
+    final totalPosts = home.posts.length;
+
+    if(currentPage >= totalPosts - 5 && home.hasMorePosts){
+      unawaited(home.createIsolate(token: token));
+    }
   }
 
   @override
@@ -152,9 +157,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             physics: VideoScrollPhysics(),
             onPageChanged: (idx) async {
 
-                print(reply.onReply.toString()+' 55555555555555555555555555555555555555');
                 home.vertical_drag_direction = home.index < idx ? 1 : -1;
-                home.posts_page++;
 
                 // reset variable
                 if(home.horizontalIndex!=0){
@@ -162,7 +165,6 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                 }
 
                 if(reply.onReply!=false){
-                  print(reply.index.toString());
                   await reply.videoController(reply.index)?..pause();
                   await reply.videoController(reply.index)?..seekTo(Duration.zero);
                   // reply.isPlaying
@@ -196,6 +198,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
   }
 
   Widget _buildVideoPage(int index) {
+    // log("${home.posts[index][0].id}");
     bool isInit = home.videoController(index)?.value.isInitialized ?? false;
 
     return PageView(
@@ -212,7 +215,6 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
   }
 
   Widget _buildMainVideoContent(int index, bool isInit) {
-    // print("${home.posts[index][0].id} ::::::::::::::::::::::::::::::::::::::::::::::");
     return GestureDetector(
       onTap: () => _handleVideoTap(index),
       child: Stack(
