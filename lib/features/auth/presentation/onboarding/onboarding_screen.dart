@@ -39,6 +39,7 @@ class OnboardingScreen extends StatelessWidget {
                         AppAsset.onboardingHero,
                         height: 367,
                         width: 390,
+                        fit: BoxFit.contain,
                         // color: Theme.of(context).hintColor,
                       ),
                     ),

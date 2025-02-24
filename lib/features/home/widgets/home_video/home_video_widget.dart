@@ -212,6 +212,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
   }
 
   Widget _buildMainVideoContent(int index, bool isInit) {
+    // print("${home.posts[index][0].id} ::::::::::::::::::::::::::::::::::::::::::::::");
     return GestureDetector(
       onTap: () => _handleVideoTap(index),
       child: Stack(
@@ -223,7 +224,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                if (!_isLastPage) ...[
+                // if (!_isLastPage) ...[
 
                   _buildThumbnail(index),
 
@@ -282,8 +283,8 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
 
                   HomeVideoProgressIndicator(),
 
-                ],
-                if (_isLastPage) _buildLastPage(index, isInit),
+                // ],
+                // if (_isLastPage) _buildLastPage(index, isInit),
               ],
             ),
           ),

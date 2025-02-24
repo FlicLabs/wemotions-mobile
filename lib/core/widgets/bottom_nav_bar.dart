@@ -424,6 +424,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                           camera.localValue = value;
                           camera.isReply = nav.selectedVideoUploadType == 'Video' ? false : true;
                           nav.parentVideoId=camera.isReply? (reply.onReply?reply.posts[reply.index].id: home.posts[home.index][0].id) : null;
+                          print(nav.parentVideoId.toString()+':::::::::::::::::::::::::::::::::::::::::::::');
                           camera.isThroughSingleTap=true;
                           camera.shouldStartRecording = false;
                           camera.showCameraScreen = true;

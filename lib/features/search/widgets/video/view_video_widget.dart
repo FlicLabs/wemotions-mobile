@@ -320,7 +320,7 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
 
                   _buildSideBar(),
 
-                  ViewVideoProgressIndicator(),
+                  // ViewVideoProgressIndicator(),
 
                 ],
               ],
