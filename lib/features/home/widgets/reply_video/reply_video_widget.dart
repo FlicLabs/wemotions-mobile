@@ -45,7 +45,6 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
   }
 
   initializeVideo() async {
-    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     await _reply.initializedVideoPlayer();
     // _reply.index = widget.postIndex;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -213,7 +212,6 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
               //   // if (details.primaryVelocity != null && details.primaryVelocity! < 0) {
               //   //   // Swiping down detected
               //   //
-              //   //   print(_nestedR.getPost.toString()+'7777777777777777777777777777777');
               //   //   if(_nestedR.getPost.isNotEmpty){
               //   //     print(reply.posts.toString()+' '+reply.index.toString()+'7777777777777777777777777777777');
               //   //     _nestedR.navigateToNestedReplies(reply.posts[reply.index].id, true);

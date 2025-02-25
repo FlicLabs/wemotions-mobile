@@ -29,5 +29,7 @@ class ScaleRoute extends PageRouteBuilder {
               child: child,
             );
           },
-        );
+    transitionDuration: const Duration(milliseconds: 300),
+    reverseTransitionDuration: const Duration(milliseconds: 200),
+  );
 }
