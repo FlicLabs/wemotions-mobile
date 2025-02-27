@@ -249,7 +249,7 @@ export 'package:socialverse/features/home/providers/home_provider.dart';
 export 'package:socialverse/features/home/providers/smooth_page_indicator_provider.dart';
 export 'package:socialverse/features/home/domain/services/home_service.dart';
 export 'package:socialverse/core/providers/report_provider.dart';
-export 'package:socialverse/features/home/providers/video_provider.dart';
+export 'package:socialverse/features/search/providers/video_provider.dart';
 export 'package:socialverse/features/home/providers/reply_provider.dart';
 export 'package:socialverse/features/auth/providers/auth_provider.dart';
 export 'package:socialverse/core/providers/notification_provider.dart';

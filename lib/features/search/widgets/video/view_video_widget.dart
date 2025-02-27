@@ -66,6 +66,10 @@ class VideoWidget extends StatefulWidget {
 }
 
 class _VideoWidgetState extends State<VideoWidget> {
+
+  double _initialDragPosition = 0.0;
+  double _dragThreshold = 30;
+
   int _previousPage = 0;
   bool _isLastPage = false;
   //
@@ -89,7 +93,6 @@ class _VideoWidgetState extends State<VideoWidget> {
 
     // _initializeReplies();
 
-    widget.pageController.addListener(_pageListener);
   }
 
   Future<void> _initializeReplies() async {
@@ -148,22 +151,18 @@ class _VideoWidgetState extends State<VideoWidget> {
   //   }
   // }
 
-  void _pageListener() {
-    final currentPage = widget.pageController.page?.round() ?? 0;
-    final lastPage = widget.posts.length - 1;
 
-    if (currentPage == lastPage && _previousPage != lastPage) {
-      setState(() => _isLastPage = true);
-    } else if (currentPage != lastPage && _isLastPage) {
-      setState(() => _isLastPage = false);
+
+  void _handleSwipe(PointerUpEvent event, int index) {
+    final double dragDistance = _initialDragPosition - event.position.dy;
+
+    if (index == widget.posts.length - 1 && dragDistance > _dragThreshold) {
+      Navigator.of(context).pop();
     }
-
-    _previousPage = currentPage;
   }
 
   @override
   void dispose() {
-    widget.pageController.removeListener(_pageListener);
     super.dispose();
   }
 
@@ -258,97 +257,99 @@ class _VideoWidgetState extends State<VideoWidget> {
   }
 
   Widget _buildMainVideoContent(int index, ViewVideoProvider __) {
-    return GestureDetector(
-      onTap: () => _handleVideoTap(index, __),
-      child: Stack(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(color: Colors.black),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                ...[
-                  _buildThumbnail(index, __),
+    return Listener(
+      onPointerDown: (PointerDownEvent event) {
+        _initialDragPosition = event.position.dy;
+      },
+      onPointerUp: (PointerUpEvent event) {
+        _handleSwipe(event, index);
+      },
+      child: GestureDetector(
+        onTap: () => _handleVideoTap(index, __),
+        child: Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(color: Colors.black),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  ...[
+                    _buildThumbnail(index, __),
 
-                  if (__.isInitialized) _buildVideoPlayer(index, __),
+                    if (__.isInitialized) _buildVideoPlayer(index, __),
 
-                  Positioned(
-                    left: 20,
-                    top: 60,
-                    child: InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        height: 18,
-                        width: 18,
-                        child: SvgPicture.asset(
-                          AppAsset.icBackArrow,
-                          color: Colors.white,
+                    Positioned(
+                      left: 20,
+                      top: 60,
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
                           height: 18,
                           width: 18,
+                          child: SvgPicture.asset(
+                            AppAsset.icBackArrow,
+                            color: Colors.white,
+                            height: 18,
+                            width: 18,
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      height: __.heightOfUserInfoBar,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            colors: [
-                              Colors.black12.withOpacity(0.56),
-                              Colors.black12.withOpacity(0.56),
-                              Colors.black12.withOpacity(0.46),
-                              Colors.black12.withOpacity(0.34),
-                              Colors.black12.withOpacity(0.24),
-                              Colors.black12.withOpacity(0.24),
-                              Colors.black12.withOpacity(0.21),
-                              Colors.black12.withOpacity(0.18),
-                              Colors.black12.withOpacity(0.12),
-                              Colors.black12.withOpacity(0.08),
-                              Colors.black12.withOpacity(0.04),
-                              Colors.black12.withOpacity(0.0),
-                            ],
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter),
-                        borderRadius: BorderRadius.circular(8),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        height: __.heightOfUserInfoBar,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: [
+                                Colors.black12.withOpacity(0.56),
+                                Colors.black12.withOpacity(0.56),
+                                Colors.black12.withOpacity(0.46),
+                                Colors.black12.withOpacity(0.34),
+                                Colors.black12.withOpacity(0.24),
+                                Colors.black12.withOpacity(0.24),
+                                Colors.black12.withOpacity(0.21),
+                                Colors.black12.withOpacity(0.18),
+                                Colors.black12.withOpacity(0.12),
+                                Colors.black12.withOpacity(0.08),
+                                Colors.black12.withOpacity(0.04),
+                                Colors.black12.withOpacity(0.0),
+                              ],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  ),
-                  VideoUserInfoBar(
-                    videoProvider: __,
-                  ),
-
-                  if (!__.isPlaying)
-                    Container(
-                      color: Colors.black12.withOpacity(0.04),
-                      height: cs.height(context),
-                      width: cs.width(context),
+                    VideoUserInfoBar(
+                      videoProvider: __,
                     ),
 
-                  // Center(
-                  //   child: Container(
-                  //     color: Colors.black12,
-                  //     height: 100,
-                  //     width: 100,
-                  //     child: Text('$index',style: TextStyle(color: Colors.white),),
-                  //   ),
-                  // ),
+                    if (!__.isPlaying)
+                      Container(
+                        color: Colors.black12.withOpacity(0.04),
+                        height: cs.height(context),
+                        width: cs.width(context),
+                      ),
 
-                  _buildSideBar(__),
+                    PlayButton(isFromVideoWidget: true,),
 
-                  // ViewVideoProgressIndicator(),
+
+                    _buildSideBar(__),
+
+                    // ViewVideoProgressIndicator(),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -845,4 +846,9 @@ class ViewVideoProgressIndicator extends StatelessWidget {
       },
     );
   }
+
+
+
+
 }
+

@@ -174,7 +174,7 @@ class _CameraScreenState extends State<CameraScreen> {
                         // Countdown Timer
                         if (__.isVideoRecord)
                           Positioned(
-                            bottom: Platform.isIOS ?120+33: 120,
+                            bottom: Platform.isIOS ?125+33: 130,
                             left: 0,
                             right: 0,
                             child: Center(
@@ -191,8 +191,8 @@ class _CameraScreenState extends State<CameraScreen> {
 
                         if (!__.recordingCompleted && !__.isThroughSingleTap)
                           Positioned(
-                            bottom: Platform.isIOS ?80+12:80,
-                            left: cs.width(context) * 0.28,
+                            bottom: Platform.isIOS ?80+12: 60,
+                            left: cs.width(context) * 0.26,
                             child: InkWell(
                               onTap: () {},
                               child: Stack(
