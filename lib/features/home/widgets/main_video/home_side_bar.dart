@@ -85,6 +85,11 @@ class HomeSideBar extends StatelessWidget {
                                 SideBarItem(
                                   onTap: () async {
                                     HapticFeedback.mediumImpact();
+
+                                    if(__.videoController(__.index)!.value.isPlaying ?? false){
+                                      await __.videoController(__.index)?..pause();
+                                    }
+
                                     showModalBottomSheet(
                                       context: context,
                                       backgroundColor: Colors.black,
@@ -99,7 +104,11 @@ class HomeSideBar extends StatelessWidget {
                                           dynamicLink: 'link',
                                         );
                                       },
-                                    );
+                                    ).then((value) async {
+                                      if(!__.videoController(__.index)!.value.isPlaying ?? false){
+                                        await __.videoController(__.index)?..play();
+                                      }
+                                    });
                                   },
                                   value: 0,
                                   icon: Padding(
@@ -123,7 +132,12 @@ class HomeSideBar extends StatelessWidget {
                                 ), //Share
                                 height16,
                                 SideBarItem(
-                                  onTap: () {
+                                  onTap: () async{
+
+                                    if(__.videoController(__.index)!.value.isPlaying ?? false){
+                                      await __.videoController(__.index)?..pause();
+                                    }
+
                                     showModalBottomSheet(
                                       context: context,
                                       shape: const RoundedRectangleBorder(
@@ -142,7 +156,11 @@ class HomeSideBar extends StatelessWidget {
                                           current_index: __.index,
                                         );
                                       },
-                                    );
+                                    ).then((value) async {
+                                      if(!__.videoController(__.index)!.value.isPlaying ?? false){
+                                        await __.videoController(__.index)?..play();
+                                      }
+                                    });
                                   },
                                   value: 5,
                                   icon: Icon(

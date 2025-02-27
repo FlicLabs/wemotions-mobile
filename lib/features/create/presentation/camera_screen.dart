@@ -174,7 +174,7 @@ class _CameraScreenState extends State<CameraScreen> {
                         // Countdown Timer
                         if (__.isVideoRecord)
                           Positioned(
-                            bottom: Platform.isIOS ?125+33: 130,
+                            bottom: Platform.isIOS ?125+40: 130,
                             left: 0,
                             right: 0,
                             child: Center(
@@ -305,7 +305,7 @@ class _CameraScreenState extends State<CameraScreen> {
                         // Circular Button to Stop Recording and Navigate
                         if (!video)
                           Positioned(
-                            bottom: 65,
+                            bottom: 40,
                             width: cs.width(context),
                             child: CircularButton(
                               onTap: () async {

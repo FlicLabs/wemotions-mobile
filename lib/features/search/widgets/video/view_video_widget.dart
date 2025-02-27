@@ -669,6 +669,11 @@ class VideoSideBar extends StatelessWidget {
                             if (__.replyPosts.isNotEmpty) ...[
                               SideBarItem(
                                 onTap: () async {
+
+                                  if(__.videoController(__.index)!.value.isPlaying ?? false){
+                                    await __.videoController(__.index)?..pause();
+                                  }
+
                                   showModalBottomSheet(
                                     context: context,
                                     shape: const RoundedRectangleBorder(
@@ -680,7 +685,12 @@ class VideoSideBar extends StatelessWidget {
                                     builder: (context) {
                                       return ReplySheet(viewVideoProvider: __,);
                                     },
-                                  );
+                                  ).then((value) async {
+                                    if(!__.videoController(__.index)!.value.isPlaying ?? false){
+                                      await __.videoController(__.index)?..play();
+                                    }
+                                  });
+
                                 },
                                 value: 0,
                                 icon: Padding(
@@ -707,6 +717,11 @@ class VideoSideBar extends StatelessWidget {
                             SideBarItem(
                               onTap: () async {
                                 HapticFeedback.mediumImpact();
+
+                                if(__.videoController(__.index)!.value.isPlaying ?? false){
+                                  await __.videoController(__.index)?..pause();
+                                }
+
                                 showModalBottomSheet(
                                   context: context,
                                   backgroundColor: Colors.black,
@@ -721,7 +736,12 @@ class VideoSideBar extends StatelessWidget {
                                       dynamicLink: 'link',
                                     );
                                   },
-                                );
+                                ).then((value) async {
+                                  if(!__.videoController(__.index)!.value.isPlaying ?? false){
+                                    await __.videoController(__.index)?..play();
+                                  }
+                                });
+
                               },
                               value: 0,
                               icon: Padding(
@@ -744,7 +764,12 @@ class VideoSideBar extends StatelessWidget {
                             ), //Share
                             height16,
                             SideBarItem(
-                              onTap: () {
+                              onTap: () async{
+
+                                if(__.videoController(__.index)!.value.isPlaying ?? false){
+                                  await __.videoController(__.index)?..pause();
+                                }
+
                                 showModalBottomSheet(
                                   context: context,
                                   shape: const RoundedRectangleBorder(
@@ -763,7 +788,11 @@ class VideoSideBar extends StatelessWidget {
                                       current_index: 0,
                                     );
                                   },
-                                );
+                                ).then((value) async {
+                                  if(!__.videoController(__.index)!.value.isPlaying ?? false){
+                                    await __.videoController(__.index)?..play();
+                                  }
+                                });
                               },
                               value: 5,
                               icon: Icon(

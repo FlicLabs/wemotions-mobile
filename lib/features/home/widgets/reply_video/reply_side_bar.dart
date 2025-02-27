@@ -112,6 +112,10 @@ class ReplySideBar extends StatelessWidget {
                                       __.posts[__.index].username !=
                                           prefs_username;
 
+                                  if(__.videoController(__.index)!.value.isPlaying ?? false){
+                                    await __.videoController(__.index)?..pause();
+                                  }
+
                                   showModalBottomSheet(
                                     context: context,
                                     backgroundColor: Colors.black,
@@ -124,7 +128,12 @@ class ReplySideBar extends StatelessWidget {
                                     builder: (context) {
                                       return ShareSheet();
                                     },
-                                  );
+                                  ).then((value) async {
+                                    if(!__.videoController(__.index)!.value.isPlaying ?? false){
+                                      await __.videoController(__.index)?..play();
+                                    }
+                                  });
+
                                 },
                                 value: 0,
                                 icon: Padding(
@@ -149,7 +158,12 @@ class ReplySideBar extends StatelessWidget {
                               height16,
 
                               SideBarItem(
-                                onTap: () {
+                                onTap: () async{
+
+                                  if(__.videoController(__.index)!.value.isPlaying ?? false){
+                                    await __.videoController(__.index)?..pause();
+                                  }
+
                                   showModalBottomSheet(
                                     isScrollControlled: true,
                                     context: context,
@@ -177,7 +191,11 @@ class ReplySideBar extends StatelessWidget {
                                         current_index: __.index,
                                       );
                                     },
-                                  );
+                                  ).then((value) async {
+                                    if(!__.videoController(__.index)!.value.isPlaying ?? false){
+                                      await __.videoController(__.index)?..play();
+                                    }
+                                  });
                                 },
                                 value: 5,
                                 icon: SvgPicture.asset(

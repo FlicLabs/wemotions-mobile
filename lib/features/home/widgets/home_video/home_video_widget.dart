@@ -271,16 +271,9 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
                   ),
                 PlayButton(),
 
-                // Center(
-                //   child: Container(
-                //     color: Colors.black12,
-                //     height: 100,
-                //     width: 100,
-                //     child: Text('$index',style: TextStyle(color: Colors.white),),
-                //   ),
-                // ),
 
                 _buildSideBar(),
+
 
                 HomeVideoProgressIndicator(),
 
