@@ -84,7 +84,7 @@ void main() async {
             ChangeNotifierProvider(create: (_) => AuthProvider()),
             ChangeNotifierProvider(create: (_) => HomeProvider()),
             ChangeNotifierProvider(create: (_) => SmoothPageIndicatorProvider()),
-            ChangeNotifierProvider(create: (_) => VideoProvider()),
+            // ChangeNotifierProvider(create: (_) => VideoProvider()),
             ChangeNotifierProvider(create: (_) => CameraProvider()),
             ChangeNotifierProvider(create: (_) => PostProvider()),
             ChangeNotifierProvider(create: (_) => SettingsProvider()),
@@ -100,7 +100,7 @@ void main() async {
             ChangeNotifierProvider(create: (_) => NotificationProvider()),
             ChangeNotifierProvider(create: (_) => ReplyProvider()),
             ChangeNotifierProvider(create: (_) => SearchProvider()),
-            ChangeNotifierProvider(create: (_) => ViewVideoProvider()),
+            ChangeNotifierProvider(create: (_) => ViewVideoProvider(initialIndex: 0,posts: [])),
             ChangeNotifierProvider(create: (_) => NestedRProvider()),
             ChangeNotifierProvider<ThemeProvider>(
               create: (_) => ThemeProvider(

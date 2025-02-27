@@ -1,4 +1,5 @@
 import 'package:socialverse/export.dart';
+import 'package:socialverse/features/home/utils/reply_sheet.dart';
 
 class HomeSideBar extends StatelessWidget {
   const HomeSideBar({Key? key}) : super(key: key);
@@ -26,16 +27,20 @@ class HomeSideBar extends StatelessWidget {
                               children: [
                                 SideBarItem(
                                   onTap: () {
+
                                     if (__.posts[__.index][0].upvoted) {
-                                      __.posts[__.index][0].upvoteCount--;
-                                      __.posts[__.index][0].upvoted = false;
+                                      if(logged_in!) {
+                                        __.posts[__.index][0].upvoteCount--;
+                                        __.posts[__.index][0].upvoted = false;
+                                      }
                                       __.postLikeRemove(
                                         id: __.posts[__.index][0].id,
                                       );
                                     } else {
-                                      __.posts[__.index][0].upvoteCount++;
-                                      __.posts[__.index][0].upvoted = true;
-
+                                      if(logged_in!){
+                                        __.posts[__.index][0].upvoteCount++;
+                                        __.posts[__.index][0].upvoted = true;
+                                      }
                                       __.postLikeAdd(
                                         id: __.posts[__.index][0].id,
                                       );
@@ -76,42 +81,6 @@ class HomeSideBar extends StatelessWidget {
                                     ),
                                   ),
                                 ), //Upvote
-                                height16,
-                                SideBarItem(
-                                  onTap: () async {
-                                    final currentPage =
-                                        __.replies.page?.round() ?? 0;
-                                    final totalPages =
-                                        __.posts[__.index].length - 1;
-                                    if (currentPage < totalPages) {
-                                      await __.replies.animateToPage(
-                                        currentPage + 1,
-                                        duration:
-                                        const Duration(milliseconds: 300),
-                                        curve: Curves.easeInOut,
-                                      );
-                                    }
-                                  },
-                                  value: 0,
-                                  icon: Padding(
-                                    padding: EdgeInsets.only(bottom: 3),
-                                    child: SvgPicture.asset(
-                                      AppAsset.icVideo,
-                                      color: Colors.white,
-                                      fit: BoxFit.scaleDown,
-                                    ),
-                                  ),
-                                  text: Text(
-                                    (__.posts[__.index][0].childVideoCount)
-                                        .toString(),
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.white,
-                                      fontFamily: 'sofia',
-                                    ),
-                                  ),
-                                ), //Share
                                 height16,
                                 SideBarItem(
                                   onTap: () async {
@@ -165,12 +134,12 @@ class HomeSideBar extends StatelessWidget {
                                       ),
                                       builder: (context) {
                                         return VideoSheet(
-                                          isUser: true,
+                                          isUser: __.posts[__.index][0].username != prefs_username,
                                           isFromFeed: true,
-                                          video_id: 0,
-                                          title: "title",
-                                          video_link: "videoLink",
-                                          current_index: 0,
+                                          video_id: __.posts[__.index][0].id,
+                                          title: __.posts[__.index][0].title,
+                                          video_link: __.posts[__.index][0].videoLink,
+                                          current_index: __.index,
                                         );
                                       },
                                     );

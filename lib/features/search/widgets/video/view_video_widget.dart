@@ -1,54 +1,71 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:developer';
+
 import 'package:socialverse/core/configs/page_routers/scale_route.dart';
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/search/providers/video_provider.dart';
 
+import '../../../home/helper/smooth_page_indicator.dart';
 import '../../../home/helper/v_video_scroll_physics.dart';
+import '../../../home/utils/reply_sheet.dart';
 
-class ViewVideoWidgetArgs {
+class VideoWidgetArgs {
   final List posts;
   final PageController pageController;
   final int pageIndex;
+  final bool? isFromProfile;
+  final bool? isFromSubverse;
+  final bool? isFromPostGrid;
+  final bool? isFromSearch;
 
-
-  ViewVideoWidgetArgs({
+  VideoWidgetArgs({
     required this.posts,
     required this.pageController,
     required this.pageIndex,
+    this.isFromProfile,
+    this.isFromSubverse,
+    this.isFromPostGrid,
+    this.isFromSearch,
   });
 }
 
-
-class ViewVideoWidget extends StatefulWidget {
-
+class VideoWidget extends StatefulWidget {
   static const routeName = '/view-video';
 
   final List posts;
   final PageController pageController;
   final int pageIndex;
+  final bool? isFromProfile;
+  final bool? isFromSubverse;
+  final bool? isFromSearch;
 
-  const ViewVideoWidget({
+  const VideoWidget({
     Key? key,
     required this.posts,
     required this.pageController,
     required this.pageIndex,
+    this.isFromProfile,
+    this.isFromSubverse,
+    this.isFromSearch,
   }) : super(key: key);
 
-  static Route route({required ViewVideoWidgetArgs args}) {
+  static Route route({required VideoWidgetArgs args}) {
     return ScaleRoute(
-      page: ViewVideoWidget(
+      page: VideoWidget(
         posts: args.posts,
         pageController: args.pageController,
         pageIndex: args.pageIndex,
+        isFromProfile: args.isFromProfile,
+        isFromSubverse: args.isFromSubverse,
+        isFromSearch: args.isFromSearch,
       ),
     );
   }
 
   @override
-  State<ViewVideoWidget> createState() => _ViewVideoWidgetState();
+  State<VideoWidget> createState() => _VideoWidgetState();
 }
 
-class _ViewVideoWidgetState extends State<ViewVideoWidget> {
+class _VideoWidgetState extends State<VideoWidget> {
   int _previousPage = 0;
   bool _isLastPage = false;
   //
@@ -56,6 +73,7 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
   // late final ReplyProvider reply;
   late final SmoothPageIndicatorProvider page;
   late final ViewVideoProvider viewVideo;
+  late final ExitProvider exit;
 
   @override
   void initState() {
@@ -64,64 +82,47 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
     // reply = Provider.of<ReplyProvider>(context, listen: false);
     page = Provider.of<SmoothPageIndicatorProvider>(context, listen: false);
     viewVideo = Provider.of<ViewVideoProvider>(context, listen: false);
+    final exit = Provider.of<ExitProvider>(context, listen: false);
 
-    initializeVideo();
+    // initializeVideo();
+    // _initializeReplies();
 
     // _initializeReplies();
 
     widget.pageController.addListener(_pageListener);
   }
 
-  // Future<void> _initializeReplies() async {
-  //   // Load initial replies in background
-  //   unawaited(_loadInitialReplies());
-  // }
+  Future<void> _initializeReplies() async {
+    // Load initial replies in background
+    unawaited(_loadInitialReplies());
+  }
 
-  // Future<void> _loadInitialReplies() async {
-  //   await home.createReplyIsolate(0, token: token);
-  //   if (home.posts[0].length > 1) {
-  //     reply.posts = home.posts[0].sublist(1);
-  //     //load first reply video
-  //     // if(reply.posts.length>=1){
-  //     //   await reply.makeFirstHControllerReady();
-  //     // }
-  //
-  //   }
-  //
-  //   // Pre fetch next page replies
-  //   if (home.posts.length > 1) {
-  //     unawaited(home.createReplyIsolate(1, token: token));
-  //   }
-  // }
+  Future<void> _loadInitialReplies() async {
+    await viewVideo.createReplyIsolate(widget.pageIndex, token: token);
+  }
 
   // void _initializePageIndicator() {
-  //   print(reply.posts.length.toString()+"/////////////////////////////////////////////////");
-  //   page.onReply = reply.onReply;
-  //   page.totalVerticalPages = home.posts.length;
-  //   page.currentVerticalIndex = home.index;
-  //   page.totalHorizontalPages = reply.posts.length;
-  //   page.currentHorizontalIndex = reply.index;
-  //   print("${page.totalVerticalPages} ${page.currentVerticalIndex} ${page.totalHorizontalPages} ${page.currentHorizontalIndex} 8888888888888888888888888888888888888");
+  //   // page.onReply = reply.onReply;
+  //   page.totalVerticalPages = viewVideo.posts.length;
+  //   page.currentVerticalIndex = viewVideo.index;
+  //   // page.totalHorizontalPages = reply.posts.length;
+  //   // page.currentHorizontalIndex = reply.index;
+  //   // print("${page.totalVerticalPages} ${page.currentVerticalIndex} ${page.totalHorizontalPages} ${page.currentHorizontalIndex} 8888888888888888888888888888888888888");
   // }
 
   Future<void> initializeVideo() async {
-
-
-
-    WidgetsBinding.instance.addPostFrameCallback(await (_) async{
-      viewVideo.posts=widget.posts;
-      await viewVideo.initializedVideoPlayer(widget.pageIndex);
-    });
-
+    // WidgetsBinding.instance.addPostFrameCallback(await (_) async {
+    //   viewVideo.posts = widget.posts;
+    //   await viewVideo.initializedVideoPlayer(widget.pageIndex);
+    // });
 
     // reply.posts = viewVideo.posts[0].sublist(1);
 
     // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   home.index = widget.pageIndex;
+    //   // home.index = widget.pageIndex;
     //   _initializePageIndicator();
     // });
   }
-
 
   // Future<void> _handleRepliesInBackground(int idx) async {
   //   // Load current post replies if available
@@ -168,67 +169,76 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (val) async{
-        if(val){
-          await viewVideo.goingBack();
-        }
-      },
-      canPop: true,
-      child: Consumer2<ViewVideoProvider,SmoothPageIndicatorProvider>(
-        builder: (_,__,___,____){
-
+    return ChangeNotifierProvider(
+      create: (_) => ViewVideoProvider(
+          posts: widget.posts, initialIndex: widget.pageIndex,isFromProfile: widget.isFromProfile??false),
+      child: Consumer2<ViewVideoProvider, SmoothPageIndicatorProvider>(
+        builder: (_, __, ___, ____) {
           if (__.posts.isEmpty) {
             return Center(child: CustomProgressIndicator());
           }
 
-          return Scaffold(
-            body: Stack(
-              children: [
-                AnimatedContainer(
-                  duration: Duration(milliseconds: 100),
-                  child: PageView.builder(
-                    itemCount: widget.posts.length,
-                    controller: widget.pageController,
-                    scrollDirection: Axis.vertical,
-                    physics: VideoScrollPhysics(),
-                    onPageChanged: (idx) async {
+          return PopScope(
+            onPopInvoked: (val) async {
+              if (val) {
+                await __.goingBack();
+              }
+            },
+            canPop: true,
+            child: Scaffold(
+              body: GestureDetector(
+                onHorizontalDragEnd: (details) {
+                  if (details.primaryVelocity! > 30 ||
+                      details.primaryVelocity! < 30) {
+                    Navigator.pop(context);
+                  }
+                },
+                child: Stack(
+                  children: [
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 100),
+                      child: PageView.builder(
+                        itemCount: widget.posts.length,
+                        controller: widget.pageController,
+                        scrollDirection: Axis.vertical,
+                        physics: VideoScrollPhysics(),
+                        onPageChanged: (idx) async {
+                          __.vertical_drag_direction =
+                              viewVideo.index < idx ? 1 : -1;
 
-                      __.vertical_drag_direction = viewVideo.index < idx ? 1 : -1;
+                          // // reset variable
+                          // if(home.horizontalIndex!=0){
+                          //   home.horizontalIndex = 0;
+                          // }
+                          // if(reply.onReply!=false){
+                          //   print(reply.index.toString());
+                          //   await reply.videoController(reply.index)?..pause();
+                          //   await reply.videoController(reply.index)?..seekTo(Duration.zero);
+                          //   // reply.isPlaying
+                          //   reply.onReply=false;
+                          // }
+                          //
+                          // if(home.posts[idx].length == 1){
+                          //   reply.posts.clear();
+                          // }
 
+                          __.onPageChanged(idx);
 
-                      // // reset variable
-                      // if(home.horizontalIndex!=0){
-                      //   home.horizontalIndex = 0;
-                      // }
-                      // if(reply.onReply!=false){
-                      //   print(reply.index.toString());
-                      //   await reply.videoController(reply.index)?..pause();
-                      //   await reply.videoController(reply.index)?..seekTo(Duration.zero);
-                      //   // reply.isPlaying
-                      //   reply.onReply=false;
-                      // }
-                      //
-                      // if(home.posts[idx].length == 1){
-                      //   reply.posts.clear();
-                      // }
+                          if(0<=idx && idx<viewVideo.posts.length)
+                            __.isFollowing = viewVideo.posts[idx].following;
 
+                          // unawaited(_handleRepliesInBackground(idx));
 
-                      __.onPageChanged(idx);
-
-                      __.isFollowing = viewVideo.posts[idx].following;
-
-
-                      // unawaited(_handleRepliesInBackground(idx));
-
-                      // _initializePageIndicator();
-                    },
-                    itemBuilder: (context, index)  {
-                      return _buildVideoPage(index,__);
-                    },
-                  ),
+                          // _initializePageIndicator();
+                        },
+                        itemBuilder: (context, index) {
+                          return _buildVideoPage(index, __);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           );
         },
@@ -236,23 +246,20 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
     );
   }
 
-  Widget _buildVideoPage(int index,ViewVideoProvider __) {
-
-
-
+  Widget _buildVideoPage(int index, ViewVideoProvider __) {
     return PageView(
       scrollDirection: Axis.horizontal,
       // controller: viewVideo.replies,
       // onPageChanged: (idx) => _handleHorizontalPageChange(idx, index),
       children: [
-        _buildMainVideoContent(index,__),
+        _buildMainVideoContent(index, __),
       ],
     );
   }
 
-  Widget _buildMainVideoContent(int index,ViewVideoProvider __) {
+  Widget _buildMainVideoContent(int index, ViewVideoProvider __) {
     return GestureDetector(
-      onTap: () => _handleVideoTap(index),
+      onTap: () => _handleVideoTap(index, __),
       child: Stack(
         children: [
           Container(
@@ -263,16 +270,15 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
               alignment: Alignment.center,
               children: [
                 ...[
+                  _buildThumbnail(index, __),
 
-                  _buildThumbnail(index,__),
-
-                  if (__.isInitialized) _buildVideoPlayer(index,__),
+                  if (__.isInitialized) _buildVideoPlayer(index, __),
 
                   Positioned(
                     left: 20,
                     top: 60,
                     child: InkWell(
-                      onTap: ()=> Navigator.pop(context),
+                      onTap: () => Navigator.pop(context),
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -287,13 +293,12 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
                         ),
                       ),
                     ),
-
                   ),
 
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
-                      height:__.heightOfUserInfoBar,
+                      height: __.heightOfUserInfoBar,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                             colors: [
@@ -311,16 +316,16 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
                               Colors.black12.withOpacity(0.0),
                             ],
                             begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter
-                        ),
+                            end: Alignment.topCenter),
                         borderRadius: BorderRadius.circular(8),
-
                       ),
                     ),
                   ),
-                  VideoUserInfoBar(),
+                  VideoUserInfoBar(
+                    videoProvider: __,
+                  ),
 
-                  if(!__.isPlaying)
+                  if (!__.isPlaying)
                     Container(
                       color: Colors.black12.withOpacity(0.04),
                       height: cs.height(context),
@@ -336,11 +341,9 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
                   //   ),
                   // ),
 
-
-                  _buildSideBar(),
+                  _buildSideBar(__),
 
                   // ViewVideoProgressIndicator(),
-
                 ],
               ],
             ),
@@ -350,7 +353,8 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
     );
   }
 
-  Widget _buildThumbnail(int index,ViewVideoProvider __) {
+  Widget _buildThumbnail(int index, ViewVideoProvider __) {
+    // log(__.posts[index].thumbnailUrl);
     return CustomNetworkImage(
       height: cs.height(context),
       width: cs.width(context),
@@ -359,10 +363,8 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
     );
   }
 
-  Widget _buildVideoPlayer(int index,ViewVideoProvider __) {
-
+  Widget _buildVideoPlayer(int index, ViewVideoProvider __) {
     if (__.videoController(index) == null) {
-
       return const SizedBox.shrink();
     }
 
@@ -378,8 +380,7 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
     );
   }
 
-
-  Widget _buildSideBar() {
+  Widget _buildSideBar(ViewVideoProvider __) {
     return Positioned(
       bottom: 15,
       right: 0,
@@ -389,16 +390,17 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            VideoSideBar(),
-            height60,
+            VideoSideBar(
+              videoProvider: __,
+            ),
+            // height5,
             // SmoothPageIndicatorView(),
-            height15,
+            // height15,
           ],
         ),
       ),
     );
   }
-
 
   // Widget _buildReplyContent(int index, bool isInit) {
   //   return NotificationListener<ScrollNotification>(
@@ -413,15 +415,15 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
   //   );
   // }
 
-  void _handleVideoTap(int index) {
-    if(viewVideo.videoController(index)==null) return;
+  void _handleVideoTap(int index, ViewVideoProvider __) {
+    if (__.videoController(index) == null) return;
 
-    if (viewVideo.videoController(index)!.value.isPlaying) {
-      viewVideo.isPlaying = false;
-      viewVideo.videoController(index)!.pause();
+    if (__.videoController(index)!.value.isPlaying) {
+      __.isPlaying = false;
+      __.videoController(index)!.pause();
     } else {
-      viewVideo.isPlaying = true;
-      viewVideo.videoController(index)!.play();
+      __.isPlaying = true;
+      __.videoController(index)!.play();
     }
   }
 
@@ -477,312 +479,312 @@ class _ViewVideoWidgetState extends State<ViewVideoWidget> {
   // }
 }
 
-
-
-
 class VideoUserInfoBar extends StatelessWidget {
-  const VideoUserInfoBar({Key? key}) : super(key: key);
+  final ViewVideoProvider videoProvider;
+  const VideoUserInfoBar({required this.videoProvider, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ViewVideoProvider>(
-      builder: (_, __, ___) {
-        final postTitle = __.posts[__.index].title;
-        return Positioned(
-          left: 20,
-          bottom: 25,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    if(__.isPlaying){
-                      __.videoController(__.index)!.pause();
-                      __.isPlaying=false;
-                    }
+    final __ = videoProvider;
+    return Positioned(
+      left: 20,
+      bottom: 25,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            GestureDetector(
+              onTap: () {
+                if (__.isPlaying) {
+                  __.videoController(__.index)!.pause();
+                  __.isPlaying = false;
+                }
 
-
-                    Navigator.of(context).pushNamed(
+                Navigator.of(context)
+                    .pushNamed(
                       UserProfileScreen.routeName,
                       arguments: UserProfileScreenArgs(
                         username: __.posts[__.index].username,
                       ),
-                    ).then((value) => {
-
-                      __.videoController(__.index)!.play(),
-                      __.isPlaying=true
-
-                    });
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(80),
-                        child: CachedNetworkImage(
-                          fadeInDuration: Duration(milliseconds: 0),
-                          fadeOutDuration: Duration(milliseconds: 0),
-                          fit: BoxFit.cover,
-                          height: 45,
-                          width: 45,
-                          imageUrl: __.posts[__.index].pictureUrl,
-                          progressIndicatorBuilder:
-                              (context, url, downloadProgress) => Image.asset(
-                            AppAsset.load,
-                            fit: BoxFit.cover,
-                            height: cs.height(context),
-                          ),
-                          errorWidget: (context, url, error) => Container(
-                            color: Theme.of(context).primaryColor,
-                            padding: const EdgeInsets.all(8),
-                            child: SvgPicture.asset(
-                              AppAsset.icuser,
-                              color: Theme.of(context).cardColor,
-                            ),
-                          ),
+                    )
+                    .then((value) => {
+                          __.videoController(__.index)!.play(),
+                          __.isPlaying = true
+                        });
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(80),
+                    child: __.posts[__.index].pictureUrl.isNotEmpty?
+                    CachedNetworkImage(
+                      fadeInDuration: Duration(milliseconds: 0),
+                      fadeOutDuration: Duration(milliseconds: 0),
+                      fit: BoxFit.cover,
+                      height: 45,
+                      width: 45,
+                      imageUrl: __.posts[__.index].pictureUrl,
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) => Image.asset(
+                        AppAsset.load,
+                        fit: BoxFit.cover,
+                        height: cs.height(context),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Theme.of(context).primaryColor,
+                        padding: const EdgeInsets.all(8),
+                        child: SvgPicture.asset(
+                          AppAsset.icuser,
+                          color: Theme.of(context).cardColor,
                         ),
                       ),
-                      width5,
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(__.posts[__.index].username,
-                              style: AppTextStyle.normalRegular16),
-                          height2,
-                          Text(
-                            "Fast Replier",
-                            style: AppTextStyle.normalRegular10,
-                          ),
-                        ],
-                      )
-                    ],
+                    )
+                        :
+                    Container(height: 45,width: 45,decoration: BoxDecoration(shape: BoxShape.circle),),
                   ),
-                ),
-                height10,
-                Row(
-                  children: [
-                    if (__.posts[__.index].title.isNotEmpty) ...[
-                      SizedBox(
-                        width: cs.width(context) - 100,
-                        child: GestureDetector(
-                          onTap: () => __.toggleTextExpanded(),
-                          child: Linkify(
-                            onOpen: (link) async {
-                              if (await canLaunchUrl(Uri.parse(link.url))) {
-                                await launchUrl(Uri.parse(link.url));
-                              } else {
-                                throw 'Could not launch $link';
-                              }
-                            },
-                            text: postTitle,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTextStyle.normalRegular,
-                            textAlign: TextAlign.start,
-                            maxLines: __.isTextExpanded
-                                ? (5 + (6 * __.expansionProgress)).round()
-                                : 1,
-                            linkStyle: TextStyle(color: Colors.blue),
-                          ),
-                        ),
+                  width5,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(__.posts[__.index].username,
+                          style: AppTextStyle.normalRegular16),
+                      height2,
+                      Text(
+                        "Fast Replier",
+                        style: AppTextStyle.normalRegular10,
                       ),
                     ],
-                  ],
-                ),
+                  )
+                ],
+              ),
+            ),
+            height10,
+            Row(
+              children: [
+                if (__.posts[__.index].title.isNotEmpty) ...[
+                  SizedBox(
+                    width: cs.width(context) - 100,
+                    child: GestureDetector(
+                      onTap: () => __.toggleTextExpanded(),
+                      child: Linkify(
+                        onOpen: (link) async {
+                          if (await canLaunchUrl(Uri.parse(link.url))) {
+                            await launchUrl(Uri.parse(link.url));
+                          } else {
+                            throw 'Could not launch $link';
+                          }
+                        },
+                        text: __.posts[__.index].title,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyle.normalRegular,
+                        textAlign: TextAlign.start,
+                        maxLines: __.isTextExpanded
+                            ? (5 + (6 * __.expansionProgress)).round()
+                            : 1,
+                        linkStyle: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 }
 
-
 class VideoSideBar extends StatelessWidget {
-  const VideoSideBar({Key? key}) : super(key: key);
+  final ViewVideoProvider videoProvider;
+  const VideoSideBar({required this.videoProvider, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
-    return Consumer<ViewVideoProvider>(
-      builder: (_, __, ___) {
-        return !__.isInitialized
-            ? shrink
-            : Container(
-          height: cs.height(context),
-          alignment: Alignment.bottomRight,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(right: 16),
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      child: Column(
-                        children: [
-                          SideBarItem(
-                            onTap: () {
-                              if (__.posts[__.index].upvoted) {
-                                __.posts[__.index].upvoteCount--;
-                                __.posts[__.index].upvoted = false;
-                                __.postLikeRemove(
-                                  id: __.posts[__.index].id,
-                                );
-                              } else {
-                                __.posts[__.index].upvoteCount++;
-                                __.posts[__.index].upvoted = true;
-
-                                __.postLikeAdd(
-                                  id: __.posts[__.index].id,
-                                );
-                              }
-                            },
-                            value: 14,
-                            icon: SvgPicture.asset(
-                              AppAsset.icWemotionsLogo,
-                              fit: BoxFit.scaleDown,
-                              color: __.posts[__.index].upvoted
-                                  ? Constants.primaryColor
-                                  : Colors.white,
-                            ),
-                            text: Text(
-                              __.posts[__.index].upvoteCount
-                                  .toString(),
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.white,
-                                fontFamily: 'sofia',
-                              ),
-                            ),
-                          ), //Upvote
-                          height16,
-                          // SideBarItem(
-                          //   onTap: () async {
-                          //     final currentPage =
-                          //         __.replies.page?.round() ?? 0;
-                          //     final totalPages =
-                          //         __.posts[__.index].length - 1;
-                          //     if (currentPage < totalPages) {
-                          //       await __.replies.animateToPage(
-                          //         currentPage + 1,
-                          //         duration:
-                          //         const Duration(milliseconds: 300),
-                          //         curve: Curves.easeInOut,
-                          //       );
-                          //     }
-                          //   },
-                          //   value: 0,
-                          //   icon: Padding(
-                          //     padding: EdgeInsets.only(bottom: 3),
-                          //     child: SvgPicture.asset(
-                          //       AppAsset.icVideo,
-                          //       color: Colors.white,
-                          //       fit: BoxFit.scaleDown,
-                          //     ),
-                          //   ),
-                          //   text: Text(
-                          //     (__.posts[__.index][0].childVideoCount)
-                          //         .toString(),
-                          //     style: TextStyle(
-                          //       fontSize: 13,
-                          //       fontWeight: FontWeight.w400,
-                          //       color: Colors.white,
-                          //       fontFamily: 'sofia',
-                          //     ),
-                          //   ),
-                          // ), //Share
-                          // height16,
-                          SideBarItem(
-                            onTap: () async {
-                              HapticFeedback.mediumImpact();
-                              showModalBottomSheet(
-                                context: context,
-                                backgroundColor: Colors.black,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(30.0),
-                                    topRight: Radius.circular(30.0),
-                                  ),
-                                ),
-                                builder: (context) {
-                                  return ShareSheet(
-                                    dynamicLink: 'link',
+    final __ = videoProvider;
+    return !__.isInitialized
+        ? shrink
+        : Container(
+            height: cs.height(context),
+            alignment: Alignment.bottomRight,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 16),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        child: Column(
+                          children: [
+                            SideBarItem(
+                              onTap: () {
+                                if(!logged_in!){
+                                  //if user not logged in then show notification
+                                  __.postLikeAdd(
+                                    id: __.posts[__.index].id,
                                   );
-                                },
-                              );
-                            },
-                            value: 0,
-                            icon: Padding(
-                              padding: EdgeInsets.only(bottom: 3),
-                              child: SvgPicture.asset(
-                                AppAsset.icShare,
-                                color: Colors.white,
+                                  return;
+                                }
+                                if (__.posts[__.index].upvoted) {
+                                  __.posts[__.index].upvoteCount--;
+                                  __.posts[__.index].upvoted = false;
+                                  __.postLikeRemove(
+                                    id: __.posts[__.index].id,
+                                  );
+                                } else {
+                                  __.posts[__.index].upvoteCount++;
+                                  __.posts[__.index].upvoted = true;
+
+                                  __.postLikeAdd(
+                                    id: __.posts[__.index].id,
+                                  );
+                                }
+                              },
+                              value: 14,
+                              icon: SvgPicture.asset(
+                                AppAsset.icWemotionsLogo,
                                 fit: BoxFit.scaleDown,
+                                color: __.posts[__.index].upvoted
+                                    ? Constants.primaryColor
+                                    : Colors.white,
                               ),
-                            ),
-                            text: Text(
-                              (__.posts[__.index].shareCount)
-                                  .toString(),
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.white,
-                                fontFamily: 'sofia',
-                              ),
-                            ),
-                          ), //Share
-                          height16,
-                          SideBarItem(
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(30.0),
-                                    topRight: Radius.circular(30.0),
-                                  ),
+                              text: Text(
+                                __.posts[__.index].upvoteCount.toString(),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white,
+                                  fontFamily: 'sofia',
                                 ),
-                                builder: (context) {
-                                  return VideoSheet(
-                                    isUser: true,
-                                    isFromFeed: true,
-                                    video_id: 0,
-                                    title: "title",
-                                    video_link: "videoLink",
-                                    current_index: 0,
+                              ),
+                            ),
+                            height16,
+                            if (__.replyPosts.isNotEmpty) ...[
+                              SideBarItem(
+                                onTap: () async {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(30.0),
+                                        topRight: Radius.circular(30.0),
+                                      ),
+                                    ),
+                                    builder: (context) {
+                                      return ReplySheet(viewVideoProvider: __,);
+                                    },
                                   );
                                 },
-                              );
-                            },
-                            value: 5,
-                            icon: Icon(
-                              Icons.more_vert,
-                              color: Colors.white,
-                              size: 27,
+                                value: 0,
+                                icon: Padding(
+                                  padding: EdgeInsets.only(bottom: 3),
+                                  child: SvgPicture.asset(
+                                    AppAsset.icVideo,
+                                    color: Colors.white,
+                                    fit: BoxFit.scaleDown,
+                                  ),
+                                ),
+                                text: Text(
+                                  (__.posts[__.index].childVideoCount)
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white,
+                                    fontFamily: 'sofia',
+                                  ),
+                                ),
+                              ), //Share
+                              height16,
+                            ],
+                            SideBarItem(
+                              onTap: () async {
+                                HapticFeedback.mediumImpact();
+                                showModalBottomSheet(
+                                  context: context,
+                                  backgroundColor: Colors.black,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(30.0),
+                                      topRight: Radius.circular(30.0),
+                                    ),
+                                  ),
+                                  builder: (context) {
+                                    return ShareSheet(
+                                      dynamicLink: 'link',
+                                    );
+                                  },
+                                );
+                              },
+                              value: 0,
+                              icon: Padding(
+                                padding: EdgeInsets.only(bottom: 3),
+                                child: SvgPicture.asset(
+                                  AppAsset.icShare,
+                                  color: Colors.white,
+                                  fit: BoxFit.scaleDown,
+                                ),
+                              ),
+                              text: Text(
+                                (__.posts[__.index].shareCount).toString(),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white,
+                                  fontFamily: 'sofia',
+                                ),
+                              ),
+                            ), //Share
+                            height16,
+                            SideBarItem(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(30.0),
+                                      topRight: Radius.circular(30.0),
+                                    ),
+                                  ),
+                                  builder: (context) {
+                                    return VideoSheet(
+                                      isUser: true,
+                                      isFromFeed: true,
+                                      video_id: 0,
+                                      title: "title",
+                                      video_link: "videoLink",
+                                      current_index: 0,
+                                    );
+                                  },
+                                );
+                              },
+                              value: 5,
+                              icon: Icon(
+                                Icons.more_vert,
+                                color: Colors.white,
+                                size: 27,
+                              ),
+                              text: shrink,
                             ),
-                            text: shrink,
-                          ),
-                          height16,
-                        ],
+                            height16,
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                    )
-                  ],
+                      SizedBox(
+                        height: 40,
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+              ],
+            ),
+          );
   }
 }
 
@@ -802,24 +804,19 @@ class ViewVideoProgressIndicator extends StatelessWidget {
               height: 9.5,
               width: MediaQuery.of(context).size.width,
               child: Stack(
-                children: [
-                  const LinearProgressIndicator(value: 0)
-                ],
+                children: [const LinearProgressIndicator(value: 0)],
               ),
             ),
           );
         }
         if (!controller.value.isInitialized) {
-
           return Positioned(
             bottom: -1,
             child: SizedBox(
               height: 9.5,
               width: MediaQuery.of(context).size.width,
               child: Stack(
-                children: [
-                  const LinearProgressIndicator(value: 0)
-                ],
+                children: [const LinearProgressIndicator(value: 0)],
               ),
             ),
           );
@@ -832,8 +829,6 @@ class ViewVideoProgressIndicator extends StatelessWidget {
             width: MediaQuery.of(context).size.width,
             child: Stack(
               children: [
-
-
                 VideoProgressIndicator(
                   __.videoController(__.index)!,
                   allowScrubbing: true,

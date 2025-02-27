@@ -1,13 +1,14 @@
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/home/widgets/reply_video/reply_video_replys.dart';
 import 'package:socialverse/features/home/widgets/reply_video/reply_video_sheet.dart';
+import 'package:socialverse/features/search/providers/video_provider.dart';
 
 class ReplySideBar extends StatelessWidget {
   const ReplySideBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final video = Provider.of<VideoProvider>(context);
+    final video = Provider.of<ViewVideoProvider>(context);
     bool isAdmin = (prefs_username == 'afrobeezy' || prefs_username == 'jack');
 
     return Consumer<ReplyProvider>(

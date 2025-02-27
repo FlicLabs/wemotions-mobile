@@ -9,34 +9,8 @@ class HomeVideoProgressIndicator extends StatelessWidget {
       builder: (_, __, ___) {
         final controller = __.videoController(__.index);
 
-        if (controller == null) {
-          return Positioned(
-            bottom: -1,
-            child: SizedBox(
-              height: 9.5,
-              width: MediaQuery.of(context).size.width,
-              child: Stack(
-                children: [
-                  const LinearProgressIndicator(value: 0)
-                ],
-              ),
-            ),
-          );
-        }
-        if (!controller.value.isInitialized) {
-
-          return Positioned(
-            bottom: -1,
-            child: SizedBox(
-              height: 9.5,
-              width: MediaQuery.of(context).size.width,
-              child: Stack(
-                children: [
-                  const LinearProgressIndicator(value: 0)
-                ],
-              ),
-            ),
-          );
+        if (controller == null || !controller.value.isInitialized) {
+          return SizedBox.shrink();
         }
 
         return Positioned(

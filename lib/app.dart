@@ -58,9 +58,7 @@ class _WeMotionsState extends State<WeMotions> {
 
   fetchSubverse() async {
     final subverse = Provider.of<SearchProvider>(context, listen: false);
-    if (logged_in!) {
-      await subverse.getSubversePosts();
-    }
+    await subverse.getSubversePosts();
   }
 
   fetchActivity() async {

@@ -9,7 +9,6 @@ class HomeUserInfoBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final video = Provider.of<VideoProvider>(context);
     // final reply = Provider.of<ReplyProvider>(context);
     return Consumer<HomeProvider>(
       builder: (_, __,___) {

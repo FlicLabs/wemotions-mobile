@@ -39,12 +39,16 @@ class HomeService {
   }
 
   postLikeAdd(int id) async {
+    try{
     Response response = await dio.post(
       '${API.endpoint}${API.posts}/$id/upvote',
       options: Options(headers: {'Flic-Token': token ?? ''}),
     );
     print(response.data);
     return response.data;
+    }catch(e){
+      throw "User not logged in";
+    }
   }
 
   view({required data}) async {
@@ -84,12 +88,16 @@ class HomeService {
   }
 
   postLikeRemove(int id) async {
-    Response response = await dio.delete(
-      '${API.endpoint}${API.posts}/$id/upvote',
-      options: Options(headers: {'Flic-Token': token ?? ''}),
-    );
-    print(response.data);
-    return response.data;
+    try{
+      Response response = await dio.delete(
+        '${API.endpoint}${API.posts}/$id/upvote',
+        options: Options(headers: {'Flic-Token': token ?? ''}),
+      );
+      print(response.data);
+      return response.data;
+    }catch(e){
+      throw "User not logged in!";
+    }
   }
 
   blockPost(int id) async {

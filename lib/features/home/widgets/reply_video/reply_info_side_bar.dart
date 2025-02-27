@@ -6,7 +6,6 @@ class ReplyInfoSideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final video = Provider.of<VideoProvider>(context);
     final home = Provider.of<HomeProvider>(context);
 
     return Consumer<ReplyProvider>(

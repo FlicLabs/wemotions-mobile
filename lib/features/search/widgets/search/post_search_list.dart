@@ -56,8 +56,8 @@ class PostSearchList extends StatelessWidget {
 
                       await Navigator.pushNamed(
                         context,
-                        ViewVideoWidget.routeName,
-                        arguments: ViewVideoWidgetArgs(
+                        VideoWidget.routeName,
+                        arguments: VideoWidgetArgs(
                           posts: __.post_search,
                           pageController: PageController(initialPage: index),
                           pageIndex: index,

@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:socialverse/export.dart';
@@ -7,6 +6,7 @@ import 'package:socialverse/features/home/helper/v_video_scroll_physics.dart';
 import 'package:socialverse/features/home/widgets/main_video/home_bottom_bar.dart';
 import 'package:socialverse/features/home/widgets/main_video/home_side_bar.dart';
 
+import '../../../search/providers/video_provider.dart';
 import '../../providers/nested_provider.dart';
 import 'home_video_progress_indicator.dart';
 import 'last_page_gradient.dart';
@@ -36,7 +36,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
   late final HomeProvider home;
   late final ReplyProvider reply;
   late final SmoothPageIndicatorProvider page;
-  late final VideoProvider video;
+  late final ViewVideoProvider video;
   late final NestedRProvider nestedR;
 
   @override
@@ -45,8 +45,8 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     home = Provider.of<HomeProvider>(context, listen: false);
     reply = Provider.of<ReplyProvider>(context, listen: false);
     page = Provider.of<SmoothPageIndicatorProvider>(context, listen: false);
-    video = Provider.of<VideoProvider>(context, listen: false);
-    nestedR = Provider.of<NestedRProvider>(context,listen: false);
+    video = Provider.of<ViewVideoProvider>(context, listen: false);
+    nestedR = Provider.of<NestedRProvider>(context, listen: false);
 
     initializeVideo();
 
@@ -64,11 +64,6 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     await home.createReplyIsolate(0, token: token);
     if (home.posts[0].length > 1) {
       reply.posts = home.posts[0].sublist(1);
-      //load first reply video
-      // if(reply.posts.length>=1){
-      //   await reply.makeFirstHControllerReady();
-      // }
-
     }
 
     // Pre fetch next page replies
@@ -83,7 +78,6 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     page.currentVerticalIndex = home.index;
     page.totalHorizontalPages = reply.posts.length;
     page.currentHorizontalIndex = reply.index;
-
   }
 
   Future<void> initializeVideo() async {
@@ -96,7 +90,6 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     });
   }
 
-
   Future<void> _handleRepliesInBackground(int idx) async {
     // Load current post replies if available
     if (home.posts[idx].length > 1) {
@@ -107,18 +100,16 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     if (home.vertical_drag_direction == 1) {
       if (idx + 1 <= home.posts.length - 1) {
         unawaited(home.createReplyIsolate(idx + 1, token: token));
-
       }
     } else {
       if (idx - 1 >= 0) {
         unawaited(home.createReplyIsolate(idx - 1, token: token));
-
       }
     }
   }
 
   void _pageListener() {
-    if(!mounted) return;
+    if (!mounted) return;
 
     final currentPage = widget.pageController.page?.round() ?? 0;
     final lastPage = widget.posts.length - 1;
@@ -133,7 +124,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
 
     final totalPosts = home.posts.length;
 
-    if(currentPage >= totalPosts - 5 && home.hasMorePosts){
+    if (currentPage >= totalPosts - 5 && home.hasMorePosts) {
       unawaited(home.createIsolate(token: token));
     }
   }
@@ -156,39 +147,37 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
             scrollDirection: Axis.vertical,
             physics: VideoScrollPhysics(),
             onPageChanged: (idx) async {
+              home.vertical_drag_direction = home.index < idx ? 1 : -1;
 
-                home.vertical_drag_direction = home.index < idx ? 1 : -1;
+              // reset variable
+              if (home.horizontalIndex != 0) {
+                home.horizontalIndex = 0;
+              }
 
-                // reset variable
-                if(home.horizontalIndex!=0){
-                  home.horizontalIndex = 0;
-                }
+              if (reply.onReply != false) {
+                await reply.videoController(reply.index)
+                  ?..pause();
+                await reply.videoController(reply.index)
+                  ?..seekTo(Duration.zero);
+                // reply.isPlaying
+                reply.onReply = false;
+              }
 
-                if(reply.onReply!=false){
-                  await reply.videoController(reply.index)?..pause();
-                  await reply.videoController(reply.index)?..seekTo(Duration.zero);
-                  // reply.isPlaying
-                  reply.onReply=false;
-                }
+              if (home.posts[idx].length == 1) {
+                reply.posts.clear();
+              }
 
-                if(home.posts[idx].length == 1){
-                  reply.posts.clear();
-                }
+              home.onPageChanged(idx);
 
+              home.isFollowing = home.posts[idx][0].following;
 
-                home.onPageChanged(idx);
+              home.video_trend_bar =
+                  (home.index == 0 || home.vertical_drag_direction == -1) &&
+                      home.horizontalIndex == 0;
 
-                home.isFollowing = home.posts[idx][0].following;
+              unawaited(_handleRepliesInBackground(idx));
 
-                home.video_trend_bar = (home.index == 0 || home.vertical_drag_direction == -1) &&
-                    home.horizontalIndex == 0;
-
-                unawaited(_handleRepliesInBackground(idx));
-
-                _initializePageIndicator();
-
-
-
+              _initializePageIndicator();
             },
             itemBuilder: (context, index) => _buildVideoPage(index),
           ),
@@ -198,7 +187,7 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
   }
 
   Widget _buildVideoPage(int index) {
-    // log("${home.posts[index][0].id}");
+    log("${home.posts[index][0].id}");
     bool isInit = home.videoController(index)?.value.isInitialized ?? false;
 
     return PageView(
@@ -228,62 +217,72 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
               children: [
                 // if (!_isLastPage) ...[
 
-                  _buildThumbnail(index),
+                _buildThumbnail(index),
 
-                  if (isInit) _buildVideoPlayer(index),
+                if (isInit) _buildVideoPlayer(index),
 
-                  // if (home.video_trend_bar) _buildTrendingBar(),
+                // if (home.video_trend_bar) _buildTrendingBar(),
 
-                  if(!video.isViewMode)  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      height:home.heightOfUserInfoBar,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: [
-                                Colors.black12.withOpacity(0.56),
-                                Colors.black12.withOpacity(0.56),
-                                Colors.black12.withOpacity(0.46),
-                                Colors.black12.withOpacity(0.34),
-                                Colors.black12.withOpacity(0.24),
-                                Colors.black12.withOpacity(0.24),
-                                Colors.black12.withOpacity(0.21),
-                                Colors.black12.withOpacity(0.18),
-                                Colors.black12.withOpacity(0.12),
-                                Colors.black12.withOpacity(0.08),
-                                Colors.black12.withOpacity(0.04),
-                                Colors.black12.withOpacity(0.0),
-                              ],
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter
-                          ),
-                          borderRadius: BorderRadius.circular(8),
+                if (video.downloading == true)
+                  DownloadBar(
+                    color: Colors.grey.withOpacity(0.4),
+                    label: 'Saving: ${video.progressString}',
+                  ),
+                if (video.downloadingCompleted == true)
+                  DownloadBar(
+                    color: Theme.of(context).hintColor,
+                    label: 'Video Saved',
+                  ),
 
-                      ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: home.heightOfUserInfoBar,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [
+                            Colors.black12.withOpacity(0.56),
+                            Colors.black12.withOpacity(0.56),
+                            Colors.black12.withOpacity(0.46),
+                            Colors.black12.withOpacity(0.34),
+                            Colors.black12.withOpacity(0.24),
+                            Colors.black12.withOpacity(0.24),
+                            Colors.black12.withOpacity(0.21),
+                            Colors.black12.withOpacity(0.18),
+                            Colors.black12.withOpacity(0.12),
+                            Colors.black12.withOpacity(0.08),
+                            Colors.black12.withOpacity(0.04),
+                            Colors.black12.withOpacity(0.0),
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  if (!video.isViewMode) HomeUserInfoBar(),
+                ),
 
-                  if(!home.isPlaying)
-                    Container(
-                      color: Colors.black12.withOpacity(0.04),
-                      height: cs.height(context),
-                      width: cs.width(context),
-                    ),
-                  PlayButton(),
+                HomeUserInfoBar(),
 
-                  // Center(
-                  //   child: Container(
-                  //     color: Colors.black12,
-                  //     height: 100,
-                  //     width: 100,
-                  //     child: Text('$index',style: TextStyle(color: Colors.white),),
-                  //   ),
-                  // ),
+                if (!home.isPlaying)
+                  Container(
+                    color: Colors.black12.withOpacity(0.04),
+                    height: cs.height(context),
+                    width: cs.width(context),
+                  ),
+                PlayButton(),
 
-                  if (!video.isViewMode) _buildSideBar(),
+                // Center(
+                //   child: Container(
+                //     color: Colors.black12,
+                //     height: 100,
+                //     width: 100,
+                //     child: Text('$index',style: TextStyle(color: Colors.white),),
+                //   ),
+                // ),
 
-                  HomeVideoProgressIndicator(),
+                _buildSideBar(),
+
+                HomeVideoProgressIndicator(),
 
                 // ],
                 // if (_isLastPage) _buildLastPage(index, isInit),
@@ -295,7 +294,9 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     );
   }
 
-  Widget _buildThumbnail(int index, ) {
+  Widget _buildThumbnail(
+    int index,
+  ) {
     return CustomNetworkImage(
       height: cs.availableHeightWithNav(context),
       width: cs.width(context),
@@ -404,9 +405,8 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     }
   }
 
-  void _handleHorizontalPageChange(int idx, int index) async{
-
-    reply.horizontal_drag_direction = reply.index < idx? 1 : -1;
+  void _handleHorizontalPageChange(int idx, int index) async {
+    reply.horizontal_drag_direction = reply.index < idx ? 1 : -1;
 
     if (idx == 1) {
       home.horizontalIndex = 1;
@@ -414,29 +414,25 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
       await home.videoController(home.index)?.pause();
       await home.videoController(home.index)?.seekTo(Duration.zero);
 
-      reply.onReply=true;
+      reply.onReply = true;
       reply.isPlaying = true;
 
       reply.videoController(reply.index)?.setLooping(true);
       reply.videoController(reply.index)?.play();
-
-
     } else if (idx == 0) {
       home.horizontalIndex = 0;
 
       reply.videoController(reply.index)?.pause();
       reply.videoController(reply.index)?.seekTo(Duration.zero);
 
-      reply.onReply=false;
-      reply.horizontal_drag_direction=0;
+      reply.onReply = false;
+      reply.horizontal_drag_direction = 0;
       reply.isPlaying = false;
 
       home.videoController(home.index)!.play();
-
-
     }
 
-    Future.microtask((){
+    Future.microtask(() {
       _initializePageIndicator();
     });
   }
@@ -455,10 +451,6 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
     return false;
   }
 }
-
-
-
-
 
 //
 // import 'package:socialverse/export.dart';
@@ -996,14 +988,3 @@ class _HomeVideoWidgetState extends State<HomeVideoWidget> {
 //
 //
 //
-
-
-
-
-
-
-
-
-
-
-

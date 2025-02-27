@@ -1,19 +1,32 @@
+import 'dart:developer';
+import 'dart:isolate';
+
+import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 
 class ViewVideoProvider with ChangeNotifier{
 
   HomeService _homeService= HomeService();
   final view_video = PageController();
+  final notification = getIt<NotificationProvider>();
 
   List _posts=[];
   List get posts=> _posts;
-  List<Posts> _replies=[];
-  List<Posts> get  replies=> _replies;
 
   set posts(List  allPosts){
     _posts=allPosts;
     notifyListeners();
   }
+
+
+  List _replyPosts=[];
+  List get replyPosts=> _replyPosts;
+
+  set replyPosts(List  allPosts){
+    _replyPosts=allPosts;
+    notifyListeners();
+  }
+
 
   int _index=0;
   bool _isPlaying=true;
@@ -37,6 +50,22 @@ class ViewVideoProvider with ChangeNotifier{
       _isInitialized=val;
       notifyListeners();
   }
+
+
+
+  ViewVideoProvider({required int initialIndex, required List<dynamic> posts,bool isFromProfile=false}) {
+    _index = initialIndex;
+    _posts = posts;
+
+    if (posts.isNotEmpty) {
+      initializedVideoPlayer(initialIndex);
+    }
+    if(!isFromProfile){
+      unawaited(createReplyIsolate(initialIndex, token: token));
+    }
+  }
+
+
 
 
 
@@ -74,15 +103,28 @@ class ViewVideoProvider with ChangeNotifier{
   }
 
   Future<void> postLikeAdd({required int id}) async {
-    isLiked=true;
-    await _homeService.postLikeAdd(id);
+    try{
+      isLiked=true;
+      await _homeService.postLikeAdd(id);
+    }catch(e){
+      notification.show(
+        title: 'User not logged in!',
+        type: NotificationType.local,
+      );
+    }
 
   }
 
   Future<void> postLikeRemove({required int id}) async {
-    isLiked=false;
-    await _homeService.postLikeRemove(id);
-
+    try{
+      isLiked = false;
+      await _homeService.postLikeRemove(id);
+    }catch(e){
+      notification.show(
+        title: 'User not logged in!',
+        type: NotificationType.local,
+      );
+    }
   }
 
   bool _isTextExpanded = false;
@@ -122,6 +164,89 @@ class ViewVideoProvider with ChangeNotifier{
   }
 
 
+// =============== downloading variables ==================
+
+  bool _downloading = false;
+  bool get downloading => _downloading;
+
+  bool _downloadingCompleted = false;
+  bool get downloadingCompleted => _downloadingCompleted;
+
+  String _progressString = '';
+  String get progressString => _progressString;
+
+
+  Future<void> saveDownloadedVideoToGallery({required String videoPath}) async {
+    await ImageGallerySaver.saveFile(videoPath);
+    log("Video Saved to Gallery");
+  }
+
+  Future<void> removeDownloadedVideo({required String videoPath}) async {
+    try {
+      File file = File(videoPath);
+      if (await file.exists()) {
+        await file.delete(recursive: true);
+        log("Video Deleted from App Directory");
+      }
+    } catch (error) {
+      debugPrint('$error');
+      log(error.toString());
+    }
+  }
+
+  Future<void> saveVideo({
+    required String videoUrl,
+    required String title,
+  }) async {
+    Dio dio = Dio();
+    try {
+      Directory dir;
+      if (Platform.isAndroid) {
+        dir = await getExternalStorageDirectory() ??
+            await getApplicationDocumentsDirectory();
+      } else {
+        dir = await getApplicationDocumentsDirectory();
+      }
+
+      final String videoPath = join(
+        dir.path,
+        '$title.mp4',
+      );
+
+      await dio.download(
+        videoUrl,
+        videoPath,
+        onReceiveProgress: (rec, total) {
+          _downloading = true;
+          _progressString = ((rec / total) * 100).toStringAsFixed(0) + "%";
+          notifyListeners();
+        },
+      );
+
+      await saveDownloadedVideoToGallery(videoPath: videoPath);
+      await removeDownloadedVideo(videoPath: videoPath);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    _downloading = false;
+    _downloadingCompleted = true;
+    _progressString = "Completed";
+    notifyListeners();
+    Future.delayed(const Duration(seconds: 2)).then(
+          (value) {
+        _downloadingCompleted = false;
+        notifyListeners();
+      },
+    );
+    log("Download completed");
+    notifyListeners();
+  }
+
+
+
+
+
+  // ==============controllers====================
 
   final Map<String, VideoPlayerController> _controllers = {};
   final Map<int, VoidCallback> _listeners = {};
@@ -294,9 +419,15 @@ class ViewVideoProvider with ChangeNotifier{
 
     if (_vertical_drag_direction == -1) {
       // Going up
+      if (_replyPosts.length > 0) {
+        _replyPosts.clear();
+      }
       await _previousVideo();
     } else if (_vertical_drag_direction == 1) {
       // Going down
+      if (_replyPosts.length > 0) {
+        _replyPosts.clear();
+      }
       await _nextVideo();
     }
 
@@ -326,6 +457,7 @@ class ViewVideoProvider with ChangeNotifier{
     }
 
     await _playController(_index);
+    unawaited(createReplyIsolate(_index,token: token));
 
   }
 
@@ -340,6 +472,8 @@ class ViewVideoProvider with ChangeNotifier{
     }
 
     await _playController(_index);
+
+    unawaited(createReplyIsolate(_index,token: token));
 
   }
 
@@ -396,6 +530,85 @@ class ViewVideoProvider with ChangeNotifier{
 
   Future<void> goingBack()async{
     await disposeAllControllers();
+    _replyPosts.clear();
   }
+
+
+
+  final Set<int> _fetchingIds = {};
+
+  Future<void> createReplyIsolate(int indexForFetch, {String? token}) async {
+
+
+    if (_fetchingIds.contains(indexForFetch)) return;
+
+
+    _fetchingIds.add(indexForFetch);
+
+
+    ReceivePort mainReceivePort = ReceivePort();
+
+    try {
+      await Isolate.spawn(getRepliesTask, mainReceivePort.sendPort);
+
+      SendPort isolateSendPort = await mainReceivePort.first as SendPort;
+      ReceivePort isolateResponseReceivePort = ReceivePort();
+
+      isolateSendPort.send([
+        _posts[indexForFetch].id,
+        isolateResponseReceivePort.sendPort,
+        token
+      ]);
+
+      final isolateResponse = await isolateResponseReceivePort.first as List<Posts>;
+
+
+      // Clear existing replies before adding new ones
+      if (_replyPosts.length > 0) {
+        _replyPosts.clear();
+      }
+
+      if(isolateResponse.isEmpty) return;
+
+
+      _replyPosts.addAll(isolateResponse);
+
+      isolateResponseReceivePort.close();
+      notifyListeners();
+
+    } catch (e) {
+      print("Error in view createReplyIsolate: $e");
+    } finally {
+      _fetchingIds.remove(indexForFetch);
+      mainReceivePort.close();
+    }
+
+  }
+
+
+  static void getRepliesTask(SendPort mySendPort) async {
+    final _homeService = HomeService();
+    ReceivePort isolateReceivePort = ReceivePort();
+
+    mySendPort.send(isolateReceivePort.sendPort);
+
+    await for (var message in isolateReceivePort) {
+      if (message is List && message.length >= 2) {
+        final int postId = message[0];
+        final SendPort isolateResponseSendPort = message[1];
+        final String? token = message.length > 2 ? message[2] : null;
+
+        try {
+          final response = await _homeService.getReplies(postId, token ?? '');
+          final List<Posts> data = ReplyModel.fromJson(response).post;
+          isolateResponseSendPort.send(data);
+        } catch (e) {
+          print("Error in isolate: $e");
+          isolateResponseSendPort.send([]);
+        }
+      }
+    }
+  }
+
 
 }

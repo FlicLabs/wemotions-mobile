@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:socialverse/export.dart';
+import '../../../search/providers/video_provider.dart';
 import '../../helper/smooth_page_indicator.dart';
 import '../../providers/nested_provider.dart';
 import '../main_video/home_bottom_bar.dart';
@@ -203,7 +204,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer4<ReplyProvider, HomeProvider, VideoProvider, SmoothPageIndicatorProvider>(
+    return Consumer4<ReplyProvider, HomeProvider, ViewVideoProvider, SmoothPageIndicatorProvider>(
       builder: (_, reply, home, video, page, ___) {
         return Stack(
           children: [
@@ -331,7 +332,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                       ),
 
 
-                                    if(!video.isViewMode)  Align(
+                                    Align(
                                       alignment: Alignment.bottomCenter,
                                       child: Container(
                                         height:home.heightOfUserInfoBar,
@@ -360,7 +361,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                       ),
                                     ),
 
-                                    video.isViewMode ? shrink : ReplyInfoSideBar(),
+                                    ReplyInfoSideBar(),
 
                                     if(!reply.isPlaying)
                                       Container(
@@ -385,7 +386,6 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                         ),
                                       )
                                     ],
-                                    video.isViewMode ? shrink :
                                     Positioned(
                                       bottom: 15,
                                       right: 0,

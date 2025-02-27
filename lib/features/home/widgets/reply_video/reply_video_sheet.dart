@@ -1,4 +1,5 @@
 import 'package:socialverse/export.dart';
+import 'package:socialverse/features/search/providers/video_provider.dart';
 
 import '../home_video/action_sheet_item.dart';
 
@@ -40,7 +41,7 @@ class ReplyActionSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final video = Provider.of<VideoProvider>(context);
+    final video = Provider.of<ViewVideoProvider>(context);
     final home = Provider.of<HomeProvider>(context);
     // final profile = Provider.of<ProfileProvider>(context);
     final notification = getIt<NotificationProvider>();
@@ -106,10 +107,10 @@ class ReplyActionSheet extends StatelessWidget {
               label: 'Download',
               onTap: () {
                 HapticFeedback.mediumImpact();
-                video.saveVideo(
-                  videoUrl: video_link,
-                  title: title,
-                );
+                // video.saveVideo(
+                //   videoUrl: video_link,
+                //   title: title,
+                // );
                 Navigator.of(context).pop();
               },
             ),

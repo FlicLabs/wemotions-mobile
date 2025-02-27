@@ -739,9 +739,7 @@ class HomeProvider extends ChangeNotifier {
   final replies = PageController();
 
   final _homeService = HomeService();
-
-
-
+  final notification = getIt<NotificationProvider>();
 
   int _posts_page = 1;
   int get posts_page => _posts_page;
@@ -1011,15 +1009,28 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> postLikeAdd({required int id}) async {
-    isLiked=true;
-    await _homeService.postLikeAdd(id);
+    try{
+      isLiked=true;
+      await _homeService.postLikeAdd(id);
+    }catch(e){
+      notification.show(
+        title: 'User not logged in!',
+        type: NotificationType.local,
+      );
+    }
 
   }
 
   Future<void> postLikeRemove({required int id}) async {
-    isLiked=false;
-    await _homeService.postLikeRemove(id);
-
+    try{
+      isLiked = false;
+      await _homeService.postLikeRemove(id);
+    }catch(e){
+      notification.show(
+        title: 'User not logged in!',
+        type: NotificationType.local,
+      );
+    }
   }
 
   // Future<dynamic> deletePost({required int id}) async {

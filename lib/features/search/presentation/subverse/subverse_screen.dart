@@ -49,13 +49,12 @@ class SubverseScreen extends StatelessWidget {
                           onTap: () {
                             Navigator.pushNamed(
                               context,
-                              ViewVideoWidget.routeName,
-                              arguments: ViewVideoWidgetArgs(
+                              VideoWidget.routeName,
+                              arguments: VideoWidgetArgs(
                                 posts: __.currentSortedPosts,
                                 pageController:
                                     PageController(initialPage: index),
                                 pageIndex: index,
-                                // isFromSubverse: true,
                               ),
                             );
                           },
