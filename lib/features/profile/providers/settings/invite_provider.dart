@@ -1,10 +1,6 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:dio/dio.dart';
-import 'package:socialverse/core/utils/constants/constants.dart';
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/domain/models/activer_users_model.dart';
-import 'package:socialverse/features/profile/domain/models/users_model.dart';
-import 'package:socialverse/features/profile/domain/services/invite_service.dart';
 
 
 class InviteProvider extends ChangeNotifier {

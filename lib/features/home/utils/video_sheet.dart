@@ -1,5 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/search/providers/video_provider.dart';
 
 class VideoSheet extends StatelessWidget {
   const VideoSheet({
@@ -25,8 +24,7 @@ class VideoSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final video = Provider.of<ViewVideoProvider>(context);
+    final video = Provider.of<VideoProvider>(context);
 
     // bool isAdmin = isFromFeed == true ||
     //     isFromSubverse == true &&
@@ -118,7 +116,6 @@ class VideoSheet extends StatelessWidget {
                           );
                         },
                       ),
-
                       height30,
                     ],
                   ),

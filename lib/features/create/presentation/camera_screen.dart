@@ -1,13 +1,11 @@
 // ignore_for_file: must_be_immutable
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/create/utils/discard_dialog.dart';
 
 import '../../../core/configs/page_routers/slide_route.dart';
 import '../utils/circular_clipper.dart';
-import '../widgets/circular_button.dart';
 
 class CameraScreenArgs {
   bool isReply;

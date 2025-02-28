@@ -1,5 +1,4 @@
 // RecordButton.dart
-import 'package:flutter/material.dart';
 import 'package:socialverse/export.dart';
 
 class RecordButton extends StatefulWidget {

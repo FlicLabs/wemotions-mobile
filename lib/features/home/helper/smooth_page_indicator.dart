@@ -1,9 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:socialverse/export.dart';
-import 'dart:math';
-import 'package:socialverse/features/home/utils/circular_dot.dart';
-
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 class SmoothPageIndicatorView extends StatelessWidget {
@@ -49,20 +44,21 @@ class SmoothPageIndicatorView extends StatelessWidget {
 
     // Add main dots
     for (int i = start; i <= end; i++) {
-      if(!isHorizontal){
+      if (!isHorizontal) {
         dots.add(
           Row(
             children: [
               Indicator(
-                isActive: provider.onReply? false:i == currentIndex,
+                isActive: provider.onReply ? false : i == currentIndex,
                 isHorizontal: isHorizontal,
-                makeTransparent: provider.onReply && i != currentIndex? true:false,
+                makeTransparent:
+                    provider.onReply && i != currentIndex ? true : false,
               ),
-
               if (provider.totalHorizontalPages != -1 &&
                   provider.currentHorizontalIndex != -1 &&
                   provider.currentVerticalIndex != -1 &&
-                  provider.totalHorizontalPages != 0 && i==currentIndex)
+                  provider.totalHorizontalPages != 0 &&
+                  i == currentIndex)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: _buildDots(
@@ -76,15 +72,14 @@ class SmoothPageIndicatorView extends StatelessWidget {
             ],
           ),
         );
-      }else{
+      } else {
         dots.add(
           Indicator(
-            isActive: provider.onReply? i == currentIndex:false,
+            isActive: provider.onReply ? i == currentIndex : false,
             isHorizontal: isHorizontal,
           ),
         );
       }
-
     }
 
     // // Add trailing more indicator if needed
@@ -106,7 +101,8 @@ class SmoothPageIndicatorView extends StatelessWidget {
     return Consumer<SmoothPageIndicatorProvider>(
       builder: (_, provider, ___) {
         // Ensure we have valid data before building
-        if (provider.totalVerticalPages == -1 || provider.currentVerticalIndex == -1) {
+        if (provider.totalVerticalPages == -1 ||
+            provider.currentVerticalIndex == -1) {
           return SizedBox.shrink();
         }
 
@@ -119,7 +115,8 @@ class SmoothPageIndicatorView extends StatelessWidget {
           //   visibleVerticalPosition++; // Account for leading more indicator
           // }
           verticalOffset = (provider.currentVerticalIndex == 0 ? 0 : 1) +
-              (provider.currentVerticalIndex - math.max(0, provider.currentVerticalIndex - 1));
+              (provider.currentVerticalIndex -
+                  math.max(0, provider.currentVerticalIndex - 1));
         }
 
         return Container(
@@ -130,7 +127,10 @@ class SmoothPageIndicatorView extends StatelessWidget {
             children: [
               // Vertical indicators
               Padding(
-                padding: EdgeInsets.only(left: provider.totalHorizontalPages>=2?(cs.width(context) / 4.5)/(3.2):(cs.width(context) / 4.5)/(1.9)),
+                padding: EdgeInsets.only(
+                    left: provider.totalHorizontalPages >= 2
+                        ? (cs.width(context) / 4.5) / (3.2)
+                        : (cs.width(context) / 4.5) / (1.9)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: _buildDots(
@@ -161,7 +161,7 @@ class Indicator extends StatelessWidget {
     required this.isActive,
     required this.isHorizontal,
     this.isMoreIndicator = false,
-    this.makeTransparent =false,
+    this.makeTransparent = false,
   }) : super(key: key);
 
   @override
@@ -174,17 +174,19 @@ class Indicator extends StatelessWidget {
         vertical: isHorizontal ? 0 : 4,
       ),
       width: isHorizontal
-          ? (isMoreIndicator ? 6 : (isActive? 9:8))
+          ? (isMoreIndicator ? 6 : (isActive ? 9 : 8))
           : (isMoreIndicator ? 6 : 8),
       height: isHorizontal
           ? (isMoreIndicator ? 6 : 8)
-          : (isMoreIndicator ? 6 : (isActive? 9:8)),
+          : (isMoreIndicator ? 6 : (isActive ? 9 : 8)),
       decoration: BoxDecoration(
-        color: makeTransparent? Colors.transparent:isActive
-            ? Constants.primaryColor
-            : (isMoreIndicator
-            ? Constants.lightPrimary.withOpacity(0.3)
-            : Constants.lightPrimary.withOpacity(0.5)),
+        color: makeTransparent
+            ? Colors.transparent
+            : isActive
+                ? Constants.primaryColor
+                : (isMoreIndicator
+                    ? Constants.lightPrimary.withOpacity(0.3)
+                    : Constants.lightPrimary.withOpacity(0.5)),
         borderRadius: BorderRadius.circular(isMoreIndicator ? 3 : 4),
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:socialverse/export.dart';
 
-import '../../../../core/configs/injection/locator.dart';
 
 class EmailScreen extends StatelessWidget {
   static const String routeName = '/add-email';

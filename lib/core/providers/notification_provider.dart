@@ -4,7 +4,6 @@ import 'package:socialverse/core/domain/models/payload_model.dart';
 import 'package:socialverse/export.dart';
 import 'package:dio/dio.dart';
 import '../domain/services/messaging_service.dart';
-import '../widgets/overlay_notification.dart';
 
 enum NotificationType { push, local }
 
@@ -84,14 +83,12 @@ class NotificationProvider extends ChangeNotifier {
 
   toggleFollowing(int index) {
     HapticFeedback.mediumImpact();
-    if (_notifications[index].actor != null) {
-      if (_notifications[index].actor.isFollowing != null) {
-        _notifications[index].actor.isFollowing =
-            !_notifications[index].actor.isFollowing!;
-        notifyListeners();
-      }
+    if (_notifications[index].actor.isFollowing != null) {
+      _notifications[index].actor.isFollowing =
+          !_notifications[index].actor.isFollowing!;
+      notifyListeners();
     }
-  }
+    }
 
   Future<void> initialize() async {
     final settings = await _service.setupPushNotifications();

@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:socialverse/export.dart';
 import 'package:socialverse/features/profile/widgets/profile/edit_profile/profile_aligned_tile.dart';
-import 'package:socialverse/features/profile/widgets/profile/edit_profile/profile_links_tile.dart';
 
 class EditProfileScreenArgs {
   final String username;

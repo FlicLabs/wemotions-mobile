@@ -1,5 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/utils/profile_share_sheet.dart';
 
 class UserProfileHeader extends StatelessWidget {
   const UserProfileHeader({

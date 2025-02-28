@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:socialverse/export.dart';
 
 class ReplyInfoSideBar extends StatelessWidget {
@@ -12,35 +11,35 @@ class ReplyInfoSideBar extends StatelessWidget {
       builder: (_, __, ___) {
         final postTitle = __.posts[__.index].title;
         return Positioned(
-          left: 20,
+          left: 10,
           bottom: 25,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
-                  onTap: (){
-
-                    if(__.isPlaying){
+                  onTap: () {
+                    if (__.isPlaying) {
                       __.videoController(__.index)!.pause();
-                      __.isPlaying=false;
+                      __.isPlaying = false;
                     }
 
-
-                    Navigator.of(context).pushNamed(
-                      UserProfileScreen.routeName,
-                      arguments: UserProfileScreenArgs(
-                        username: __.posts[__.index].username,
-                      ),
-                    ).then((value) => {
-
-                      if(home.horizontalIndex==1){
-                        __.isPlaying=true,
-                        __.videoController(__.index)!.play(),
-                      }
-                    });
+                    Navigator.of(context)
+                        .pushNamed(
+                          UserProfileScreen.routeName,
+                          arguments: UserProfileScreenArgs(
+                            username: __.posts[__.index].username,
+                          ),
+                        )
+                        .then((value) => {
+                              if (home.horizontalIndex == 1)
+                                {
+                                  __.isPlaying = true,
+                                  __.videoController(__.index)!.play(),
+                                }
+                            });
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -74,10 +73,8 @@ class ReplyInfoSideBar extends StatelessWidget {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(
-                            __.posts[__.index].username,
-                            style: AppTextStyle.normalRegular16
-                          ),
+                          Text(__.posts[__.index].username,
+                              style: AppTextStyle.normalRegular16),
                         ],
                       )
                     ],

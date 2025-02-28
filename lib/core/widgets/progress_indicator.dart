@@ -1,4 +1,3 @@
-import 'package:socialverse/core/utils/network/internet_error.dart';
 import 'package:socialverse/export.dart';
 
 class Circle {

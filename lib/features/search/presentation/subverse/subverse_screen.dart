@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:socialverse/export.dart';
 
 class SubverseScreen extends StatelessWidget {

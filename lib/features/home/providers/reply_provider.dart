@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 
 /* New provider to manage the horizontal feed and their video controllers.*/

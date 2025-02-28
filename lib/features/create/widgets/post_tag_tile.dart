@@ -1,8 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/create/widgets/tagpeople_widget.dart';
 
 class PostTagTile extends StatelessWidget {
   const PostTagTile({super.key});

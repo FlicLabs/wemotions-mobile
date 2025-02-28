@@ -1,11 +1,6 @@
 import 'dart:ui';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:socialverse/export.dart';
-import '../../../search/providers/video_provider.dart';
 import '../../helper/smooth_page_indicator.dart';
-import '../../providers/nested_provider.dart';
 import '../main_video/home_bottom_bar.dart';
 
 class ReplyVideoWidget extends StatefulWidget {
@@ -62,20 +57,18 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
 
   //****************************************************
 
-
   Widget _buildNestedVideoPage(int index) {
-    bool isInit = _nestedR.videoController(index,true)?.value.isInitialized ?? false;
+    bool isInit =
+        _nestedR.videoController(index, true)?.value.isInitialized ?? false;
 
     return PageView(
       scrollDirection: Axis.horizontal,
       // controller: home.replies,
       // onPageChanged: (idx) => _handleHorizontalPageChange(idx, index),
       children: [
-        if(_nestedR.getPost.isNotEmpty)
-          ...[
-            _buildNestedVideoContent(index, isInit),
-
-          ]
+        if (_nestedR.getPost.isNotEmpty) ...[
+          _buildNestedVideoContent(index, isInit),
+        ]
 
         // if (home.posts[index].length > 1 &&
         //     reply.posts.length == home.posts[index].length - 1)
@@ -96,63 +89,59 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                  _buildNestedVideoThumbnail(index),
+                _buildNestedVideoThumbnail(index),
 
-                  if (isInit) _buildNestedVideoVideoPlayer(index),
+                if (isInit) _buildNestedVideoVideoPlayer(index),
 
-
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      height:_home.heightOfUserInfoBar,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            colors: [
-                              Colors.black12.withOpacity(0.56),
-                              Colors.black12.withOpacity(0.56),
-                              Colors.black12.withOpacity(0.46),
-                              Colors.black12.withOpacity(0.34),
-                              Colors.black12.withOpacity(0.24),
-                              Colors.black12.withOpacity(0.24),
-                              Colors.black12.withOpacity(0.21),
-                              Colors.black12.withOpacity(0.18),
-                              Colors.black12.withOpacity(0.12),
-                              Colors.black12.withOpacity(0.08),
-                              Colors.black12.withOpacity(0.04),
-                              Colors.black12.withOpacity(0.0),
-                            ],
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-
-                      ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: _home.heightOfUserInfoBar,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [
+                            Colors.black12.withOpacity(0.56),
+                            Colors.black12.withOpacity(0.56),
+                            Colors.black12.withOpacity(0.46),
+                            Colors.black12.withOpacity(0.34),
+                            Colors.black12.withOpacity(0.24),
+                            Colors.black12.withOpacity(0.24),
+                            Colors.black12.withOpacity(0.21),
+                            Colors.black12.withOpacity(0.18),
+                            Colors.black12.withOpacity(0.12),
+                            Colors.black12.withOpacity(0.08),
+                            Colors.black12.withOpacity(0.04),
+                            Colors.black12.withOpacity(0.0),
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  HomeUserInfoBar(),
+                ),
+                HomeUserInfoBar(),
 
-                  if(!_nestedR.isPlaying)
-                    Container(
-                      color: Colors.black12.withOpacity(0.04),
-                      height: cs.height(context),
-                      width: cs.width(context),
-                    ),
-                  PlayButton(),
+                if (!_nestedR.isPlaying)
+                  Container(
+                    color: Colors.black12.withOpacity(0.04),
+                    height: cs.height(context),
+                    width: cs.width(context),
+                  ),
+                PlayButton(),
 
-                  // Center(
-                  //   child: Container(
-                  //     color: Colors.black12,
-                  //     height: 100,
-                  //     width: 100,
-                  //     child: Text('$index',style: TextStyle(color: Colors.white),),
-                  //   ),
-                  // ),
+                // Center(
+                //   child: Container(
+                //     color: Colors.black12,
+                //     height: 100,
+                //     width: 100,
+                //     child: Text('$index',style: TextStyle(color: Colors.white),),
+                //   ),
+                // ),
 
-                  // if (!video.isViewMode) _buildSideBar(),
+                // if (!video.isViewMode) _buildSideBar(),
 
-                  // HomeVideoProgressIndicator(),
-
-                ],
+                // HomeVideoProgressIndicator(),
+              ],
             ),
           ),
         ],
@@ -160,8 +149,10 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
     );
   }
 
-  Widget _buildNestedVideoThumbnail(int index, ) {
-    var value= _nestedR.getPost[index];
+  Widget _buildNestedVideoThumbnail(
+    int index,
+  ) {
+    var value = _nestedR.getPost[index];
     return CustomNetworkImage(
       height: cs.availableHeightWithNav(context),
       width: cs.width(context),
@@ -170,31 +161,20 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
     );
   }
 
-  Widget _buildNestedVideoVideoPlayer(int index,{bool isNested=false}) {
-      return SizedBox.expand(
-        child: FittedBox(
-          fit: BoxFit.cover,
-          child: SizedBox(
-            width: _nestedR.videoController(index,true)!.value.size.width,
-            height: _nestedR.videoController(index,true)!.value.size.height,
-            child: VideoPlayer(_nestedR.videoController(index,true)!),
-          ),
+  Widget _buildNestedVideoVideoPlayer(int index) {
+    return SizedBox.expand(
+      child: FittedBox(
+        fit: BoxFit.cover,
+        child: SizedBox(
+          width: _nestedR.videoController(index, true)!.value.size.width,
+          height: _nestedR.videoController(index, true)!.value.size.height,
+          child: VideoPlayer(_nestedR.videoController(index, true)!),
         ),
-      );
+      ),
+    );
   }
 
-
-
   //****************************************************
-
-
-
-
-
-
-
-
-
 
   @override
   void dispose() {
@@ -204,7 +184,8 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer4<ReplyProvider, HomeProvider, ViewVideoProvider, SmoothPageIndicatorProvider>(
+    return Consumer4<ReplyProvider, HomeProvider, VideoProvider,
+        SmoothPageIndicatorProvider>(
       builder: (_, reply, home, video, page, ___) {
         return Stack(
           children: [
@@ -233,9 +214,6 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                   reply.isFollowing = reply.posts[index].following;
 
                   _initializePageIndicator();
-
-
-
                 },
                 controller: widget.pageController,
                 physics: CustomBouncingScrollPhysics(),
@@ -243,7 +221,8 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                 itemBuilder: (context, index) {
                   bool isReplyInit = false;
                   if (reply.videoController(index) != null) {
-                    isReplyInit = reply.videoController(index)!.value.isInitialized;
+                    isReplyInit =
+                        reply.videoController(index)!.value.isInitialized;
                   }
 
                   return Stack(
@@ -262,7 +241,8 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                               reply.postLikeAdd(id: reply.posts[index].id);
                             }
 
-                            Timer(Duration(seconds: 1), () => reply.isLiked = false);
+                            Timer(Duration(seconds: 1),
+                                () => reply.isLiked = false);
 
                             if (reply.tapPosition != reply.prevTapPosition) {
                               reply.consecutiveDoubleTaps = 0;
@@ -272,11 +252,12 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                             reply.prevTapPosition = reply.tapPosition;
 
                             reply.consecutiveDoubleTaps++;
-                            reply.likeAnimationScale = 1.0 + (reply.consecutiveDoubleTaps * 0.2);
+                            reply.likeAnimationScale =
+                                1.0 + (reply.consecutiveDoubleTaps * 0.2);
                             reply.timer?.cancel();
                             reply.timer = Timer(
                               Duration(seconds: 2),
-                                  () {
+                              () {
                                 reply.consecutiveDoubleTaps = 0;
                                 reply.likeAnimationScale = 1.0;
                               },
@@ -313,9 +294,18 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                         child: FittedBox(
                                           fit: BoxFit.cover,
                                           child: SizedBox(
-                                            width: reply.videoController(index)!.value.size.width,
-                                            height: reply.videoController(index)!.value.size.height,
-                                            child: VideoPlayer(reply.videoController(index)!),
+                                            width: reply
+                                                .videoController(index)!
+                                                .value
+                                                .size
+                                                .width,
+                                            height: reply
+                                                .videoController(index)!
+                                                .value
+                                                .size
+                                                .height,
+                                            child: VideoPlayer(
+                                                reply.videoController(index)!),
                                           ),
                                         ),
                                       ),
@@ -323,47 +313,54 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                     if (video.downloading == true)
                                       DownloadBar(
                                         color: Colors.grey.withOpacity(0.4),
-                                        label: 'Saving: ${video.progressString}',
+                                        label:
+                                            'Saving: ${video.progressString}',
                                       ),
                                     if (video.downloadingCompleted == true)
                                       DownloadBar(
                                         color: Theme.of(context).hintColor,
                                         label: 'Video Saved',
                                       ),
-
-
                                     Align(
                                       alignment: Alignment.bottomCenter,
                                       child: Container(
-                                        height:home.heightOfUserInfoBar,
+                                        height: home.heightOfUserInfoBar,
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
                                               colors: [
-                                                Colors.black12.withOpacity(0.56),
-                                                Colors.black12.withOpacity(0.56),
-                                                Colors.black12.withOpacity(0.46),
-                                                Colors.black12.withOpacity(0.34),
-                                                Colors.black12.withOpacity(0.24),
-                                                Colors.black12.withOpacity(0.24),
-                                                Colors.black12.withOpacity(0.21),
-                                                Colors.black12.withOpacity(0.18),
-                                                Colors.black12.withOpacity(0.12),
-                                                Colors.black12.withOpacity(0.08),
-                                                Colors.black12.withOpacity(0.04),
+                                                Colors.black12
+                                                    .withOpacity(0.56),
+                                                Colors.black12
+                                                    .withOpacity(0.56),
+                                                Colors.black12
+                                                    .withOpacity(0.46),
+                                                Colors.black12
+                                                    .withOpacity(0.34),
+                                                Colors.black12
+                                                    .withOpacity(0.24),
+                                                Colors.black12
+                                                    .withOpacity(0.24),
+                                                Colors.black12
+                                                    .withOpacity(0.21),
+                                                Colors.black12
+                                                    .withOpacity(0.18),
+                                                Colors.black12
+                                                    .withOpacity(0.12),
+                                                Colors.black12
+                                                    .withOpacity(0.08),
+                                                Colors.black12
+                                                    .withOpacity(0.04),
                                                 Colors.black12.withOpacity(0.0),
                                               ],
                                               begin: Alignment.bottomCenter,
-                                              end: Alignment.topCenter
-                                          ),
-                                          borderRadius: BorderRadius.circular(8),
-
+                                              end: Alignment.topCenter),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                       ),
                                     ),
-
                                     ReplyInfoSideBar(),
-
-                                    if(!reply.isPlaying)
+                                    if (!reply.isPlaying)
                                       Container(
                                         color: Colors.black12.withOpacity(0.04),
                                         height: cs.height(context),
@@ -390,7 +387,7 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                       bottom: 15,
                                       right: 0,
                                       child: Container(
-                                        width: cs.width(context) / 4.5,
+                                        width: cs.width(context) / 4.8,
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -425,12 +422,15 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                            filter:
+                                ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Flexible(
                                     flex: 4,
@@ -440,12 +440,14 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                         horizontal: 10,
                                       ),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           RichText(
                                             text: TextSpan(
                                               text: 'Replying to ',
-                                              style: AppTextStyle.normalRegular16,
+                                              style:
+                                                  AppTextStyle.normalRegular16,
                                               children: [
                                                 TextSpan(),
                                               ],
@@ -455,38 +457,53 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                           Row(
                                             children: [
                                               ClipRRect(
-                                                borderRadius: BorderRadius.circular(80),
+                                                borderRadius:
+                                                    BorderRadius.circular(80),
                                                 child: CachedNetworkImage(
-                                                  fadeInDuration: Duration(milliseconds: 0),
-                                                  fadeOutDuration: Duration(milliseconds: 0),
+                                                  fadeInDuration:
+                                                      Duration(milliseconds: 0),
+                                                  fadeOutDuration:
+                                                      Duration(milliseconds: 0),
                                                   fit: BoxFit.cover,
                                                   height: 35,
                                                   width: 35,
-                                                  imageUrl: home.posts[home.index][0].pictureUrl,
-                                                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                                                      Image.asset(
-                                                        AppAsset.load,
-                                                        fit: BoxFit.cover,
-                                                        height: cs.height(context),
-                                                      ),
-                                                  errorWidget: (context, url, error) => Container(
-                                                    color: Theme.of(context).primaryColor,
-                                                    padding: const EdgeInsets.all(8),
+                                                  imageUrl: home
+                                                      .posts[home.index][0]
+                                                      .pictureUrl,
+                                                  progressIndicatorBuilder:
+                                                      (context, url,
+                                                              downloadProgress) =>
+                                                          Image.asset(
+                                                    AppAsset.load,
+                                                    fit: BoxFit.cover,
+                                                    height: cs.height(context),
+                                                  ),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Container(
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                    padding:
+                                                        const EdgeInsets.all(8),
                                                     child: SvgPicture.asset(
                                                       AppAsset.icuser,
-                                                      color: Theme.of(context).cardColor,
+                                                      color: Theme.of(context)
+                                                          .cardColor,
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                               width5,
                                               Column(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   Text(
-                                                      home.posts[home.index][0].username,
-                                                      style: AppTextStyle.normalRegular14
-                                                  ),
+                                                      home.posts[home.index][0]
+                                                          .username,
+                                                      style: AppTextStyle
+                                                          .normalRegular14),
                                                   height10
                                                 ],
                                               )
@@ -504,16 +521,16 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
                                         color: Colors.transparent,
                                         image: DecorationImage(
                                             image: CachedNetworkImageProvider(
-                                                home.posts[home.index][0].thumbnailUrl
-                                            ),
-                                            fit: BoxFit.cover
-                                        ),
+                                                home.posts[home.index][0]
+                                                    .thumbnailUrl),
+                                            fit: BoxFit.cover),
                                       ),
                                       child: GestureDetector(
                                         child: Container(
                                           alignment: Alignment.center,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
                                             color: Colors.black26,
                                           ),
                                           child: const Icon(
@@ -587,7 +604,8 @@ class _ReplyVideoWidgetState extends State<ReplyVideoWidget> {
 class CustomBouncingScrollPhysics extends BouncingScrollPhysics {
   final double nFrictionFactor;
 
-  CustomBouncingScrollPhysics({ScrollPhysics? parent, this.nFrictionFactor = 0.001})
+  CustomBouncingScrollPhysics(
+      {ScrollPhysics? parent, this.nFrictionFactor = 0.001})
       : super(parent: parent);
 
   @override
@@ -600,10 +618,10 @@ class CustomBouncingScrollPhysics extends BouncingScrollPhysics {
 
   @override
   SpringDescription get spring => const SpringDescription(
-    mass: 80,
-    stiffness: 60,
-    damping: 1,
-  );
+        mass: 80,
+        stiffness: 60,
+        damping: 1,
+      );
 
   @override
   double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {

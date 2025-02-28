@@ -8,6 +8,7 @@ export 'package:flutter/foundation.dart' hide Category;
 export 'dart:convert';
 export 'dart:async';
 export 'dart:io';
+export 'package:socialverse/app.dart';
 
 // Packages
 export 'package:firebase_core/firebase_core.dart';
@@ -275,6 +276,8 @@ export 'package:socialverse/features/search/providers/edit_subverse_provider.dar
 export 'package:socialverse/features/search/providers/search_provider.dart';
 export 'package:socialverse/features/search/providers/subscription_provider.dart';
 
+export 'package:socialverse/features/home/providers/nested_provider.dart';
+
 
 
 
@@ -306,7 +309,7 @@ export 'package:socialverse/features/search/presentation/subverse/subverse_empty
 export 'package:socialverse/features/search/presentation/subverse/subverse_screen.dart';
 export 'package:socialverse/features/search/widgets/subverse_detail/subverse_detail_header.dart';
 export 'package:socialverse/features/search/widgets/subverse_detail/subverse_post_grid_item.dart';
-export 'package:socialverse/features/search/widgets/video/view_video_widget.dart';
+export 'package:socialverse/features/search/widgets/video/video_widget.dart';
 
 // export 'package:socialverse/core/presentation/welcome_screen.dart';
 

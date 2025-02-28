@@ -1,7 +1,5 @@
 
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/widgets/profile/invite/add_item.dart';
-import 'package:socialverse/features/profile/widgets/profile/invite/invite_list_tile_item.dart';
 
 
 class AddFriendsScreen extends StatefulWidget {

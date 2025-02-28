@@ -1,6 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/core/utils/constants/constants.dart';
-import 'package:socialverse/features/profile/utils/profile_share_item.dart';
 import 'package:line_icons/line_icons.dart';
 
 class ProfileShareSheet extends StatelessWidget {

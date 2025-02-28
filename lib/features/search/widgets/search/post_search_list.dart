@@ -1,7 +1,4 @@
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:socialverse/export.dart';
-
-import '../video/video_widget.dart';
 
 class PostSearchList extends StatelessWidget {
   const PostSearchList({Key? key}) : super(key: key);
@@ -15,28 +12,29 @@ class PostSearchList extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   child: SvgPicture.asset(
                     AppAsset.search,
                     color: Constants.primaryGrey500,
-                    width: cs.width(context)/2,
-                    height: cs.height(context)/3,
+                    width: cs.width(context) / 2,
+                    height: cs.height(context) / 3,
                   ),
                 ),
-
                 Text(
                   "It seems we can't find the posts\n you're looking for. Try another\n search.",
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Constants.primaryGrey500,fontWeight: FontWeight.bold,fontSize: 20),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Constants.primaryGrey500,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
                 )
               ],
             ),
           );
         }
         return GridView.builder(
-          padding: EdgeInsets.symmetric(vertical: 10,horizontal: 2),
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 2),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: 0.60,
@@ -53,7 +51,6 @@ class PostSearchList extends StatelessWidget {
                   flex: 10,
                   child: SubversePostGridItem(
                     onTap: () async {
-
                       await Navigator.pushNamed(
                         context,
                         VideoWidget.routeName,
@@ -63,10 +60,6 @@ class PostSearchList extends StatelessWidget {
                           pageIndex: index,
                         ),
                       );
-
-
-
-
                     },
                     imageUrl: __.post_search[index].thumbnailUrl,
                     createdAt: __.post_search[index].createdAt,
@@ -74,7 +67,6 @@ class PostSearchList extends StatelessWidget {
                     username: __.post_search[index].username,
                     pictureUrl: __.post_search[index].pictureUrl,
                     isFromSearch: true,
-
                   ),
                 ),
                 height10,

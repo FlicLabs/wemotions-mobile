@@ -1,5 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/search/providers/video_provider.dart';
 
 import '../home_video/action_sheet_item.dart';
 
@@ -41,7 +40,6 @@ class ReplyActionSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final video = Provider.of<ViewVideoProvider>(context);
     final home = Provider.of<HomeProvider>(context);
     // final profile = Provider.of<ProfileProvider>(context);
     final notification = getIt<NotificationProvider>();

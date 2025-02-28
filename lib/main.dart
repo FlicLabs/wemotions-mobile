@@ -1,7 +1,3 @@
-import 'package:socialverse/app.dart';
-import 'package:socialverse/features/home/providers/nested_provider.dart';
-import 'package:socialverse/features/search/providers/video_provider.dart';
-
 import 'export.dart';
 
 @pragma('vm:entry-point')
@@ -71,19 +67,18 @@ void main() async {
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
 
-
   SharedPreferences.getInstance().then(
-        (prefs) {
+    (prefs) {
       var mode = prefs.getString('themeMode') ?? 'ThemeMode.system';
       getThemeMode(mode);
       bool value = mode == 'ThemeMode.dark';
       runApp(
         MultiProvider(
           providers: [
-
             ChangeNotifierProvider(create: (_) => AuthProvider()),
             ChangeNotifierProvider(create: (_) => HomeProvider()),
-            ChangeNotifierProvider(create: (_) => SmoothPageIndicatorProvider()),
+            ChangeNotifierProvider(
+                create: (_) => SmoothPageIndicatorProvider()),
             // ChangeNotifierProvider(create: (_) => VideoProvider()),
             ChangeNotifierProvider(create: (_) => CameraProvider()),
             ChangeNotifierProvider(create: (_) => PostProvider()),
@@ -100,7 +95,8 @@ void main() async {
             ChangeNotifierProvider(create: (_) => NotificationProvider()),
             ChangeNotifierProvider(create: (_) => ReplyProvider()),
             ChangeNotifierProvider(create: (_) => SearchProvider()),
-            ChangeNotifierProvider(create: (_) => ViewVideoProvider(initialIndex: 0,posts: [])),
+            ChangeNotifierProvider(
+                create: (_) => VideoProvider(initialIndex: 0, posts: [])),
             ChangeNotifierProvider(create: (_) => NestedRProvider()),
             ChangeNotifierProvider<ThemeProvider>(
               create: (_) => ThemeProvider(
@@ -108,7 +104,7 @@ void main() async {
               ),
             ),
           ],
-          child:  const WeMotions(),
+          child: const WeMotions(),
         ),
       );
     },

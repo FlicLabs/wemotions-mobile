@@ -1,47 +1,44 @@
-import 'dart:ui';
-
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/home/providers/nested_provider.dart';
 
 class HomeUserInfoBar extends StatelessWidget {
   const HomeUserInfoBar({Key? key}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
     // final reply = Provider.of<ReplyProvider>(context);
     return Consumer<HomeProvider>(
-      builder: (_, __,___) {
+      builder: (_, __, ___) {
         final postTitle = __.posts[__.index][0].title;
         return Positioned(
-          left: 20,
+          left: 10,
           bottom: 25,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
                   onTap: () {
-                    if(__.isPlaying){
+                    if (__.isPlaying) {
                       __.videoController(__.index)!.pause();
-                      __.isPlaying=false;
+                      __.isPlaying = false;
                     }
 
-
-                    Navigator.of(context).pushNamed(
-                      UserProfileScreen.routeName,
-                      arguments: UserProfileScreenArgs(
-                        username: __.posts[__.index][0].username,
-                      ),
-                    ).then((value) => {
-                      if(__.horizontalIndex==0){
-                        __.videoController(__.index)!.play(),
-                        __.isPlaying=true
-                      }
-
-                    });
+                    Navigator.of(context)
+                        .pushNamed(
+                          UserProfileScreen.routeName,
+                          arguments: UserProfileScreenArgs(
+                            username: __.posts[__.index][0].username,
+                          ),
+                        )
+                        .then((value) => {
+                              if (__.horizontalIndex == 0)
+                                {
+                                  __.videoController(__.index)!.play(),
+                                  __.isPlaying = true
+                                }
+                            });
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,

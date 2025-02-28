@@ -8,7 +8,7 @@ class PlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isFromVideoWidget) {
-      return Consumer<ViewVideoProvider>(
+      return Consumer<VideoProvider>(
         builder: (_, __, ___) {
           final controller = __.videoController(__.index);
 

@@ -1,5 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/widgets/profile/shared/profile_link_tree.dart';
 
 class ProfileInfo extends StatelessWidget {
   const ProfileInfo({

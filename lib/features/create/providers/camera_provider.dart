@@ -501,11 +501,9 @@ class CameraProvider extends ChangeNotifier {
     } else {
       try {
         XFile? recordedVideo = await _cameraController!.stopVideoRecording();
-        if (recordedVideo != null) {
-          _videoSegments.clear();  // i dont know let me check after some time
-          _videoSegments.add(recordedVideo); // Store the segment even during flip
-        }
-        log('DEBUG: Recording stopped from flip');
+        _videoSegments.clear();  // i dont know let me check after some time
+        _videoSegments.add(recordedVideo); // Store the segment even during flip
+              log('DEBUG: Recording stopped from flip');
       } catch (e) {
         log('Error stopping video recording during flip: $e');
       }
@@ -806,7 +804,7 @@ class CameraProvider extends ChangeNotifier {
           _cameraController = null;
           notifyListeners();
           await _oldCameraController!.pausePreview();
-          await _oldCameraController!.dispose();
+          await _oldCameraController.dispose();
           _oldCameraController=null;
         }).then((value) => notifyListeners());
 

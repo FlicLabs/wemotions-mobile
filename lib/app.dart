@@ -2,7 +2,6 @@
 import 'package:socialverse/core/presentation/welcome_screen.dart';
 
 import 'core/configs/route_generator/custom_router.dart';
-import 'core/widgets/bottom_nav_bar.dart';
 import 'export.dart';
 
 class WeMotions extends StatefulWidget {

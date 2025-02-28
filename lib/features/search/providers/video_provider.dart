@@ -4,83 +4,73 @@ import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:socialverse/export.dart';
 
-class ViewVideoProvider with ChangeNotifier{
-
-  HomeService _homeService= HomeService();
+class VideoProvider with ChangeNotifier {
+  HomeService _homeService = HomeService();
   final view_video = PageController();
   final notification = getIt<NotificationProvider>();
 
-  List _posts=[];
-  List get posts=> _posts;
+  List _posts = [];
+  List get posts => _posts;
 
-  set posts(List  allPosts){
-    _posts=allPosts;
+  set posts(List allPosts) {
+    _posts = allPosts;
     notifyListeners();
   }
 
+  List _replyPosts = [];
+  List get replyPosts => _replyPosts;
 
-  List _replyPosts=[];
-  List get replyPosts=> _replyPosts;
-
-  set replyPosts(List  allPosts){
-    _replyPosts=allPosts;
+  set replyPosts(List allPosts) {
+    _replyPosts = allPosts;
     notifyListeners();
   }
 
+  int _index = 0;
+  bool _isPlaying = true;
 
-  int _index=0;
-  bool _isPlaying=true;
+  int get index => _index;
+  bool get isPlaying => _isPlaying;
 
-
-  int get index=>_index;
-  bool get isPlaying=> _isPlaying;
-
-  set isPlaying(bool val){
-    if(_isPlaying!=val){
-      _isPlaying=val;
+  set isPlaying(bool val) {
+    if (_isPlaying != val) {
+      _isPlaying = val;
       notifyListeners();
     }
   }
 
+  bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
 
-  bool _isInitialized=false;
-  bool get isInitialized=> _isInitialized;
-
-  set isInitialized(bool val){
-      _isInitialized=val;
-      notifyListeners();
+  set isInitialized(bool val) {
+    _isInitialized = val;
+    notifyListeners();
   }
 
-
-
-  ViewVideoProvider({required int initialIndex, required List<dynamic> posts,bool isFromProfile=false}) {
+  VideoProvider(
+      {required int initialIndex,
+      required List<dynamic> posts,
+      bool isFromProfile = false}) {
     _index = initialIndex;
     _posts = posts;
 
     if (posts.isNotEmpty) {
       initializedVideoPlayer(initialIndex);
     }
-    if(!isFromProfile){
+    if (!isFromProfile) {
       unawaited(createReplyIsolate(initialIndex, token: token));
     }
   }
 
+  int _vertical_drag_direction = 0; // 0 for no drag at initial
+  int get vertical_drag_direction => _vertical_drag_direction;
 
-
-
-
-
-  int _vertical_drag_direction=0; // 0 for no drag at initial
-  int get vertical_drag_direction=> _vertical_drag_direction;
-
-  set vertical_drag_direction(int value){
-    _vertical_drag_direction=value;
+  set vertical_drag_direction(int value) {
+    _vertical_drag_direction = value;
     notifyListeners();
   }
 
-
-  double _heightOfUserInfoBar=120;
-  double get heightOfUserInfoBar=> _heightOfUserInfoBar;
+  double _heightOfUserInfoBar = 120;
+  double get heightOfUserInfoBar => _heightOfUserInfoBar;
 
   bool _isFollowing = false;
   bool get isFollowing => _isFollowing;
@@ -89,7 +79,6 @@ class ViewVideoProvider with ChangeNotifier{
     _isFollowing = value;
     notifyListeners();
   }
-
 
   bool _loading = false;
   bool get loading => _loading;
@@ -103,23 +92,22 @@ class ViewVideoProvider with ChangeNotifier{
   }
 
   Future<void> postLikeAdd({required int id}) async {
-    try{
-      isLiked=true;
+    try {
+      isLiked = true;
       await _homeService.postLikeAdd(id);
-    }catch(e){
+    } catch (e) {
       notification.show(
         title: 'User not logged in!',
         type: NotificationType.local,
       );
     }
-
   }
 
   Future<void> postLikeRemove({required int id}) async {
-    try{
+    try {
       isLiked = false;
       await _homeService.postLikeRemove(id);
-    }catch(e){
+    } catch (e) {
       notification.show(
         title: 'User not logged in!',
         type: NotificationType.local,
@@ -130,13 +118,12 @@ class ViewVideoProvider with ChangeNotifier{
   bool _isTextExpanded = false;
   bool get isTextExpanded => _isTextExpanded;
 
-
   void toggleTextExpanded() {
     _isTextExpanded = !_isTextExpanded;
-    if(_isTextExpanded){
-      _heightOfUserInfoBar=(5 + (6 * _expansionProgress))*10+120;
-    }else{
-      _heightOfUserInfoBar=120;
+    if (_isTextExpanded) {
+      _heightOfUserInfoBar = (5 + (6 * _expansionProgress)) * 10 + 120;
+    } else {
+      _heightOfUserInfoBar = 120;
     }
 
     _animateTextExpansion();
@@ -153,7 +140,7 @@ class ViewVideoProvider with ChangeNotifier{
 
     Timer.periodic(stepDuration, (timer) {
       _expansionProgress =
-      _isTextExpanded ? (currentStep / steps) : 1 - (currentStep / steps);
+          _isTextExpanded ? (currentStep / steps) : 1 - (currentStep / steps);
       notifyListeners();
       currentStep++;
 
@@ -162,7 +149,6 @@ class ViewVideoProvider with ChangeNotifier{
       }
     });
   }
-
 
 // =============== downloading variables ==================
 
@@ -174,7 +160,6 @@ class ViewVideoProvider with ChangeNotifier{
 
   String _progressString = '';
   String get progressString => _progressString;
-
 
   Future<void> saveDownloadedVideoToGallery({required String videoPath}) async {
     await ImageGallerySaver.saveFile(videoPath);
@@ -233,7 +218,7 @@ class ViewVideoProvider with ChangeNotifier{
     _progressString = "Completed";
     notifyListeners();
     Future.delayed(const Duration(seconds: 2)).then(
-          (value) {
+      (value) {
         _downloadingCompleted = false;
         notifyListeners();
       },
@@ -242,16 +227,11 @@ class ViewVideoProvider with ChangeNotifier{
     notifyListeners();
   }
 
-
-
-
-
   // ==============controllers====================
 
   final Map<String, VideoPlayerController> _controllers = {};
   final Map<int, VoidCallback> _listeners = {};
   final Map<int, bool> _viewCountUpdated = {};
-
 
   initializedVideoPlayer(int index) async {
     if (_posts.isNotEmpty) {
@@ -260,15 +240,13 @@ class ViewVideoProvider with ChangeNotifier{
       await _initController(index);
     }
 
-    if (_posts.length > index+1) {
-      await _initController(index+1);
+    if (_posts.length > index + 1) {
+      await _initController(index + 1);
     }
-    if (0 <= index-1) {
-      await _initController(index-1);
+    if (0 <= index - 1) {
+      await _initController(index - 1);
     }
-
   }
-
 
   Future<void> _initController(int index) async {
     if (_controllers.containsKey(_posts.elementAt(index).videoLink)) return;
@@ -285,7 +263,7 @@ class ViewVideoProvider with ChangeNotifier{
     controller.initialize().then((_) {
       controller.setVolume(1.0);
       if (index == _index) {
-        _isInitialized=true;
+        _isInitialized = true;
         notifyListeners();
         _playController(index);
       }
@@ -293,7 +271,8 @@ class ViewVideoProvider with ChangeNotifier{
   }
 
   Future<void> _stopController(int index) async {
-    print("stop: $index :::: ${_controllers[_posts.elementAt(index).videoLink]} ::::::::::::::::::::::::::::::::::::::");
+    print(
+        "stop: $index :::: ${_controllers[_posts.elementAt(index).videoLink]} ::::::::::::::::::::::::::::::::::::::");
     try {
       if (index < 0 || index >= _posts.length) return;
 
@@ -307,8 +286,9 @@ class ViewVideoProvider with ChangeNotifier{
     }
   }
 
-  Future<void>  _playController(int index) async {
-    print("playing: $index :::: ${_controllers[_posts.elementAt(index).videoLink]} ::::::::::::::::::::::::::::::::::::::");
+  Future<void> _playController(int index) async {
+    print(
+        "playing: $index :::: ${_controllers[_posts.elementAt(index).videoLink]} ::::::::::::::::::::::::::::::::::::::");
     try {
       if (index < 0 || index >= _posts.length) return;
 
@@ -334,7 +314,6 @@ class ViewVideoProvider with ChangeNotifier{
       print("Error playing controller at index $index: $e");
     }
   }
-
 
   VoidCallback _listenerSpawner(index) {
     return () {
@@ -382,15 +361,12 @@ class ViewVideoProvider with ChangeNotifier{
     };
   }
 
-
   VideoPlayerController? videoController(int index) {
     if (_posts.isEmpty || index < 0 || index >= _posts.length) {
       return null;
     }
     return _controllers[_posts.elementAt(index).videoLink];
   }
-
-
 
   Future<void> updateViewCount({required int id}) async {
     Map data = {
@@ -403,13 +379,12 @@ class ViewVideoProvider with ChangeNotifier{
     }
   }
 
-
   onPageChanged(int index) async {
     _isPlaying = true;
 
     final oldIndex = _index;
 
-   _index = index;
+    _index = index;
 
     if (!_controllers.containsKey(_posts.elementAt(index).videoLink)) {
       await _initController(index);
@@ -431,7 +406,6 @@ class ViewVideoProvider with ChangeNotifier{
       await _nextVideo();
     }
 
-
     if (_vertical_drag_direction == 1) {
       if (index + 1 < _posts.length) _initController(index + 1);
       if (index + 2 < _posts.length) _initController(index + 2);
@@ -450,15 +424,15 @@ class ViewVideoProvider with ChangeNotifier{
     notifyListeners();
   }
 
-
   Future<void> _previousVideo() async {
-    if (_index - 1 >= 0 && !_controllers.containsKey(_posts.elementAt(_index - 1).videoLink)) {
-      unawaited(_initController(_index - 1));  // Don't await here for faster playback
+    if (_index - 1 >= 0 &&
+        !_controllers.containsKey(_posts.elementAt(_index - 1).videoLink)) {
+      unawaited(
+          _initController(_index - 1)); // Don't await here for faster playback
     }
 
     await _playController(_index);
-    unawaited(createReplyIsolate(_index,token: token));
-
+    unawaited(createReplyIsolate(_index, token: token));
   }
 
   Future<void> _nextVideo() async {
@@ -467,16 +441,16 @@ class ViewVideoProvider with ChangeNotifier{
       return;
     }
 
-    if (_index + 1 < _posts.length && !_controllers.containsKey(_posts.elementAt(_index + 1).videoLink)) {
-      unawaited(_initController(_index + 1));  // Don't await here for faster playback
+    if (_index + 1 < _posts.length &&
+        !_controllers.containsKey(_posts.elementAt(_index + 1).videoLink)) {
+      unawaited(
+          _initController(_index + 1)); // Don't await here for faster playback
     }
 
     await _playController(_index);
 
-    unawaited(createReplyIsolate(_index,token: token));
-
+    unawaited(createReplyIsolate(_index, token: token));
   }
-
 
   void _cleanupControllers(int currentIndex) {
     final keepRange = 2; // Range of controllers to keep on each side
@@ -494,7 +468,8 @@ class ViewVideoProvider with ChangeNotifier{
     _controllers.forEach((videoLink, controller) {
       bool shouldKeep = false;
       for (var idx in validIndices) {
-        if (idx < _posts.length && _posts.elementAt(idx).videoLink == videoLink) {
+        if (idx < _posts.length &&
+            _posts.elementAt(idx).videoLink == videoLink) {
           shouldKeep = true;
           break;
         }
@@ -506,18 +481,16 @@ class ViewVideoProvider with ChangeNotifier{
 
         // Find and remove corresponding listener
         _listeners.removeWhere((index, _) =>
-        index < 0 ||
+            index < 0 ||
             index >= _posts.length ||
-            _posts.elementAt(index).videoLink == videoLink
-        );
+            _posts.elementAt(index).videoLink == videoLink);
       }
     });
 
     linksToRemove.forEach(_controllers.remove);
   }
 
-
-  Future<void> disposeAllControllers() async{
+  Future<void> disposeAllControllers() async {
     _controllers.forEach((_, controller) async {
       await controller.pause();
       await controller.dispose();
@@ -525,26 +498,19 @@ class ViewVideoProvider with ChangeNotifier{
     _controllers.clear();
     _listeners.clear();
     _viewCountUpdated.clear();
-
   }
 
-  Future<void> goingBack()async{
+  Future<void> goingBack() async {
     await disposeAllControllers();
     _replyPosts.clear();
   }
 
-
-
   final Set<int> _fetchingIds = {};
 
   Future<void> createReplyIsolate(int indexForFetch, {String? token}) async {
-
-
     if (_fetchingIds.contains(indexForFetch)) return;
 
-
     _fetchingIds.add(indexForFetch);
-
 
     ReceivePort mainReceivePort = ReceivePort();
 
@@ -560,31 +526,27 @@ class ViewVideoProvider with ChangeNotifier{
         token
       ]);
 
-      final isolateResponse = await isolateResponseReceivePort.first as List<Posts>;
-
+      final isolateResponse =
+          await isolateResponseReceivePort.first as List<Posts>;
 
       // Clear existing replies before adding new ones
       if (_replyPosts.length > 0) {
         _replyPosts.clear();
       }
 
-      if(isolateResponse.isEmpty) return;
-
+      if (isolateResponse.isEmpty) return;
 
       _replyPosts.addAll(isolateResponse);
 
       isolateResponseReceivePort.close();
       notifyListeners();
-
     } catch (e) {
       print("Error in view createReplyIsolate: $e");
     } finally {
       _fetchingIds.remove(indexForFetch);
       mainReceivePort.close();
     }
-
   }
-
 
   static void getRepliesTask(SendPort mySendPort) async {
     final _homeService = HomeService();
@@ -609,6 +571,4 @@ class ViewVideoProvider with ChangeNotifier{
       }
     }
   }
-
-
 }

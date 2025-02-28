@@ -1,5 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/presentation/settings/account/change_password_screen.dart';
 
 class ManageAccountScreen extends StatefulWidget {
   static const String routeName = '/manage-account';

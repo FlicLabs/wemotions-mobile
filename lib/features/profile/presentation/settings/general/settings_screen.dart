@@ -1,5 +1,4 @@
 import 'package:socialverse/export.dart';
-import 'package:socialverse/features/profile/widgets/settings/icon_list_tile.dart';
 
 class SettingsScreen extends StatelessWidget {
   static const String routeName = '/settings';

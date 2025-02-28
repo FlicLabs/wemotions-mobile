@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:socialverse/export.dart';
 
-
 class BottomNavBar extends StatefulWidget {
   static const String routeName = '/bottom-nav';
   const BottomNavBar({Key? key}) : super(key: key);
@@ -27,7 +26,6 @@ class _BottomNavBarState extends State<BottomNavBar>
     ActivityScreen(),
     ProfileScreen(),
   ];
-
 
   bool wasPlayingBeforeCamera = false;
 
@@ -67,7 +65,6 @@ class _BottomNavBarState extends State<BottomNavBar>
         auth.showAuthBottomSheet(context);
         return false;
       }
-
 
       try {
         // First check current camera permission status
@@ -110,9 +107,7 @@ class _BottomNavBarState extends State<BottomNavBar>
 
         // If camera permission is granted, proceed with storage permission
         if (cameraStatus.isGranted) {
-          setState(() {
-
-          });
+          setState(() {});
           PermissionStatus storageStatus = await Permission.storage.status;
           print('Storage Status: $storageStatus');
 
@@ -151,7 +146,7 @@ class _BottomNavBarState extends State<BottomNavBar>
           }
 
           // Return true only if both permissions are granted
-          return cameraStatus.isGranted ;
+          return cameraStatus.isGranted;
         }
 
         return false;
@@ -182,10 +177,9 @@ class _BottomNavBarState extends State<BottomNavBar>
       camera.setZoomLevel(camera.currentZoomLevel);
     }
 
-
     return WillPopScope(
-      onWillPop: () async{
-        if(camera.showCameraScreen){
+      onWillPop: () async {
+        if (camera.showCameraScreen) {
           await camera.resetValues(isDisposing: true);
         }
         return false;
@@ -213,7 +207,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                           showUnselectedLabels: false,
                           selectedFontSize: 0,
                           onTap: (index) {
-                            if( index==2) return;
+                            if (index == 2) return;
 
                             if (index == 3 && logged_in == false) {
                               auth.showAuthBottomSheet(context);
@@ -222,8 +216,9 @@ class _BottomNavBarState extends State<BottomNavBar>
                             } else {
                               nav.currentPage = index;
 
-                              if(index!=0 && nav.selectedVideoUploadType=='Reply'){
-                                nav.selectedVideoUploadType='Video';
+                              if (index != 0 &&
+                                  nav.selectedVideoUploadType == 'Reply') {
+                                nav.selectedVideoUploadType = 'Video';
                               }
 
                               if (home.posts.isNotEmpty) {
@@ -263,11 +258,12 @@ class _BottomNavBarState extends State<BottomNavBar>
                                 }
                               }
 
-                              if (index==3){
-                                notification.notifications.forEach((element) async{
+                              if (index == 3) {
+                                notification.notifications
+                                    .forEach((element) async {
                                   await notification.readActivity(element.id);
                                 });
-                                notification.notSeenNotification=0;
+                                notification.notSeenNotification = 0;
                               }
                             }
                           },
@@ -310,33 +306,42 @@ class _BottomNavBarState extends State<BottomNavBar>
                                 children: [
                                   nav.currentPage == 3
                                       ? SvgPicture.asset(
-                                    AppAsset.icnotification_active,
-                                    height: 24,
-                                    width: 24,
-                                  )
+                                          AppAsset.icnotification_active,
+                                          height: 24,
+                                          width: 24,
+                                        )
                                       : SvgPicture.asset(
-                                    AppAsset.icnotification,
-                                    color: Theme.of(context).focusColor,
-                                    height: 24,
-                                    width: 24,
-                                  ),
-
-                                  if(notification.notSeenNotification!=0) Positioned(
-                                    right: -1,
-                                    top: -2,
-                                    child: Container(
-                                      // padding: EdgeInsets.all(4),
-                                      decoration: BoxDecoration(
-                                        color: Colors.red,
-                                        borderRadius: BorderRadius.circular(50),
+                                          AppAsset.icnotification,
+                                          color: Theme.of(context).focusColor,
+                                          height: 24,
+                                          width: 24,
+                                        ),
+                                  if (notification.notSeenNotification != 0)
+                                    Positioned(
+                                      right: -1,
+                                      top: -2,
+                                      child: Container(
+                                        // padding: EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                        ),
+                                        constraints: BoxConstraints(
+                                          minHeight: 12,
+                                          minWidth: 12,
+                                        ),
+                                        child: Text(
+                                          '${notification.notSeenNotification}',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
-                                      constraints: BoxConstraints(
-                                        minHeight: 12,
-                                        minWidth: 12,
-                                      ),
-                                      child: Text('${notification.notSeenNotification}',style: TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold,),textAlign: TextAlign.center,),
-                                    ),
-                                  )
+                                    )
                                 ],
                               ),
                               label: '',
@@ -417,35 +422,58 @@ class _BottomNavBarState extends State<BottomNavBar>
                   // if (camera.showCameraScreen) ...[RecordButton()]
                   GestureDetector(
                     onTap: () async {
-                      bool permissionsGranted = await _checkAndRequestPermissions(context);
+                      if (home.videoController(home.index)!.value.isPlaying) {
+                        await home.videoController(home.index)!.pause();
+                      }
+                      bool permissionsGranted =
+                          await _checkAndRequestPermissions(context);
                       if (permissionsGranted) {
                         camera.hasPermission = true;
                         await availableCameras().then((value) {
                           camera.localValue = value;
-                          camera.isReply = nav.selectedVideoUploadType == 'Video' ? false : true;
-                          nav.parentVideoId=camera.isReply? (reply.onReply?reply.posts[reply.index].id: home.posts[home.index][0].id) : null;
-                          log('ParentVideoId: '+(nav.parentVideoId).toString());
-                          camera.isThroughSingleTap=true;
+                          camera.isReply =
+                              nav.selectedVideoUploadType == 'Video'
+                                  ? false
+                                  : true;
+                          nav.parentVideoId = camera.isReply
+                              ? (reply.onReply
+                                  ? reply.posts[reply.index].id
+                                  : home.posts[home.index][0].id)
+                              : null;
+                          log('ParentVideoId: ' +
+                              (nav.parentVideoId).toString());
+                          camera.isThroughSingleTap = true;
                           camera.shouldStartRecording = false;
                           camera.showCameraScreen = true;
-
                         });
                       }
                     },
-
                     onLongPress: () async {
-                      if(camera.recordingCompleted) return ;
+                      if (home.videoController(home.index)!.value.isPlaying) {
+                        await home.videoController(home.index)!.pause();
+                      }
+                      if (camera.recordingCompleted) return;
                       camera.isLongPressed = true;
                       // Store the initial press position
                       camera.pressPosition = null;
-                      bool permissionsGranted = await _checkAndRequestPermissions(context);
+                      bool permissionsGranted =
+                          await _checkAndRequestPermissions(context);
                       if (permissionsGranted) {
                         camera.hasPermission = true;
                         await availableCameras().then((value) {
-                          nav.parentVideoId=camera.isReply? (reply.onReply?reply.index:home.index) : null;
+                          nav.parentVideoId = camera.isReply
+                              ? (reply.onReply ? reply.index : home.index)
+                              : null;
                           camera.localValue = value;
-                          camera.isReply = nav.selectedVideoUploadType == 'Video' ? false : true;
-                          nav.parentVideoId=camera.isReply? (reply.onReply?reply.posts[reply.index].id: home.posts[home.index][0].id) : null;
+                          camera.isReply =
+                              nav.selectedVideoUploadType == 'Video'
+                                  ? false
+                                  : true;
+                          nav.parentVideoId = camera.isReply
+                              ? (reply.onReply
+                                  ? reply.posts[reply.index].id
+                                  : home.posts[home.index][0].id)
+                              : null;
                           camera.shouldStartRecording = true;
                           camera.showCameraScreen = true;
 
@@ -455,20 +483,21 @@ class _BottomNavBarState extends State<BottomNavBar>
                         });
                       }
                     },
-
                     onLongPressMoveUpdate: (details) {
-                      if(camera.recordingCompleted) return ;
+                      if (camera.recordingCompleted) return;
                       if (camera.pressPosition == null) {
                         camera.pressPosition = details.globalPosition;
-                      }
-                      else{
-                        double horizontalDifference = details.globalPosition.dx - camera.pressPosition!.dx;
-                        double verticalDifference = details.globalPosition.dy - camera.pressPosition!.dy;
+                      } else {
+                        double horizontalDifference =
+                            details.globalPosition.dx -
+                                camera.pressPosition!.dx;
+                        double verticalDifference = details.globalPosition.dy -
+                            camera.pressPosition!.dy;
 
-                        if(horizontalDifference<-10){
-                          camera.isLockIconHovered=true;
-                        }else{
-                          camera.isLockIconHovered=false;
+                        if (horizontalDifference < -10) {
+                          camera.isLockIconHovered = true;
+                        } else {
+                          camera.isLockIconHovered = false;
                         }
 
                         // if(verticalDifference<100){
@@ -477,18 +506,17 @@ class _BottomNavBarState extends State<BottomNavBar>
                         //   camera.setZoomLevel(1.0);
                         // }
                       }
-
                     },
-
                     onLongPressEnd: (details) async {
-                      if(camera.recordingCompleted) return ;
+                      if (camera.recordingCompleted) return;
 
                       if (camera.pressPosition != null) {
-                        double horizontalDifference = details.globalPosition.dx - camera.pressPosition!.dx;
+                        double horizontalDifference =
+                            details.globalPosition.dx -
+                                camera.pressPosition!.dx;
                         if (horizontalDifference < -20) {
                           camera.isRecordingLocked = true;
-                          camera.isLockIconHovered=false;
-
+                          camera.isLockIconHovered = false;
                         }
                       }
 
@@ -497,8 +525,9 @@ class _BottomNavBarState extends State<BottomNavBar>
                         camera.stopRecording();
                       }
                     },
-
-                    child: camera.showCameraScreen ? RecordButton() : CameraButton(isDark: isDark, nav: nav),
+                    child: camera.showCameraScreen
+                        ? RecordButton()
+                        : CameraButton(isDark: isDark, nav: nav),
                   )
                 ],
               ),

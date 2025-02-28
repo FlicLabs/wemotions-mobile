@@ -1,7 +1,6 @@
 // import 'package:line_icons/line_icons.dart';
 import 'package:socialverse/export.dart';
 
-import '../../profile/widgets/profile/profile/following_item.dart';
 
 class MotionSheet extends StatelessWidget {
   final bool? isFromVideoPlayer;
