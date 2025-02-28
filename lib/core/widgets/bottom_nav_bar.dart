@@ -425,6 +425,10 @@ class _BottomNavBarState extends State<BottomNavBar>
                       if (home.videoController(home.index)!.value.isPlaying) {
                         await home.videoController(home.index)!.pause();
                       }
+
+                      if (reply.videoController(reply.index)!.value.isPlaying) {
+                        await reply.videoController(reply.index)!.pause();
+                      }
                       bool permissionsGranted =
                           await _checkAndRequestPermissions(context);
                       if (permissionsGranted) {
@@ -451,6 +455,10 @@ class _BottomNavBarState extends State<BottomNavBar>
                     onLongPress: () async {
                       if (home.videoController(home.index)!.value.isPlaying) {
                         await home.videoController(home.index)!.pause();
+                      }
+
+                      if (reply.videoController(reply.index)!.value.isPlaying) {
+                        await reply.videoController(reply.index)!.pause();
                       }
                       if (camera.recordingCompleted) return;
                       camera.isLongPressed = true;
